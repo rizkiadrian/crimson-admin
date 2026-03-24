@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/Button";
 import { FormInput } from "@/components/ui/FormInput";
-import { AtSign, Eye } from "lucide-react";
+import { AtSign } from "lucide-react";
 
 export function LoginForm() {
   return (
     <form className="space-y-6 relative z-10">
       <FormInput
-        id="corporate-email"
+        id="corporate-email-form"
         label="CORPORATE EMAIL"
         placeholder="name@crimson-executive.com"
         type="email"
