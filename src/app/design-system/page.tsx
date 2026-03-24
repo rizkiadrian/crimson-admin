@@ -2,6 +2,7 @@
 import { ColorPalette } from "./components/color-pallete";
 import { TypographyShowcase } from "./components/typography";
 import { ButtonShowcase } from "./components/button-showcase";
+import { FormInputShowcase } from "./components/input-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -39,6 +40,14 @@ export default function DesignSystemPage() {
             3. Buttons
           </h2>
           <ButtonShowcase />
+        </section>
+
+        {/* Section 4: Input Fields */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            4. Input Fields
+          </h2>
+          <FormInputShowcase />
         </section>
       </div>
     </div>
