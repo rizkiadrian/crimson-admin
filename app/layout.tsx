@@ -21,7 +21,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Crimson Admin Panel",
-  description: "Crimson Admin Panel is a modern admin dashboard built for efficient data management, analytics tracking, and business workflow automation.",
+  description:
+    "Crimson Admin Panel is a modern admin dashboard built for efficient data management, analytics tracking, and business workflow automation.",
 };
 
 export default function RootLayout({
