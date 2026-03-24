@@ -10,7 +10,19 @@ const colorTokens = [
   { name: "Neutral", prefix: "neutral" },
 ];
 
-const shades = ["950", "900", "800", "700", "600", "500", "400", "300", "200", "100", "50"];
+const shades = [
+  "950",
+  "900",
+  "800",
+  "700",
+  "600",
+  "500",
+  "400",
+  "300",
+  "200",
+  "100",
+  "50",
+];
 
 export function ColorPalette() {
   const [baseColors, setBaseColors] = useState<Record<string, string>>({});
@@ -22,7 +34,9 @@ export function ColorPalette() {
       const extractedColors: Record<string, string> = {};
 
       colorTokens.forEach((color) => {
-        const cssValue = rootStyles.getPropertyValue(`--color-${color.prefix}-500`).trim();
+        const cssValue = rootStyles
+          .getPropertyValue(`--color-${color.prefix}-500`)
+          .trim();
         extractedColors[color.prefix] = cssValue || "N/A";
       });
 
@@ -36,14 +50,15 @@ export function ColorPalette() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {colorTokens.map((color) => {
-        const textColor = color.prefix === "neutral" ? "text-secondary-900" : "text-white";
+        const textColor =
+          color.prefix === "neutral" ? "text-secondary-900" : "text-white";
 
         return (
-          <div 
-            key={color.name} 
+          <div
+            key={color.name}
             className="flex flex-col h-48 rounded-2xl overflow-hidden shadow-sm border border-neutral-200"
           >
-            <div 
+            <div
               className={`flex-1 p-4 flex justify-between items-start font-medium text-sm ${textColor}`}
               style={{ backgroundColor: `var(--color-${color.prefix}-500)` }}
             >
@@ -59,7 +74,9 @@ export function ColorPalette() {
                 <div
                   key={`${color.prefix}-${shade}`}
                   className="flex-1 h-full"
-                  style={{ backgroundColor: `var(--color-${color.prefix}-${shade})` }}
+                  style={{
+                    backgroundColor: `var(--color-${color.prefix}-${shade})`,
+                  }}
                   title={`${color.name} ${shade}`}
                 />
               ))}

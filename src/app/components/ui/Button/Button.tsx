@@ -1,7 +1,7 @@
 // src/components/ui/Button.tsx
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import { cn } from "../../../lib/utils";
 
 const buttonVariants = cva(
   // Base styles: Fleksibel, transisi halus, dan state focus/disabled
@@ -12,13 +12,18 @@ const buttonVariants = cva(
         // Varian berdasarkan gambar Crimson Nexus
         primary: "bg-primary-500 text-white hover:bg-primary-600 shadow-sm",
         secondary: "bg-neutral-200 text-secondary-800 hover:bg-neutral-300",
-        inverted: "bg-secondary-800 text-white hover:bg-secondary-900 shadow-sm",
-        outlined: "border border-neutral-300 bg-transparent text-secondary-800 hover:bg-neutral-100",
-        
+        inverted:
+          "bg-secondary-800 text-white hover:bg-secondary-900 shadow-sm",
+        outlined:
+          "border border-neutral-300 bg-transparent text-secondary-800 hover:bg-neutral-100",
+
         // Varian untuk Icon Buttons (Bulat)
-        iconPrimary: "bg-primary-500 text-white hover:bg-primary-600 rounded-full shadow-sm",
-        iconSecondary: "bg-secondary-500 text-white hover:bg-secondary-600 rounded-full shadow-sm",
-        iconTertiary: "bg-tertiary-600 text-white hover:bg-tertiary-700 rounded-full shadow-sm",
+        iconPrimary:
+          "bg-primary-500 text-white hover:bg-primary-600 rounded-full shadow-sm",
+        iconSecondary:
+          "bg-secondary-500 text-white hover:bg-secondary-600 rounded-full shadow-sm",
+        iconTertiary:
+          "bg-tertiary-600 text-white hover:bg-tertiary-700 rounded-full shadow-sm",
       },
       size: {
         default: "h-10 px-6 py-2",
@@ -35,7 +40,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }

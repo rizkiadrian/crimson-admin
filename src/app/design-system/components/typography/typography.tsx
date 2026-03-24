@@ -1,6 +1,6 @@
 // src/components/design-system/TypographyShowcase.tsx
 import React from "react";
-import { Text } from "@/components/ui/Text"; // Pastikan path import ini sesuai
+import { Text } from "../../../components/ui/Text"; // Pastikan path import ini sesuai
 
 // Kita buat array yang mereferensikan varian dari komponen Text Anda
 const typographyTokens = [
@@ -19,7 +19,10 @@ export function TypographyShowcase() {
         >
           {/* Label di pojok kiri atas */}
           <div className="absolute top-6 left-6">
-            <Text variant="label" className="text-secondary-400 uppercase tracking-wider">
+            <Text
+              variant="label"
+              className="text-secondary-400 uppercase tracking-wider"
+            >
               {type.name}
             </Text>
           </div>
@@ -29,8 +32,8 @@ export function TypographyShowcase() {
             Lalu kita timpa ukurannya menjadi sangat besar (text-[7rem]) khusus untuk display ini.
             Ketebalan (bold/normal/medium) dan warna akan tetap bawaan dari variannya!
           */}
-          <Text 
-            variant={type.variant} 
+          <Text
+            variant={type.variant}
             className="text-[6rem] md:text-[8rem] leading-none select-none"
           >
             Aa

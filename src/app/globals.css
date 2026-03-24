@@ -11,7 +11,7 @@
   --color-primary-200: #f5c2c2;
   --color-primary-300: #ee9f9f;
   --color-primary-400: #e46767;
-  --color-primary-500: #D32F2F; /* BASE */
+  --color-primary-500: #d32f2f; /* BASE */
   --color-primary-600: #be2a2a;
   --color-primary-700: #9e2323;
   --color-primary-800: #7f1c1c;
@@ -38,14 +38,14 @@
   --color-tertiary-300: #8bcce0;
   --color-tertiary-400: #55abcb;
   --color-tertiary-500: #368fb2;
-  --color-tertiary-600: #00799C; /* BASE */
+  --color-tertiary-600: #00799c; /* BASE */
   --color-tertiary-700: #26647f;
   --color-tertiary-800: #265369;
   --color-tertiary-900: #244558;
   --color-tertiary-950: #132c3a;
 
   /* NEUTRAL: Light Gray */
-  --color-neutral-50: #F8F9FA; /* BASE */
+  --color-neutral-50: #f8f9fa; /* BASE */
   --color-neutral-100: #f1f3f5;
   --color-neutral-200: #e9ecef;
   --color-neutral-300: #dee2e6;
@@ -70,10 +70,14 @@
   --color-border-subtle: var(--color-neutral-200);
 
   /* Semantic Tokens - Text (BARU) */
-  --color-text-main: var(--color-secondary-900);     /* Teks utama (Hitam/Gelap) */
-  --color-text-muted: var(--color-secondary-500);    /* Teks sekunder/deskripsi (Abu-abu) */
-  --color-text-inverted: var(--color-neutral-50);    /* Teks di atas background gelap (Putih) */
-  --color-text-accent: var(--color-primary-500);     /* Teks aksen/link (Merah) */
+  --color-text-main: var(--color-secondary-900); /* Teks utama (Hitam/Gelap) */
+  --color-text-muted: var(
+    --color-secondary-500
+  ); /* Teks sekunder/deskripsi (Abu-abu) */
+  --color-text-inverted: var(
+    --color-neutral-50
+  ); /* Teks di atas background gelap (Putih) */
+  --color-text-accent: var(--color-primary-500); /* Teks aksen/link (Merah) */
 }
 
 /* 2. Beri tahu Tailwind untuk membuat utility class (seperti bg-primary-500) dari variabel di atas */
@@ -135,7 +139,7 @@
   --color-bg-app: var(--color-bg-app);
   --color-bg-card: var(--color-bg-card);
   --color-border-subtle: var(--color-border-subtle);
-  
+
   --color-text-main: var(--color-text-main);
   --color-text-muted: var(--color-text-muted);
   --color-text-inverted: var(--color-text-inverted);
@@ -153,21 +157,26 @@ body {
   /* Gunakan variabel semantic kita sebagai warna dasar aplikasi */
   background-color: var(--color-bg-app);
   color: var(--color-text-main);
-  
+
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 /* Opsional: Beri styling default untuk heading dan paragraf */
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-text-main font-bold tracking-tight;
   }
-  
+
   p {
     @apply text-text-muted leading-relaxed;
   }
-  
+
   a {
     @apply text-text-accent hover:underline;
   }
