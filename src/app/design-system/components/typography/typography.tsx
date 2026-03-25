@@ -1,6 +1,6 @@
 // src/components/design-system/TypographyShowcase.tsx
 import React from "react";
-import { Text } from "../../../components/ui/Text"; // Pastikan path import ini sesuai
+import { Text } from "@app/components/ui/Text"; // Pastikan path import ini sesuai
 
 // Kita buat array yang mereferensikan varian dari komponen Text Anda
 const typographyTokens = [

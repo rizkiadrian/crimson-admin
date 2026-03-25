@@ -1,7 +1,7 @@
 // src/components/design-system/ButtonShowcase.tsx
 import React from "react";
-import { Button } from "../../../components/ui/Button";
-import { Text } from "../../../components/ui/Text";
+import { Button } from "@app/components/ui/Button";
+import { Text } from "@app/components/ui/Text";
 import { PenSquare, Home, Trash2, Tag } from "lucide-react";
 
 export function ButtonShowcase() {

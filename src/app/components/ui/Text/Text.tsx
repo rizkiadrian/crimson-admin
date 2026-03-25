@@ -1,6 +1,6 @@
 // src/components/ui/Text.tsx
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../../lib/utils";
+import { cn } from "@lib/utils";
 
 const textVariants = cva("text-secondary-800", {
   variants: {

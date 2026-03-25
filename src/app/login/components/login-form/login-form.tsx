@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
-import { FormInput } from "@/components/ui/FormInput";
+import { Button } from "@app/components/ui/Button";
+import { FormInput } from "@app/components/ui/FormInput";
 import { AtSign } from "lucide-react";
 
 export function LoginForm() {

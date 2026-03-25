@@ -2,7 +2,7 @@
 "use client"; // Wajib ditambahkan karena kita menggunakan useState
 
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@lib/utils";
 import { Eye, EyeOff } from "lucide-react"; // Import icon mata
 
 export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {

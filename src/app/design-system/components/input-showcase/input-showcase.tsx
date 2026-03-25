@@ -1,7 +1,7 @@
 // src/components/design-system/FormInputShowcase.tsx
 import React from "react";
-import { FormInput } from "@/components/ui/FormInput";
-import { Text } from "@/components/ui/Text";
+import { FormInput } from "@app/components/ui/FormInput";
+import { Text } from "@app/components/ui/Text";
 import { AtSign, Search, Eye } from "lucide-react"; // Pastikan lucide-react sudah terinstall
 
 export function FormInputShowcase() {

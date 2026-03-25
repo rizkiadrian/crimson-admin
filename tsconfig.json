@@ -19,8 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/app/*"],
-      "@config/*": ["./src/config/*"]
+      "@app/*": ["./src/app/*"],
+      "@config/*": ["./src/config/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@services/*": ["./src/services/*"]
     }
   },
   "include": [
