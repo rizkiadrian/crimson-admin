@@ -22,7 +22,7 @@ export async function setSecureCookie(tokenName: string, item: string) {
  */
 export async function removeSecureCookie(tokenName: string) {
   const cookieStore = await cookies();
-  cookieStore.deleteaa(tokenName);
+  cookieStore.delete(tokenName);
 }
 
 /**

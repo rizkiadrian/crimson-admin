@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --max-warnings=0",
+    "src/**/*.{ts,tsx}": [
+      "bash -c 'tsc --noEmit'",
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "src/**/*.{js,jsx}": [
+      "eslint --fix --max-warnings=0",
       "prettier --write"
     ],
     "*.{json,css,md}": [
