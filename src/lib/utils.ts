@@ -7,16 +7,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function handleResponseError({
+// Tambahkan <T = unknown> di sebelah nama fungsi
+export function handleResponseError<T = unknown>({
   message,
   errors,
 }: {
   message?: string;
-  errors?: Record<string, string[]> | unknown;
-}): IApiError {
+  errors?: T; // Ubah tipe errors menjadi T
+}): IApiError<T> {
+  // Pastikan return type-nya juga menerima T
   return {
     success: false,
     message: message ?? "Something went wrong",
-    errors,
+    errors, // TypeScript akan otomatis tahu ini bertipe T
   };
 }

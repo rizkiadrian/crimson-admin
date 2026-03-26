@@ -53,7 +53,7 @@ export function LoginForm() {
       <FormInput
         id="corporate-email-form"
         label="CORPORATE EMAIL"
-        placeholder="name@crimson-executive.com"
+        placeholder="name@lingkarid.com"
         type="email"
         name="login"
         leftIcon={
