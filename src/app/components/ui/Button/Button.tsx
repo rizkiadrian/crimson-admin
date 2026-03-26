@@ -2,6 +2,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@lib/utils";
+import { Loader2 } from "lucide-react"; // 1. Import icon spinner
 
 const buttonVariants = cva(
   // Base styles: Fleksibel, transisi halus, dan state focus/disabled
@@ -9,15 +10,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Varian berdasarkan gambar Crimson Nexus
         primary: "bg-primary-500 text-white hover:bg-primary-600 shadow-sm",
         secondary: "bg-neutral-200 text-secondary-800 hover:bg-neutral-300",
         inverted:
           "bg-secondary-800 text-white hover:bg-secondary-900 shadow-sm",
         outlined:
           "border border-neutral-300 bg-transparent text-secondary-800 hover:bg-neutral-100",
-
-        // Varian untuk Icon Buttons (Bulat)
         iconPrimary:
           "bg-primary-500 text-white hover:bg-primary-600 rounded-full shadow-sm",
         iconSecondary:
@@ -29,7 +27,7 @@ const buttonVariants = cva(
         default: "h-10 px-6 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10", // Ukuran kotak presisi untuk ikon bulat
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {
@@ -44,16 +42,37 @@ export interface ButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  isLoading?: boolean; // 2. Tambahkan prop isLoading
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  (
+    { className, variant, size, isLoading, disabled, children, ...props },
+    ref
+  ) => {
     return (
       <button
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        // 3. Otomatis disable tombol jika sedang loading ATAU jika prop disabled di-set true
+        disabled={disabled || isLoading}
         {...props}
-      />
+      >
+        {/* 4. Render spinner jika isLoading true */}
+        {isLoading && (
+          <Loader2
+            className={cn(
+              "animate-spin",
+              // Beri jarak margin kanan (mr-2) jika tombol memiliki teks/children.
+              // Jika tombol hanya icon (tanpa teks), jangan beri margin agar tetap di tengah.
+              children ? "mr-2 h-4 w-4" : "h-4 w-4"
+            )}
+          />
+        )}
+
+        {/* Render isi tombol (teks atau ikon lain) */}
+        {children}
+      </button>
     );
   }
 );

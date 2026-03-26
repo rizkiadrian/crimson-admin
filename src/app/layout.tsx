@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SetupClient } from "@app/components/core/SetupClient";
+import { GlobalNotification } from "@app/components/ui/GlobalNotification";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -37,7 +38,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
     >
       <SetupClient />
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <GlobalNotification />
+        {children}
+      </body>
     </html>
   );
 }

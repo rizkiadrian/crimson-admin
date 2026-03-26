@@ -1,17 +1,20 @@
 @import "tailwindcss";
 
-/* 1. Deklarasikan semua warna mentah di :root agar selalu tersedia di DOM */
+/* =========================================
+   1. ROOT VARIABLES (LIGHT THEME & BASE)
+   ========================================= */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 
+  /* --- EXISTING PALETTES --- */
   /* PRIMARY: Crimson Red */
   --color-primary-50: #fdf2f2;
   --color-primary-100: #fbe5e5;
   --color-primary-200: #f5c2c2;
   --color-primary-300: #ee9f9f;
   --color-primary-400: #e46767;
-  --color-primary-500: #d32f2f; /* BASE */
+  --color-primary-500: #d32f2f;
   --color-primary-600: #be2a2a;
   --color-primary-700: #9e2323;
   --color-primary-800: #7f1c1c;
@@ -27,7 +30,7 @@
   --color-secondary-500: #6d6d6d;
   --color-secondary-600: #5d5d5d;
   --color-secondary-700: #4f4f4f;
-  --color-secondary-800: #424242; /* BASE */
+  --color-secondary-800: #424242;
   --color-secondary-900: #3b3b3b;
   --color-secondary-950: #222222;
 
@@ -38,14 +41,14 @@
   --color-tertiary-300: #8bcce0;
   --color-tertiary-400: #55abcb;
   --color-tertiary-500: #368fb2;
-  --color-tertiary-600: #00799c; /* BASE */
+  --color-tertiary-600: #00799c;
   --color-tertiary-700: #26647f;
   --color-tertiary-800: #265369;
   --color-tertiary-900: #244558;
   --color-tertiary-950: #132c3a;
 
   /* NEUTRAL: Light Gray */
-  --color-neutral-50: #f8f9fa; /* BASE */
+  --color-neutral-50: #f8f9fa;
   --color-neutral-100: #f1f3f5;
   --color-neutral-200: #e9ecef;
   --color-neutral-300: #dee2e6;
@@ -57,36 +60,89 @@
   --color-neutral-900: #212529;
   --color-neutral-950: #121416;
 
-  /* Semantic Tokens */
+  /* --- NEW: STATE PALETTES --- */
+  /* SUCCESS: Emerald Green */
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+
+  /* WARNING: Amber/Orange */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  /* DANGER/ERROR: Re-use Primary (Crimson) */
+  --color-error-50: var(--color-primary-50);
+  --color-error-100: var(--color-primary-100);
+  --color-error-200: var(--color-primary-200);
+  --color-error-300: var(--color-primary-300);
+  --color-error-400: var(--color-primary-400);
+  --color-error-500: var(--color-primary-500);
+  --color-error-600: var(--color-primary-600);
+  --color-error-700: var(--color-primary-700);
+  --color-error-800: var(--color-primary-800);
+  --color-error-900: var(--color-primary-900);
+
+  /* -----------------------------------------
+     SEMANTIC TOKENS (TETAP TERANG)
+     ----------------------------------------- */
   --color-bg-app: var(--color-neutral-50);
   --color-bg-card: #ffffff;
+  --color-border-subtle: var(--color-neutral-200);
+
   --color-text-main: var(--color-secondary-900);
   --color-text-muted: var(--color-secondary-500);
-  --color-border-subtle: var(--color-neutral-200);
+  --color-text-inverted: var(--color-neutral-50);
+  --color-text-accent: var(--color-primary-500);
 
-  /* Semantic Tokens - Backgrounds */
-  --color-bg-app: var(--color-neutral-50);
-  --color-bg-card: #ffffff;
-  --color-border-subtle: var(--color-neutral-200);
+  /* Interactive / Button Elements */
+  --color-bg-primary: var(--color-primary-600);
+  --color-bg-primary-hover: var(--color-primary-700);
+  --color-bg-primary-active: var(--color-primary-800);
 
-  /* Semantic Tokens - Text (BARU) */
-  --color-text-main: var(--color-secondary-900); /* Teks utama (Hitam/Gelap) */
-  --color-text-muted: var(
-    --color-secondary-500
-  ); /* Teks sekunder/deskripsi (Abu-abu) */
-  --color-text-inverted: var(
-    --color-neutral-50
-  ); /* Teks di atas background gelap (Putih) */
-  --color-text-accent: var(--color-primary-500); /* Teks aksen/link (Merah) */
+  --color-bg-secondary: var(--color-secondary-100);
+  --color-bg-secondary-hover: var(--color-secondary-200);
+  --color-bg-secondary-active: var(--color-secondary-300);
+
+  --color-border-input: var(--color-neutral-300);
+  --color-border-input-focus: var(--color-primary-500);
 }
 
-/* 2. Beri tahu Tailwind untuk membuat utility class (seperti bg-primary-500) dari variabel di atas */
+/* =========================================
+   2. DARK THEME MAPPING (DIKEMBALIKAN KE ASAL)
+   ========================================= */
+/* Kita biarkan kosong dari semantic override agar tidak merusak UI terang Anda */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* =========================================
+   3. TAILWIND V4 THEME INJECTION
+   ========================================= */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 
+  /* Inject Core Palettes */
   --color-primary-50: var(--color-primary-50);
   --color-primary-100: var(--color-primary-100);
   --color-primary-200: var(--color-primary-200);
@@ -135,35 +191,71 @@
   --color-neutral-900: var(--color-neutral-900);
   --color-neutral-950: var(--color-neutral-950);
 
-  /* Mapping Semantic Tokens */
+  /* Inject State Palettes */
+  --color-success-50: var(--color-success-50);
+  --color-success-100: var(--color-success-100);
+  --color-success-200: var(--color-success-200);
+  --color-success-300: var(--color-success-300);
+  --color-success-400: var(--color-success-400);
+  --color-success-500: var(--color-success-500);
+  --color-success-600: var(--color-success-600);
+  --color-success-700: var(--color-success-700);
+  --color-success-800: var(--color-success-800);
+  --color-success-900: var(--color-success-900);
+
+  --color-warning-50: var(--color-warning-50);
+  --color-warning-100: var(--color-warning-100);
+  --color-warning-200: var(--color-warning-200);
+  --color-warning-300: var(--color-warning-300);
+  --color-warning-400: var(--color-warning-400);
+  --color-warning-500: var(--color-warning-500);
+  --color-warning-600: var(--color-warning-600);
+  --color-warning-700: var(--color-warning-700);
+  --color-warning-800: var(--color-warning-800);
+  --color-warning-900: var(--color-warning-900);
+
+  --color-error-50: var(--color-error-50);
+  --color-error-100: var(--color-error-100);
+  --color-error-200: var(--color-error-200);
+  --color-error-300: var(--color-error-300);
+  --color-error-400: var(--color-error-400);
+  --color-error-500: var(--color-error-500);
+  --color-error-600: var(--color-error-600);
+  --color-error-700: var(--color-error-700);
+  --color-error-800: var(--color-error-800);
+  --color-error-900: var(--color-error-900);
+
+  /* Inject Semantic Tokens */
   --color-bg-app: var(--color-bg-app);
   --color-bg-card: var(--color-bg-card);
   --color-border-subtle: var(--color-border-subtle);
-
   --color-text-main: var(--color-text-main);
   --color-text-muted: var(--color-text-muted);
   --color-text-inverted: var(--color-text-inverted);
   --color-text-accent: var(--color-text-accent);
+
+  /* Inject Interactive Tokens */
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-primary-hover: var(--color-bg-primary-hover);
+  --color-bg-primary-active: var(--color-bg-primary-active);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-secondary-hover: var(--color-bg-secondary-hover);
+  --color-bg-secondary-active: var(--color-bg-secondary-active);
+  --color-border-input: var(--color-border-input);
+  --color-border-input-focus: var(--color-border-input-focus);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  /* Gunakan variabel semantic kita sebagai warna dasar aplikasi */
-  background-color: var(--color-bg-app);
-  color: var(--color-text-main);
-
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Opsional: Beri styling default untuk heading dan paragraf */
+/* =========================================
+   4. BASE STYLES
+   ========================================= */
 @layer base {
+  body {
+    background-color: var(--color-bg-app);
+    color: var(--color-text-main);
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
   h1,
   h2,
   h3,

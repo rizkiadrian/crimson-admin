@@ -22,7 +22,9 @@
       "@app/*": ["./src/app/*"],
       "@config/*": ["./src/config/*"],
       "@lib/*": ["./src/lib/*"],
-      "@services/*": ["./src/services/*"]
+      "@services/*": ["./src/services/*"],
+      "@actions/*": ["./src/actions/*"],
+      "@store/*": ["./src/store/*"]
     }
   },
   "include": [

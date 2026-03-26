@@ -3,11 +3,15 @@
 
 import React, { useEffect, useState } from "react";
 
+// Tambahkan Success, Warning, dan Error ke dalam list
 const colorTokens = [
   { name: "Primary", prefix: "primary" },
   { name: "Secondary", prefix: "secondary" },
   { name: "Tertiary", prefix: "tertiary" },
   { name: "Neutral", prefix: "neutral" },
+  { name: "Success", prefix: "success" },
+  { name: "Warning", prefix: "warning" },
+  { name: "Error", prefix: "error" },
 ];
 
 const shades = [
@@ -28,7 +32,6 @@ export function ColorPalette() {
   const [baseColors, setBaseColors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    // Bungkus dengan setTimeout untuk menghindari sinkronisasi yang memicu peringatan
     const timer = setTimeout(() => {
       const rootStyles = getComputedStyle(document.documentElement);
       const extractedColors: Record<string, string> = {};
@@ -41,17 +44,18 @@ export function ColorPalette() {
       });
 
       setBaseColors(extractedColors);
-    }, 0); // Jeda 0 milidetik sudah cukup untuk melepaskannya dari thread utama efek
+    }, 0);
 
-    // Selalu bersihkan timer jika komponen di-unmount agar tidak ada memory leak
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {colorTokens.map((color) => {
-        const textColor =
-          color.prefix === "neutral" ? "text-secondary-900" : "text-white";
+        // Warning (kuning) dan Neutral (abu terang) butuh teks gelap agar kontras
+        const isDarkText =
+          color.prefix === "neutral" || color.prefix === "warning";
+        const textColor = isDarkText ? "text-secondary-900" : "text-white";
 
         return (
           <div
@@ -63,7 +67,6 @@ export function ColorPalette() {
               style={{ backgroundColor: `var(--color-${color.prefix}-500)` }}
             >
               <span>{color.name}</span>
-              {/* Tampilkan nilai atau state loading sementara "..." */}
               <span className="uppercase tracking-wider opacity-90">
                 {baseColors[color.prefix] || "..."}
               </span>
