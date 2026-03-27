@@ -1,6 +1,7 @@
 // src/app/(dashboard)/layout.tsx
 import { Sidebar } from "@app/components/layout/Sidebar";
 import { Navbar } from "@app/components/layout/Navbar";
+import { BackofficeStatus } from "@app/components/core/BackofficeStatus";
 
 export default function DashboardLayout({
   children,
@@ -9,6 +10,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="min-h-screen bg-white flex">
+      <BackofficeStatus />
       <Sidebar />
 
       <div className="flex-1 flex flex-col ml-64 min-h-screen">

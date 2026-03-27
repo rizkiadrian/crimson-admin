@@ -19,3 +19,7 @@ export interface IApiError<TData = unknown> {
 export interface IPingResult {
   from: string;
 }
+
+export interface IBackOfficeStatus {
+  backoffice_status: string;
+}

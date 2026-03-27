@@ -7,12 +7,14 @@ import { setCredentials } from "@actions/auth";
 import { ILoginPayload } from "@services/auth";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const showNotification = useNotificationStore(
     (state) => state.showNotification
   );
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,8 +34,7 @@ export function LoginForm() {
           result.errors?.login?.[0] ?? result.message ?? "Login Error";
         showNotification(specificLoginError, "error");
       } else {
-        showNotification("Login berhasil!", "success");
-        // router.push("/dashboard");
+        router.push("/dashboard");
       }
     } catch (e) {
       console.error("Something went wrong", e);

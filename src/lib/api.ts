@@ -1,33 +1,90 @@
 // src/lib/api.ts
 import { ENV } from "@config/env";
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+} from "axios";
 
-// 1. Definisikan struktur error yang biasanya dikembalikan oleh Backend Anda
 export interface ApiErrorResponse {
   message?: string;
   error?: string;
   statusCode?: number;
 }
 
-// 2. Definisikan struktur error kustom yang akan kita lempar ke komponen
 export interface CustomApiError {
   message: string;
   status?: number;
 }
 
-const apiClient = axios.create({
+// Interface untuk item dalam antrean failed requests
+interface FailedQueueItem {
+  resolve: (token?: string) => void;
+  reject: (error: unknown) => void;
+}
+
+const apiClient: AxiosInstance = axios.create({
   baseURL: ENV.API_PROXY_PATH,
   headers: { "Content-Type": "application/json" },
 });
+
+// --- LOGIKA SILENT REFRESH (TYPE-SAFE) ---
+let isRefreshing = false;
+let failedQueue: FailedQueueItem[] = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token ?? undefined);
+  });
+  failedQueue = [];
+};
 
 apiClient.interceptors.request.use((config) => config);
 
 apiClient.interceptors.response.use(
   (response) => response.data,
-  // Berikan tipe ApiErrorResponse pada AxiosError
-  (error: AxiosError<ApiErrorResponse>) => {
+  async (error: AxiosError<ApiErrorResponse>) => {
+    // Menambahkan properti _retry secara aman pada config
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise<string | undefined>((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => apiClient(originalRequest))
+          .catch((err: unknown) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Panggil API Route internal Next.js
+        await axios.post("/api/auth/refresh");
+
+        processQueue(null);
+
+        // Panggil ulang request asli
+        return apiClient(originalRequest);
+      } catch (refreshError: unknown) {
+        processQueue(refreshError, null);
+
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    // Error Handling Standar
     const customError: CustomApiError = {
-      // Sekarang TypeScript tahu bahwa data memiliki properti 'message' (tidak perlu 'any' lagi)
       message:
         error.response?.data?.message ||
         error.message ||
@@ -38,13 +95,10 @@ apiClient.interceptors.response.use(
   }
 );
 
-// 3. Gunakan Generic <T> untuk tipe kembalian (Response)
-//    dan Generic <D> untuk tipe payload data (Request)
 export const api = {
   get: <T>(url: string, config?: AxiosRequestConfig) =>
     apiClient.get<T, T>(url, config),
 
-  // Tambahkan <T, D = unknown> agar tipe data yang dikirim tidak 'any'
   post: <T, D = unknown>(
     url: string,
     data?: D,
