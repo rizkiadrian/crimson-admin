@@ -13,10 +13,11 @@ import {
   Plus,
 } from "lucide-react";
 import { cn } from "@lib/utils";
+import { PATHS } from "@config/routing";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Customers", href: "/customers", icon: Users },
+  { label: "Dashboard", href: PATHS.dashboard, icon: LayoutDashboard },
+  { label: "Backoffice Members", href: PATHS.backofficeMembers, icon: Users },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Reports", href: "/reports", icon: FileText },
 ];

@@ -22,6 +22,8 @@ const buttonVariants = cva(
           "bg-secondary-500 text-white hover:bg-secondary-600 rounded-full shadow-sm",
         iconTertiary:
           "bg-tertiary-600 text-white hover:bg-tertiary-700 rounded-full shadow-sm",
+        ghost:
+          "bg-transparent text-neutral-400 hover:text-text-main hover:bg-neutral-50 border border-transparent hover:border-border-subtle",
       },
       size: {
         default: "h-10 px-6 py-2",
