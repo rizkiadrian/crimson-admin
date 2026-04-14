@@ -3,6 +3,7 @@ import { ColorPalette } from "./components/color-pallete";
 import { TypographyShowcase } from "./components/typography";
 import { ButtonShowcase } from "./components/button-showcase";
 import { FormInputShowcase } from "./components/input-showcase";
+import { AppTable } from "./components/member-table";
 
 export default function DesignSystemPage() {
   return (
@@ -48,6 +49,16 @@ export default function DesignSystemPage() {
             4. Input Fields
           </h2>
           <FormInputShowcase />
+        </section>
+        {/* Section 5: Data Table */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            5. Data Tables
+          </h2>
+          {/* Bungkus dengan div tambahan jika ingin membatasi lebar tabel di showcase */}
+          <div className="w-full">
+            <AppTable />
+          </div>
         </section>
       </div>
     </div>

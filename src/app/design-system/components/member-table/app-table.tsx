@@ -1,4 +1,4 @@
-"use client";
+// // src/components/dashboard/ClientTable.tsx
 import { Plus, ListFilter, Download, Pencil, Trash2 } from "lucide-react";
 import { TableHeader } from "@app/components/ui/TableHeader";
 import {
@@ -11,43 +11,45 @@ import {
   Badge,
 } from "@app/components/ui/Table";
 import { Button } from "@app/components/ui/Button";
-import { useEffect, useState } from "react";
-import {
-  backofficeMembersService,
-  IBackofficeUser,
-} from "@services/backoffice/backoffice-members";
-import { IApiError } from "@services/general";
-import { getNameInitials } from "@lib/utils";
 
-export function MemberTable() {
-  // 1. Inisialisasi State
-  const [members, setMembers] = useState<IBackofficeUser[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+// Dummy data tetap sama...
+const CLIENTS = [
+  {
+    id: 1,
+    initials: "AS",
+    name: "Alexander Sterling",
+    email: "alexander.s@vanguard.com",
+    status: "ACTIVE",
+    amount: "$142,500.00",
+    tier: "HIGH-VALUE TIER",
+  },
+  {
+    id: 2,
+    initials: "ER",
+    name: "Elena Rodriguez",
+    email: "elena.rod@fintech.io",
+    status: "ACTIVE",
+    amount: "$89,200.50",
+    tier: "RETAINER CLIENT",
+  },
+  {
+    id: 3,
+    initials: "MW",
+    name: "Marcus Wainwright",
+    email: "m.wainwright@heritage.co",
+    status: "INACTIVE",
+    amount: "$12,400.00",
+    tier: "DORMANT ACCOUNT",
+  },
+];
 
-  // 2. Fetching Data saat komponen dimuat
-  useEffect(() => {
-    const handler = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await backofficeMembersService.backofficeMembers();
-        setMembers(response.data || []);
-      } catch (err: unknown) {
-        const apiError = err as IApiError;
-        setError(apiError.message || "Gagal mengambil data member");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    handler();
-  }, []);
+export function AppTable() {
   return (
     <div className="bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-hidden">
       {/* 1. Generic Table Header */}
       <TableHeader
-        title="Backoffice Members"
+        title="Client Directory"
+        badge="Verified Only"
         actions={
           <>
             <Button
@@ -81,48 +83,52 @@ export function MemberTable() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell>Email</TableHeaderCell>
-            <TableHeaderCell>Role</TableHeaderCell>
+            <TableHeaderCell>Client Name</TableHeaderCell>
+            <TableHeaderCell>Relationship Status</TableHeaderCell>
+            <TableHeaderCell>Total Transactional Spend</TableHeaderCell>
             <TableHeaderCell className="text-right">Actions</TableHeaderCell>
           </TableRow>
         </TableHead>
 
-        <TableBody loading={isLoading} error={error} columnCount={4}>
-          {members.map((member) => (
-            <TableRow key={member.id}>
+        <TableBody>
+          {CLIENTS.map((client) => (
+            <TableRow key={client.id}>
               <TableCell>
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-full bg-neutral-100 flex items-center justify-center text-sm font-bold text-neutral-600">
-                    {getNameInitials(member.name)}
+                    {client.initials}
                   </div>
                   <div>
                     <p className="text-[15px] font-bold text-text-main">
-                      {member.name}
+                      {client.name}
+                    </p>
+                    <p className="text-[13px] text-text-muted font-medium">
+                      {client.email}
                     </p>
                   </div>
                 </div>
               </TableCell>
-              <TableCell>
-                <div>
-                  <p className="text-[15px] font-bold text-text-main">
-                    {member.email}
-                  </p>
-                </div>
-              </TableCell>
+
               <TableCell>
                 <Badge
-                  variant={
-                    member.role_name?.toLowerCase() === "admin"
-                      ? "primary"
-                      : "tertiary"
-                  }
+                  variant={client.status === "ACTIVE" ? "primary" : "tertiary"}
                 >
-                  {member.role_name}
+                  {client.status}
                 </Badge>
               </TableCell>
+
+              <TableCell>
+                <p className="text-[15px] font-bold text-text-main">
+                  {client.amount}
+                </p>
+                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mt-0.5">
+                  {client.tier}
+                </p>
+              </TableCell>
+
               <TableCell>
                 <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                  {/* Tombol Edit (Pencil) */}
                   <Button
                     variant="ghost"
                     size="icon"
