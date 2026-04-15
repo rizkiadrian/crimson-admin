@@ -2,6 +2,11 @@ export interface IBaseMeta {
   http_status: number;
 }
 
+export interface IPaginationParams {
+  page?: number;
+  per_page?: number;
+}
+
 export interface IPagination {
   total: number;
   per_page: number;

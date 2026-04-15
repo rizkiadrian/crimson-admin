@@ -1,3 +1,5 @@
+import { IPaginationParams } from "@services/general";
+
 export interface IBackofficeUser {
   id: number;
   name: string;
@@ -10,3 +12,5 @@ export interface IBackofficeUser {
   is_verified: boolean;
   role_name: string;
 }
+
+export type IBackofficeUserParams = IPaginationParams;

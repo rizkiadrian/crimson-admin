@@ -9,14 +9,16 @@ import {
   TableHeaderCell,
   TableCell,
   Badge,
+  TablePagination,
 } from "@app/components/ui/Table";
 import { Button } from "@app/components/ui/Button";
 import { useEffect, useState } from "react";
 import {
   backofficeMembersService,
   IBackofficeUser,
+  IBackofficeUserParams,
 } from "@services/backoffice/backoffice-members";
-import { IApiError } from "@services/general";
+import { IApiError, IPagination } from "@services/general";
 import { getNameInitials } from "@lib/utils";
 
 export function MemberTable() {
@@ -24,6 +26,19 @@ export function MemberTable() {
   const [members, setMembers] = useState<IBackofficeUser[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [backofficeUserParam, setBackofficeUserParam] =
+    useState<IBackofficeUserParams>({
+      page: 1,
+      per_page: 10,
+    });
+  const [paginationMeta, setPaginationMeta] = useState<IPagination>({
+    total: 0,
+    per_page: 10,
+    current_page: 1,
+    last_page: 1,
+    next_page_url: null,
+    prev_page_url: null,
+  });
 
   // 2. Fetching Data saat komponen dimuat
   useEffect(() => {
@@ -31,8 +46,12 @@ export function MemberTable() {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await backofficeMembersService.backofficeMembers();
+        const response =
+          await backofficeMembersService.backofficeMembers(backofficeUserParam);
         setMembers(response.data || []);
+        if (response.meta?.pagination) {
+          setPaginationMeta(response.meta.pagination);
+        }
       } catch (err: unknown) {
         const apiError = err as IApiError;
         setError(apiError.message || "Gagal mengambil data member");
@@ -42,7 +61,12 @@ export function MemberTable() {
     };
 
     handler();
-  }, []);
+  }, [backofficeUserParam]);
+
+  const handlePageChange = (newPage: number) => {
+    setBackofficeUserParam((prev) => ({ ...prev, page: newPage }));
+  };
+
   return (
     <div className="bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-hidden">
       {/* 1. Generic Table Header */}
@@ -145,11 +169,15 @@ export function MemberTable() {
           ))}
         </TableBody>
       </Table>
-
-      {/* 3. Footer / Pagination (Bisa dibuat generic juga nantinya) */}
-      <div className="px-8 py-6 border-t border-border-subtle flex items-center justify-between">
-        {/* ... (Kode pagination tetap sama) ... */}
-      </div>
+      {paginationMeta.total > 0 && !isLoading && !error && (
+        <TablePagination
+          currentPage={paginationMeta.current_page}
+          totalPages={paginationMeta.last_page}
+          totalItems={paginationMeta.total}
+          itemsPerPage={paginationMeta.per_page}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

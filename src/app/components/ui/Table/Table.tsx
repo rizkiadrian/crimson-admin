@@ -1,6 +1,7 @@
 // src/components/ui/Table.tsx
 import React from "react";
 import { cn } from "@lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function Table({
   children,
@@ -223,5 +224,126 @@ export function Skeleton({
       className={cn("animate-pulse rounded bg-neutral-200/60", className)}
       {...props}
     />
+  );
+}
+
+export interface TablePaginationProps extends React.HTMLAttributes<HTMLDivElement> {
+  currentPage?: number;
+  totalPages?: number;
+  totalItems?: number;
+  itemsPerPage?: number;
+  onPageChange?: (page: number) => void;
+}
+
+export interface TablePaginationProps extends React.HTMLAttributes<HTMLDivElement> {
+  currentPage?: number;
+  totalPages?: number;
+  totalItems?: number;
+  itemsPerPage?: number;
+  onPageChange?: (page: number) => void;
+}
+
+export function TablePagination({
+  currentPage = 1,
+  totalPages = 1,
+  totalItems = 0,
+  itemsPerPage = 10,
+  onPageChange,
+  className,
+  ...props
+}: TablePaginationProps) {
+  // --- Fungsi Pintar untuk Ellipsis ---
+  const generatePagination = (current: number, total: number) => {
+    if (total <= 5) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    if (current <= 3) {
+      return [1, 2, 3, "...", total];
+    }
+
+    if (current >= total - 2) {
+      return [1, "...", total - 2, total - 1, total];
+    }
+
+    return [1, "...", current - 1, current, current + 1, "...", total];
+  };
+
+  const pageNumbers = generatePagination(currentPage, totalPages);
+
+  return (
+    <div
+      className={cn(
+        "px-8 py-6 border-t border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4",
+        className
+      )}
+      {...props}
+    >
+      {/* Teks Informasi Data */}
+      <p className="text-sm font-medium text-text-muted">
+        Showing{" "}
+        <span className="text-text-main font-semibold">
+          {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}
+        </span>{" "}
+        to{" "}
+        <span className="text-text-main font-semibold">
+          {Math.min(currentPage * itemsPerPage, totalItems)}
+        </span>{" "}
+        of <span className="text-text-main font-semibold">{totalItems}</span>{" "}
+        clients
+      </p>
+
+      {/* Kontrol Navigasi Angka */}
+      <div className="flex items-center gap-1">
+        {/* Tombol Previous */}
+        <button
+          onClick={() => onPageChange?.(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-neutral-400 hover:text-text-main hover:bg-neutral-100 disabled:opacity-50 disabled:pointer-events-none transition-colors cursor-pointer"
+        >
+          <ChevronLeft size={16} />
+        </button>
+
+        {/* Angka Halaman & Ellipsis */}
+        {pageNumbers.map((page, index) => {
+          // Render titik-titik (tidak bisa diklik)
+          if (page === "...") {
+            return (
+              <span
+                key={`ellipsis-${index}`}
+                className="w-8 h-8 flex items-center justify-center text-neutral-400 text-sm font-bold tracking-widest"
+              >
+                ...
+              </span>
+            );
+          }
+
+          // Render angka yang bisa diklik
+          return (
+            <button
+              key={`page-${page}`}
+              onClick={() => onPageChange?.(page as number)}
+              className={cn(
+                "w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-colors cursor-pointer",
+                currentPage === page
+                  ? "bg-primary-600 text-white shadow-md shadow-primary-200/60" // Active state (Crimson Red)
+                  : "text-neutral-600 hover:bg-neutral-100" // Inactive state
+              )}
+            >
+              {page}
+            </button>
+          );
+        })}
+
+        {/* Tombol Next */}
+        <button
+          onClick={() => onPageChange?.(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-neutral-400 hover:text-text-main hover:bg-neutral-100 disabled:opacity-50 disabled:pointer-events-none transition-colors cursor-pointer"
+        >
+          <ChevronRight size={16} />
+        </button>
+      </div>
+    </div>
   );
 }
