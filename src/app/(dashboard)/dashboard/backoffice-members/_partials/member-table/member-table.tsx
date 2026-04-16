@@ -23,13 +23,14 @@ import { getNameInitials } from "@lib/utils";
 
 export function MemberTable() {
   // 1. Inisialisasi State
+  const [isMounted, setIsMounted] = useState(false);
   const [members, setMembers] = useState<IBackofficeUser[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [backofficeUserParam, setBackofficeUserParam] =
     useState<IBackofficeUserParams>({
       page: 1,
-      per_page: 10,
+      per_page: 10, // Tetap 1 untuk keperluan testing
     });
   const [paginationMeta, setPaginationMeta] = useState<IPagination>({
     total: 0,
@@ -40,7 +41,12 @@ export function MemberTable() {
     prev_page_url: null,
   });
 
-  // 2. Fetching Data saat komponen dimuat
+  // 2. Hydration Fix
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // 3. Fetching Data
   useEffect(() => {
     const handler = async () => {
       try {
@@ -60,15 +66,24 @@ export function MemberTable() {
       }
     };
 
-    handler();
-  }, [backofficeUserParam]);
+    if (isMounted) {
+      handler();
+    }
+  }, [backofficeUserParam, isMounted]);
 
   const handlePageChange = (newPage: number) => {
     setBackofficeUserParam((prev) => ({ ...prev, page: newPage }));
   };
 
+  // Mencegah error render antara server & client
+  if (!isMounted) return null;
+
+  // --- LOGIKA PEMISAH LOADING ---
+  const isInitialLoad = isLoading && members.length === 0;
+  const isPaginationLoad = isLoading && members.length > 0;
+
   return (
-    <div className="bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-hidden">
+    <div className="bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-hidden relative">
       {/* 1. Generic Table Header */}
       <TableHeader
         title="Backoffice Members"
@@ -76,7 +91,6 @@ export function MemberTable() {
           <>
             <Button
               variant="primary"
-              // Timpa sedikit base styling-nya agar 100% match dengan desain (rounded-xl, gap, height)
               className="rounded-xl gap-2 shadow-md shadow-primary-200/60 h-auto py-2.5 px-5"
             >
               <Plus size={16} strokeWidth={2.5} />
@@ -101,8 +115,8 @@ export function MemberTable() {
         }
       />
 
-      {/* 2. Generic Table Body */}
-      <Table>
+      {/* 2. Generic Table Body (Menggunakan isRefetching untuk memicu animasi) */}
+      <Table isRefetching={isPaginationLoad}>
         <TableHead>
           <TableRow>
             <TableHeaderCell>Name</TableHeaderCell>
@@ -112,7 +126,7 @@ export function MemberTable() {
           </TableRow>
         </TableHead>
 
-        <TableBody loading={isLoading} error={error} columnCount={4}>
+        <TableBody loading={isInitialLoad} error={error} columnCount={4}>
           {members.map((member) => (
             <TableRow key={member.id}>
               <TableCell>
@@ -169,7 +183,9 @@ export function MemberTable() {
           ))}
         </TableBody>
       </Table>
-      {paginationMeta.total > 0 && !isLoading && !error && (
+
+      {/* 3. Pagination */}
+      {paginationMeta.total > 0 && !isInitialLoad && !error && (
         <TablePagination
           currentPage={paginationMeta.current_page}
           totalPages={paginationMeta.last_page}

@@ -3,15 +3,50 @@ import React from "react";
 import { cn } from "@lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
+  isRefetching?: boolean; // Prop baru untuk mode loading saat pagination/refresh
+}
+
 export function Table({
   children,
   className,
-}: React.HTMLAttributes<HTMLTableElement>) {
+  isRefetching,
+  ...props
+}: TableProps) {
   return (
-    <div className="w-full overflow-x-auto">
-      <table className={cn("w-full text-left border-collapse", className)}>
-        {children}
-      </table>
+    <div className="relative w-full">
+      {/* PROGRESS BAR: Muncul di atas tabel jika isRefetching true */}
+      {isRefetching && (
+        <div className="absolute top-0 left-0 right-0 h-0.75 bg-primary-100 overflow-hidden z-20">
+          <style>{`
+            @keyframes slide-infinite {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(200%); }
+            }
+          `}</style>
+          <div
+            className="h-full bg-primary-500 w-1/2 rounded-full"
+            style={{ animation: "slide-infinite 1.2s infinite ease-in-out" }}
+          />
+        </div>
+      )}
+
+      {/* WRAPPER TABEL: Mengatur opacity dan mencegah klik jika sedang loading */}
+      <div
+        className={cn(
+          "w-full overflow-x-auto transition-opacity duration-300",
+          isRefetching
+            ? "opacity-50 pointer-events-none select-none"
+            : "opacity-100"
+        )}
+      >
+        <table
+          className={cn("w-full text-left border-collapse", className)}
+          {...props}
+        >
+          {children}
+        </table>
+      </div>
     </div>
   );
 }
@@ -19,8 +54,13 @@ export function Table({
 export function TableHead({
   children,
   className,
+  ...props
 }: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={className}>{children}</thead>;
+  return (
+    <thead className={className} {...props}>
+      {children}
+    </thead>
+  );
 }
 
 export function TableBody({
@@ -30,6 +70,7 @@ export function TableBody({
   error,
   columnCount = 4,
   rowCount = 5,
+  ...props
 }: React.HTMLAttributes<HTMLTableSectionElement> & {
   loading?: boolean;
   error?: string | null;
@@ -38,29 +79,29 @@ export function TableBody({
 }) {
   if (loading) {
     return (
-      <tbody className={cn("divide-y divide-border-subtle", className)}>
+      <tbody
+        className={cn("divide-y divide-border-subtle", className)}
+        {...props}
+      >
         {Array.from({ length: rowCount }).map((_, rowIndex) => (
           <TableRow key={rowIndex} className="hover:bg-transparent">
             {Array.from({ length: columnCount }).map((_, colIndex) => (
               <TableCell key={colIndex}>
                 {colIndex === 0 ? (
-                  // Kolom pertama biasanya Nama/Avatar
                   <div className="flex items-center gap-4">
                     <Skeleton className="w-11 h-11 rounded-full shrink-0" />
                     <Skeleton className="h-4 w-32" />
                   </div>
                 ) : colIndex === columnCount - 1 ? (
-                  // Kolom terakhir biasanya Actions
                   <div className="flex justify-end gap-2">
                     <Skeleton className="h-8 w-8 rounded-lg" />
                     <Skeleton className="h-8 w-8 rounded-lg" />
                   </div>
                 ) : (
-                  // Kolom tengah (Email, Status, dll)
                   <Skeleton
                     className={cn(
                       "h-4 w-full max-w-37.5",
-                      colIndex === 2 && "h-6 w-20 rounded-full" // Shimmer gaya Badge
+                      colIndex === 2 && "h-6 w-20 rounded-full"
                     )}
                   />
                 )}
@@ -74,12 +115,11 @@ export function TableBody({
 
   if (error) {
     return (
-      <tbody className={cn("divide-y divide-border-subtle", className)}>
+      <tbody
+        className={cn("divide-y divide-border-subtle", className)}
+        {...props}
+      >
         <TableRow className="hover:bg-transparent">
-          {/* Perubahan kunci:
-            1. Tambahkan `!p-0` untuk mereset padding bawaan dari TableCell (yang termasuk first:pl-8 last:pr-8).
-            2. Gunakan div di dalam dengan flex center absolute untuk benar-benar memusatkan konten.
-          */}
           <TableCell colSpan={columnCount} className="p-0!">
             <div className="flex flex-col items-center justify-center min-h-75 w-full text-center">
               <div className="w-10 h-10 rounded-full bg-error-50 flex items-center justify-center text-error-600 mb-2">
@@ -111,7 +151,10 @@ export function TableBody({
   }
 
   return (
-    <tbody className={cn("divide-y divide-border-subtle", className)}>
+    <tbody
+      className={cn("divide-y divide-border-subtle", className)}
+      {...props}
+    >
       {children}
     </tbody>
   );
@@ -235,14 +278,6 @@ export interface TablePaginationProps extends React.HTMLAttributes<HTMLDivElemen
   onPageChange?: (page: number) => void;
 }
 
-export interface TablePaginationProps extends React.HTMLAttributes<HTMLDivElement> {
-  currentPage?: number;
-  totalPages?: number;
-  totalItems?: number;
-  itemsPerPage?: number;
-  onPageChange?: (page: number) => void;
-}
-
 export function TablePagination({
   currentPage = 1,
   totalPages = 1,
@@ -252,20 +287,16 @@ export function TablePagination({
   className,
   ...props
 }: TablePaginationProps) {
-  // --- Fungsi Pintar untuk Ellipsis ---
   const generatePagination = (current: number, total: number) => {
     if (total <= 5) {
       return Array.from({ length: total }, (_, i) => i + 1);
     }
-
     if (current <= 3) {
       return [1, 2, 3, "...", total];
     }
-
     if (current >= total - 2) {
       return [1, "...", total - 2, total - 1, total];
     }
-
     return [1, "...", current - 1, current, current + 1, "...", total];
   };
 
@@ -279,7 +310,6 @@ export function TablePagination({
       )}
       {...props}
     >
-      {/* Teks Informasi Data */}
       <p className="text-sm font-medium text-text-muted">
         Showing{" "}
         <span className="text-text-main font-semibold">
@@ -293,9 +323,7 @@ export function TablePagination({
         clients
       </p>
 
-      {/* Kontrol Navigasi Angka */}
       <div className="flex items-center gap-1">
-        {/* Tombol Previous */}
         <button
           onClick={() => onPageChange?.(currentPage - 1)}
           disabled={currentPage === 1}
@@ -304,9 +332,7 @@ export function TablePagination({
           <ChevronLeft size={16} />
         </button>
 
-        {/* Angka Halaman & Ellipsis */}
         {pageNumbers.map((page, index) => {
-          // Render titik-titik (tidak bisa diklik)
           if (page === "...") {
             return (
               <span
@@ -318,7 +344,6 @@ export function TablePagination({
             );
           }
 
-          // Render angka yang bisa diklik
           return (
             <button
               key={`page-${page}`}
@@ -326,8 +351,8 @@ export function TablePagination({
               className={cn(
                 "w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-colors cursor-pointer",
                 currentPage === page
-                  ? "bg-primary-600 text-white shadow-md shadow-primary-200/60" // Active state (Crimson Red)
-                  : "text-neutral-600 hover:bg-neutral-100" // Inactive state
+                  ? "bg-primary-600 text-white shadow-md shadow-primary-200/60"
+                  : "text-neutral-600 hover:bg-neutral-100"
               )}
             >
               {page}
@@ -335,7 +360,6 @@ export function TablePagination({
           );
         })}
 
-        {/* Tombol Next */}
         <button
           onClick={() => onPageChange?.(currentPage + 1)}
           disabled={currentPage === totalPages}

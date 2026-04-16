@@ -1,9 +1,9 @@
 // src/components/ui/FormInput.tsx
-"use client"; // Wajib ditambahkan karena kita menggunakan useState
+"use client";
 
 import React, { useState } from "react";
 import { cn } from "@lib/utils";
-import { Eye, EyeOff } from "lucide-react"; // Import icon mata
+import { Eye, EyeOff } from "lucide-react";
 
 export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -11,6 +11,7 @@ export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputEleme
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   containerClassName?: string;
+  format?: "phone" | "default"; // Props baru untuk menentukan format input
 }
 
 export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
@@ -23,22 +24,54 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
       rightIcon,
       containerClassName,
       type = "text",
-      ...props
+      format = "default", // Default tidak ada format khusus
+      onChange, // Ekstrak onChange bawaan parent
+      ...props // Sisa props seperti value, placeholder, required, dll
     },
     ref
   ) => {
-    // State lokal khusus untuk mengatur visibilitas password
     const [showPassword, setShowPassword] = useState(false);
-
-    // Cek apakah input ini adalah input password
     const isPassword = type === "password";
-
-    // Tentukan tipe input yang sedang aktif (teks biasa atau password yang disensor)
     const currentType = isPassword
       ? showPassword
         ? "text"
         : "password"
       : type;
+
+    // --- INTERCEPTOR ONCHANGE ---
+    // Fungsi ini mencegat ketikan user, memformatnya, baru mengirimnya ke parent
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (format === "phone") {
+        const value = e.target.value;
+
+        // Jika tidak kosong, jalankan formatter
+        if (value) {
+          let cleaned = value.replace(/[^\d+]/g, "");
+
+          if (cleaned.startsWith("0")) cleaned = "+62" + cleaned.slice(1);
+          else if (cleaned.startsWith("8")) cleaned = "+628" + cleaned.slice(1);
+          else if (cleaned.startsWith("62")) cleaned = "+" + cleaned;
+
+          const digits = cleaned.replace(/\D/g, "");
+          if (digits.startsWith("62")) {
+            let formatted = "+62";
+            if (digits.length > 2) formatted += " " + digits.substring(2, 5);
+            if (digits.length > 5) formatted += "-" + digits.substring(5, 9);
+            if (digits.length > 9) formatted += "-" + digits.substring(9, 15);
+
+            // Timpa value event dengan value yang sudah rapi
+            e.target.value = formatted;
+          } else {
+            e.target.value = cleaned;
+          }
+        }
+      }
+
+      // Lempar event yang sudah dimodifikasi (atau tidak dimodifikasi) ke parent
+      if (onChange) {
+        onChange(e);
+      }
+    };
 
     return (
       <div className="w-full">
@@ -66,7 +99,8 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
           <input
             id={id}
             ref={ref}
-            type={currentType} // Gunakan tipe yang sudah dikalkulasi di atas
+            type={currentType}
+            onChange={handleInputChange} // Gunakan fungsi interceptor di sini
             className={cn(
               "flex-1 bg-transparent py-3.5 px-4 outline-none text-secondary-900 placeholder:text-secondary-400 text-base",
               className
@@ -74,9 +108,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             {...props}
           />
 
-          {/* LOGIKA IKON KANAN / PASSWORD TOGGLE */}
           {isPassword ? (
-            // Jika ini input password, otomatis render tombol mata
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -90,7 +122,6 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               )}
             </button>
           ) : rightIcon ? (
-            // Jika bukan password, tapi ada rightIcon yang dikirim, render icon tersebut
             <div className="flex items-center justify-center pr-4 text-secondary-400 pointer-events-none">
               {rightIcon}
             </div>

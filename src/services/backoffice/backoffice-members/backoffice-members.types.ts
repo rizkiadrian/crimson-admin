@@ -13,4 +13,11 @@ export interface IBackofficeUser {
   role_name: string;
 }
 
+export interface IBackofficeCreatePayload {
+  name: string;
+  email: string;
+  phone: string;
+  password: string; // Tambahan sesuai request prompt-mu
+}
+
 export type IBackofficeUserParams = IPaginationParams;
