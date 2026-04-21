@@ -1,92 +1,120 @@
 "use client";
 import { Plus, ListFilter, Download, Pencil, Trash2 } from "lucide-react";
-import { TableHeader } from "@app/components/ui/TableHeader";
 import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableHeaderCell,
+  TableCard,
+  TableCardHeader,
+  TableCardContent,
+  TableCardPagination,
   TableCell,
   Badge,
-  TablePagination,
 } from "@app/components/ui/Table";
+import type { TableColumn } from "@app/components/ui/Table";
 import { Button } from "@app/components/ui/Button";
-import { useEffect, useState } from "react";
+import { useTableData } from "@lib/hooks/use-table-data";
 import {
   backofficeMembersService,
   IBackofficeUser,
   IBackofficeUserParams,
 } from "@services/backoffice/backoffice-members";
-import { IApiError, IPagination } from "@services/general";
 import { getNameInitials } from "@lib/utils";
 import { PATHS } from "@config/routing";
+import { useCallback } from "react";
+
+const columns: TableColumn<IBackofficeUser>[] = [
+  {
+    key: "name",
+    header: "Name",
+    render: (member) => (
+      <TableCell>
+        <div className="flex items-center gap-4">
+          <div className="w-11 h-11 rounded-full bg-neutral-100 flex items-center justify-center text-sm font-bold text-neutral-600">
+            {getNameInitials(member.name)}
+          </div>
+          <div>
+            <p className="text-[15px] font-bold text-text-main">
+              {member.name}
+            </p>
+          </div>
+        </div>
+      </TableCell>
+    ),
+  },
+  {
+    key: "email",
+    header: "Email",
+    render: (member) => (
+      <TableCell>
+        <p className="text-[15px] font-bold text-text-main">{member.email}</p>
+      </TableCell>
+    ),
+  },
+  {
+    key: "role",
+    header: "Role",
+    render: (member) => (
+      <TableCell>
+        <Badge
+          variant={
+            member.role_name?.toLowerCase() === "admin" ? "primary" : "tertiary"
+          }
+        >
+          {member.role_name}
+        </Badge>
+      </TableCell>
+    ),
+  },
+  {
+    key: "actions",
+    header: "Actions",
+    headerClassName: "text-right",
+    render: () => (
+      <TableCell>
+        <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-auto w-auto p-2 rounded-lg hover:text-primary-600 hover:bg-primary-50 hover:border-transparent"
+          >
+            <Pencil size={16} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-auto w-auto p-2 rounded-lg hover:text-error-600 hover:bg-error-50 hover:border-transparent"
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
+      </TableCell>
+    ),
+  },
+];
 
 export function MemberTable() {
-  // 1. Inisialisasi State
-  const [isMounted, setIsMounted] = useState(false);
-  const [members, setMembers] = useState<IBackofficeUser[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [backofficeUserParam, setBackofficeUserParam] =
-    useState<IBackofficeUserParams>({
-      page: 1,
-      per_page: 10, // Tetap 1 untuk keperluan testing
-    });
-  const [paginationMeta, setPaginationMeta] = useState<IPagination>({
-    total: 0,
-    per_page: 10,
-    current_page: 1,
-    last_page: 1,
-    next_page_url: null,
-    prev_page_url: null,
+  const fetcher = useCallback(
+    (params: IBackofficeUserParams) =>
+      backofficeMembersService.backofficeMembers(params),
+    []
+  );
+
+  const {
+    data: members,
+    isInitialLoad,
+    isRefetching,
+    error,
+    pagination,
+    handlePageChange,
+    isMounted,
+  } = useTableData<IBackofficeUser, IBackofficeUserParams>({
+    fetcher,
+    perPage: 10,
   });
 
-  // 2. Hydration Fix
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // 3. Fetching Data
-  useEffect(() => {
-    const handler = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response =
-          await backofficeMembersService.backofficeMembers(backofficeUserParam);
-        setMembers(response.data || []);
-        if (response.meta?.pagination) {
-          setPaginationMeta(response.meta.pagination);
-        }
-      } catch (err: unknown) {
-        const apiError = err as IApiError;
-        setError(apiError.message || "Gagal mengambil data member");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (isMounted) {
-      handler();
-    }
-  }, [backofficeUserParam, isMounted]);
-
-  const handlePageChange = (newPage: number) => {
-    setBackofficeUserParam((prev) => ({ ...prev, page: newPage }));
-  };
-
-  // Mencegah error render antara server & client
   if (!isMounted) return null;
 
-  // --- LOGIKA PEMISAH LOADING ---
-  const isInitialLoad = isLoading && members.length === 0;
-  const isPaginationLoad = isLoading && members.length > 0;
-
   return (
-    <div className="bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-hidden relative">
-      {/* 1. Generic Table Header */}
-      <TableHeader
+    <TableCard>
+      <TableCardHeader
         title="Backoffice Members"
         actions={
           <>
@@ -105,7 +133,6 @@ export function MemberTable() {
             >
               <ListFilter size={18} />
             </Button>
-
             <Button
               variant="ghost"
               size="icon"
@@ -117,85 +144,21 @@ export function MemberTable() {
         }
       />
 
-      {/* 2. Generic Table Body (Menggunakan isRefetching untuk memicu animasi) */}
-      <Table isRefetching={isPaginationLoad}>
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell>Email</TableHeaderCell>
-            <TableHeaderCell>Role</TableHeaderCell>
-            <TableHeaderCell className="text-right">Actions</TableHeaderCell>
-          </TableRow>
-        </TableHead>
+      <TableCardContent
+        columns={columns}
+        data={members}
+        keyExtractor={(member) => member.id}
+        isRefetching={isRefetching}
+        isLoading={isInitialLoad}
+        error={error}
+      />
 
-        <TableBody loading={isInitialLoad} error={error} columnCount={4}>
-          {members.map((member) => (
-            <TableRow key={member.id}>
-              <TableCell>
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-full bg-neutral-100 flex items-center justify-center text-sm font-bold text-neutral-600">
-                    {getNameInitials(member.name)}
-                  </div>
-                  <div>
-                    <p className="text-[15px] font-bold text-text-main">
-                      {member.name}
-                    </p>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div>
-                  <p className="text-[15px] font-bold text-text-main">
-                    {member.email}
-                  </p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge
-                  variant={
-                    member.role_name?.toLowerCase() === "admin"
-                      ? "primary"
-                      : "tertiary"
-                  }
-                >
-                  {member.role_name}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-auto w-auto p-2 rounded-lg hover:text-primary-600 hover:bg-primary-50 hover:border-transparent"
-                  >
-                    <Pencil size={16} />
-                  </Button>
-
-                  {/* Tombol Delete (Trash) */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-auto w-auto p-2 rounded-lg hover:text-error-600 hover:bg-error-50 hover:border-transparent"
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-
-      {/* 3. Pagination */}
-      {paginationMeta.total > 0 && !isInitialLoad && !error && (
-        <TablePagination
-          currentPage={paginationMeta.current_page}
-          totalPages={paginationMeta.last_page}
-          totalItems={paginationMeta.total}
-          itemsPerPage={paginationMeta.per_page}
-          onPageChange={handlePageChange}
-        />
-      )}
-    </div>
+      <TableCardPagination
+        pagination={pagination}
+        isInitialLoad={isInitialLoad}
+        error={error}
+        onPageChange={handlePageChange}
+      />
+    </TableCard>
   );
 }
