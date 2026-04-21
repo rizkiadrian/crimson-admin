@@ -149,6 +149,35 @@ import type { TableColumn } from "@app/components/ui/Table";
 | `TableCardContent`    | Declarative table: pass `columns` + `data`, get skeleton/error for free |
 | `TableCardPagination` | Conditional pagination, auto-hides when not needed                      |
 
+#### FormCard System
+
+A composable card system for form/create/edit pages. Mirrors the `TableCard` pattern to keep all dashboard pages visually consistent.
+
+```tsx
+import {
+  FormCard,
+  FormCardHeader,
+  FormCardBody,
+  FormCardFooter,
+} from "@app/components/ui/FormCard";
+```
+
+| Component        | Description                                                                 |
+| ---------------- | --------------------------------------------------------------------------- |
+| `FormCard`       | Card wrapper with the same rounded corners, shadow, and border as TableCard |
+| `FormCardHeader` | Title + description + optional badge or custom actions on the right         |
+| `FormCardBody`   | Padded content area with vertical spacing for form fields                   |
+| `FormCardFooter` | Right-aligned action bar with top border (Cancel + Submit buttons)          |
+
+**FormCardHeader props:**
+
+| Prop          | Type        | Default | Description                                              |
+| ------------- | ----------- | ------- | -------------------------------------------------------- |
+| `title`       | `string`    | —       | Main heading text (required)                             |
+| `description` | `string`    | —       | Subtitle text below the title                            |
+| `badge`       | `string`    | —       | Small badge label on the right (e.g. "Authorized only")  |
+| `actions`     | `ReactNode` | —       | Custom right-side content. Takes precedence over `badge` |
+
 #### TableHeader
 
 Standalone header bar with title, optional badge, and action slot.
@@ -300,6 +329,56 @@ export function ProductTable() {
         onPageChange={handlePageChange}
       />
     </TableCard>
+  );
+}
+```
+
+---
+
+### Building a New Form Page
+
+Combine `FormCard` components for a consistent create/edit page:
+
+```tsx
+"use client";
+import {
+  FormCard,
+  FormCardHeader,
+  FormCardBody,
+  FormCardFooter,
+} from "@app/components/ui/FormCard";
+import { FormInput } from "@app/components/ui/FormInput";
+import { Button } from "@app/components/ui/Button";
+import { Check } from "lucide-react";
+
+export default function CreateProductPage() {
+  return (
+    <FormCard>
+      <FormCardHeader
+        title="Create Product"
+        description="Fill in the product details below."
+        badge="Draft"
+      />
+
+      <form onSubmit={handleSubmit}>
+        <FormCardBody>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            <FormInput id="name" label="Product Name" />
+            <FormInput id="sku" label="SKU" />
+          </div>
+        </FormCardBody>
+
+        <FormCardFooter>
+          <Button variant="ghost" href="/products">
+            Cancel
+          </Button>
+          <Button type="submit" variant="primary">
+            <Check size={16} className="mr-2" />
+            Save Product
+          </Button>
+        </FormCardFooter>
+      </form>
+    </FormCard>
   );
 }
 ```
