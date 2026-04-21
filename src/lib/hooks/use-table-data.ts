@@ -8,6 +8,7 @@ import type {
   IPaginationMeta,
 } from "@services/general";
 
+/** Fallback pagination state used before the first API response arrives. */
 const DEFAULT_PAGINATION: IPagination = {
   total: 0,
   per_page: 10,
@@ -18,39 +19,58 @@ const DEFAULT_PAGINATION: IPagination = {
 };
 
 export interface UseTableDataOptions<TData, TParams extends IPaginationParams> {
-  /** Service function yang mengembalikan IApiListResponse */
+  /** API service function that returns a paginated list response. */
   fetcher: (
     params: TParams
   ) => Promise<
     IApiListResponse<TData, IPaginationMeta> | IApiListResponse<TData>
   >;
-  /** Parameter awal selain page & per_page */
+  /** Extra params beyond page & per_page (e.g. search, filters). */
   initialParams?: Omit<TParams, "page" | "per_page">;
-  /** Jumlah item per halaman (default: 10) */
+  /** Number of items per page. Defaults to 10. */
   perPage?: number;
 }
 
 export interface UseTableDataReturn<TData, TParams extends IPaginationParams> {
-  /** Data hasil fetch */
+  /** Array of fetched items for the current page. */
   data: TData[];
-  /** Sedang loading (pertama kali, belum ada data) */
+  /** True during the first load when no data exists yet (shows skeleton). */
   isInitialLoad: boolean;
-  /** Sedang loading tapi sudah ada data (pagination/refetch) */
+  /** True when loading but data already exists (shows progress bar overlay). */
   isRefetching: boolean;
-  /** Pesan error jika fetch gagal */
+  /** Error message string if the fetch failed, otherwise null. */
   error: string | null;
-  /** Metadata pagination dari API */
+  /** Pagination metadata returned by the API. */
   pagination: IPagination;
-  /** Ganti halaman */
+  /** Navigate to a specific page number. */
   handlePageChange: (page: number) => void;
-  /** Update params (akan reset ke page 1) */
+  /** Merge new filter/search params and reset to page 1. */
   setParams: (params: Partial<TParams>) => void;
-  /** Refetch data dengan params yang sama */
+  /** Re-trigger a fetch with the current params. */
   refetch: () => void;
-  /** Apakah component sudah mounted (hydration safe) */
+  /** Whether the component has mounted (safe to render client-only content). */
   isMounted: boolean;
 }
 
+/**
+ * Generic hook that encapsulates the full data-fetching lifecycle for table pages.
+ *
+ * Handles:
+ * - Hydration safety (delays fetch until after mount to avoid SSR mismatch).
+ * - Loading states split into initial load vs. refetch so the UI can show
+ *   skeletons on first load and a progress bar on subsequent fetches.
+ * - Pagination state management with automatic page reset on filter changes.
+ * - Error capture from the API error shape.
+ *
+ * @example
+ * ```tsx
+ * const { data, isInitialLoad, isRefetching, error, pagination, handlePageChange } =
+ *   useTableData<IProduct, IProductParams>({
+ *     fetcher: (params) => productService.list(params),
+ *     perPage: 10,
+ *   });
+ * ```
+ */
 export function useTableData<
   TData,
   TParams extends IPaginationParams = IPaginationParams,
@@ -73,12 +93,12 @@ export function useTableData<
     per_page: perPage,
   });
 
-  // Hydration fix
+  // Mark component as mounted so we only fetch on the client (avoids hydration mismatch).
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Fetch data
+  // Fetch data whenever params change. Skipped until mounted.
   useEffect(() => {
     if (!isMounted) return;
 
@@ -93,7 +113,7 @@ export function useTableData<
         }
       } catch (err: unknown) {
         const apiError = err as IApiError;
-        setError(apiError.message || "Gagal mengambil data");
+        setError(apiError.message || "Failed to fetch data");
       } finally {
         setIsLoading(false);
       }
@@ -102,19 +122,22 @@ export function useTableData<
     fetchData();
   }, [params, isMounted, fetcher]);
 
+  /** Navigate to a specific page. */
   const handlePageChange = useCallback((page: number) => {
     setParamsState((prev) => ({ ...prev, page }));
   }, []);
 
+  /** Merge new params (e.g. search query, filters) and reset to page 1. */
   const setParams = useCallback((newParams: Partial<TParams>) => {
     setParamsState((prev) => ({ ...prev, ...newParams, page: 1 }));
   }, []);
 
+  /** Force a re-fetch with the current params by creating a new state reference. */
   const refetch = useCallback(() => {
-    // Trigger re-fetch dengan membuat referensi baru
     setParamsState((prev) => ({ ...prev }));
   }, []);
 
+  // Derive loading sub-states so consumers can differentiate skeleton vs. overlay.
   const isInitialLoad = isLoading && data.length === 0;
   const isRefetching = isLoading && data.length > 0;
 

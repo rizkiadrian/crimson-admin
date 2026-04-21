@@ -1,10 +1,13 @@
-// src/components/ui/Button.tsx
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@lib/utils";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * Tailwind class variants for the Button component.
+ * Managed by `class-variance-authority` to keep variant logic declarative.
+ */
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-bg-app transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer font-semibold",
   {
@@ -44,10 +47,22 @@ export interface ButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  /** Shows a spinner and disables interaction. */
   isLoading?: boolean;
-  href?: string; // 2. Tambahkan prop href (opsional)
+  /** When provided, renders as a Next.js Link instead of a native button. */
+  href?: string;
 }
 
+/**
+ * Polymorphic button component.
+ *
+ * - Renders as a `<button>` by default.
+ * - Renders as a Next.js `<Link>` when `href` is provided, preserving
+ *   client-side navigation while keeping the same visual styling.
+ * - Shows a loading spinner when `isLoading` is true and disables interaction.
+ *
+ * Supports `ref` forwarding for the native button element.
+ */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { className, variant, size, isLoading, disabled, href, children, ...props },
@@ -67,14 +82,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       </>
     );
 
-    // 3. JIKA ADA HREF: Render sebagai Next.js Link
+    // Render as Next.js Link when href is provided
     if (href) {
       return (
         <Link
           href={href}
           className={cn(
             buttonVariants({ variant, size, className }),
-            // Jika Link diset loading/disabled, matikan event pointer-nya
             (disabled || isLoading) && "pointer-events-none opacity-50"
           )}
         >
@@ -83,7 +97,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       );
     }
 
-    // 4. JIKA TIDAK ADA HREF: Render sebagai Button standar
+    // Default: render as native button
     return (
       <button
         className={cn(buttonVariants({ variant, size, className }))}

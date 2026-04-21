@@ -1,4 +1,3 @@
-// src/components/ui/FormInput.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -6,15 +5,36 @@ import { cn } from "@lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 
 export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  /** Label text displayed above the input. */
   label: string;
+  /** HTML id attribute, also used for the label's `htmlFor`. */
   id: string;
+  /** Icon rendered inside the input on the left side. */
   leftIcon?: React.ReactNode;
+  /** Icon rendered inside the input on the right side. */
   rightIcon?: React.ReactNode;
+  /** Additional className applied to the outer input container. */
   containerClassName?: string;
+  /** When set to "phone", auto-formats the display as +62 XXX-XXXX-XXXX. */
   format?: "phone" | "default";
+  /** Error message string. When present, triggers error border and shows the message below. */
   error?: string;
 }
 
+/**
+ * Form input with built-in label, error state, icon slots, password toggle,
+ * and Indonesian phone number formatting.
+ *
+ * When `format="phone"`:
+ * - The displayed value is formatted as `+62 XXX-XXXX-XXXX` for readability.
+ * - The value emitted via `onChange` is the raw digit string (e.g. "6281234567890"),
+ *   ready for API submission without extra parsing.
+ *
+ * When `type="password"`:
+ * - A show/hide toggle button replaces the right icon slot.
+ *
+ * Supports `ref` forwarding for integration with form libraries (e.g. React Hook Form).
+ */
 export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
   (
     {
@@ -28,7 +48,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
       format = "default",
       error,
       onChange,
-      value, // Kita ekstrak value untuk diformat secara visual
+      value,
       ...props
     },
     ref
@@ -41,7 +61,11 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         : "password"
       : type;
 
-    // --- HELPER UNTUK VISUAL DISPLAY (+62 8XX-XXXX) ---
+    /**
+     * Converts a raw phone number into a human-readable format: +62 XXX-XXXX-XXXX.
+     * Normalizes common Indonesian prefixes (0, 8, +62) to the "62" country code.
+     * Only applied when `format="phone"`.
+     */
     const getDisplayValue = (
       val: string | number | readonly string[] | undefined
     ) => {
@@ -63,22 +87,29 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
       return cleaned;
     };
 
-    // --- HELPER UNTUK DATABASE RAW VALUE (628XX) ---
+    /**
+     * Strips all non-digit characters and normalizes the prefix to "62".
+     * Returns a digits-only string suitable for database storage.
+     */
     const getRawValue = (val: string) => {
       let cleaned = val.replace(/[^\d+]/g, "");
       if (cleaned.startsWith("0")) cleaned = "62" + cleaned.slice(1);
       else if (cleaned.startsWith("8")) cleaned = "628" + cleaned.slice(1);
       else if (cleaned.startsWith("+62")) cleaned = "62" + cleaned.substring(3);
-      return cleaned.replace(/\D/g, ""); // Kembalikan hanya angka
+      return cleaned.replace(/\D/g, "");
     };
 
-    // --- INTERCEPTOR ONCHANGE ---
+    /**
+     * Intercepts onChange for phone inputs to emit the raw digit value
+     * instead of the formatted display value. For other formats, passes
+     * the event through unchanged.
+     */
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (format === "phone") {
         const rawValue = getRawValue(e.target.value);
 
         if (onChange) {
-          // Membuat event tiruan (synthetic clone) agar state parent menerima angka mentah
+          // Clone the event with the raw value so the parent state receives digits only
           const clonedEvent = {
             ...e,
             target: {
@@ -133,7 +164,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             ref={ref}
             type={currentType}
             onChange={handleInputChange}
-            value={getDisplayValue(value)} // Gunakan formatter visual di sini
+            value={getDisplayValue(value)}
             className={cn(
               "flex-1 bg-transparent py-3.5 px-4 outline-none text-secondary-900 placeholder:text-secondary-400 text-base",
               className

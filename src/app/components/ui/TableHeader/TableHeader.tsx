@@ -1,13 +1,19 @@
-// src/components/ui/TableHeader.tsx
 import React from "react";
 
 interface TableHeaderProps {
+  /** Title text displayed on the left side. */
   title: string;
+  /** Optional small badge shown next to the title (e.g. total count). */
   badge?: string;
-  // actions berupa ReactNode agar kita bebas memasukkan tombol apapun
+  /** Action slot rendered on the right side (e.g. buttons for Add, Filter, Export). */
   actions?: React.ReactNode;
 }
 
+/**
+ * Horizontal header bar for table sections.
+ * Displays a title with an optional badge on the left and an action slot on the right.
+ * Separated from TableCard so it can also be used standalone outside card contexts.
+ */
 export function TableHeader({ title, badge, actions }: TableHeaderProps) {
   return (
     <div className="px-8 py-8 flex items-center justify-between border-b border-border-subtle">

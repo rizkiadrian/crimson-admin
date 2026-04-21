@@ -12,12 +12,18 @@ import {
 import { TableHeader } from "@app/components/ui/TableHeader";
 import type { IPagination } from "@services/general";
 
-// ─── TableCard: Wrapper card untuk semua table page ───
+// ─── TableCard ──────────────────────────────────────────────────────────────────
+
 export interface TableCardProps {
   children: React.ReactNode;
   className?: string;
 }
 
+/**
+ * Card container for table pages.
+ * Provides consistent rounded corners, shadow, and border styling
+ * so every table page shares the same visual wrapper.
+ */
 export function TableCard({ children, className }: TableCardProps) {
   return (
     <div
@@ -31,13 +37,19 @@ export function TableCard({ children, className }: TableCardProps) {
   );
 }
 
-// ─── TableCardHeader: Shortcut untuk TableHeader di dalam TableCard ───
+// ─── TableCardHeader ────────────────────────────────────────────────────────────
+
 export interface TableCardHeaderProps {
   title: string;
   badge?: string;
   actions?: React.ReactNode;
 }
 
+/**
+ * Header section inside a TableCard.
+ * Renders a title with an optional badge and an action slot (e.g. Add, Filter, Export buttons).
+ * Delegates rendering to the standalone TableHeader component.
+ */
 export function TableCardHeader({
   title,
   badge,
@@ -46,11 +58,17 @@ export function TableCardHeader({
   return <TableHeader title={title} badge={badge} actions={actions} />;
 }
 
-// ─── TableCardContent: Wrapper untuk Table + columns + data rendering ───
+// ─── TableCardContent ───────────────────────────────────────────────────────────
+
+/** Describes a single column in a TableCardContent. */
 export interface TableColumn<T> {
+  /** Unique key used as the React key for this column. */
   key: string;
+  /** Text displayed in the column header. */
   header: string;
+  /** Optional className applied to the header cell. */
   headerClassName?: string;
+  /** Render function that returns a TableCell for each row. */
   render: (item: T, index: number) => React.ReactNode;
 }
 
@@ -64,6 +82,17 @@ export interface TableCardContentProps<T> {
   skeletonRowCount?: number;
 }
 
+/**
+ * Declarative table body that renders columns and rows from data.
+ *
+ * Handles three states automatically:
+ * - **Loading**: shows skeleton rows via TableBody's built-in loading state.
+ * - **Error**: shows a centered error message via TableBody's error state.
+ * - **Data**: iterates over `data` and renders each column's `render` function.
+ *
+ * When `isRefetching` is true, the table dims and shows a progress bar
+ * while keeping existing rows visible.
+ */
 export function TableCardContent<T>({
   columns,
   data,
@@ -105,7 +134,8 @@ export function TableCardContent<T>({
   );
 }
 
-// ─── TableCardPagination: Conditional pagination rendering ───
+// ─── TableCardPagination ────────────────────────────────────────────────────────
+
 export interface TableCardPaginationProps {
   pagination: IPagination;
   isInitialLoad: boolean;
@@ -113,6 +143,11 @@ export interface TableCardPaginationProps {
   onPageChange: (page: number) => void;
 }
 
+/**
+ * Conditional pagination footer for TableCard.
+ * Automatically hides itself when there is no data, during initial load,
+ * or when an error is present — so consumers don't need to handle visibility logic.
+ */
 export function TableCardPagination({
   pagination,
   isInitialLoad,

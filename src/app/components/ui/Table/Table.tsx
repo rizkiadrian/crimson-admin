@@ -1,12 +1,18 @@
-// src/components/ui/Table.tsx
 import React from "react";
 import { cn } from "@lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
-  isRefetching?: boolean; // Prop baru untuk mode loading saat pagination/refresh
+  /** When true, shows an indeterminate progress bar and dims the table content. */
+  isRefetching?: boolean;
 }
 
+/**
+ * Root table wrapper.
+ * Renders a standard `<table>` inside a horizontally scrollable container.
+ * When `isRefetching` is true, an animated progress bar appears at the top
+ * and the table content is dimmed with pointer events disabled.
+ */
 export function Table({
   children,
   className,
@@ -15,7 +21,7 @@ export function Table({
 }: TableProps) {
   return (
     <div className="relative w-full">
-      {/* PROGRESS BAR: Muncul di atas tabel jika isRefetching true */}
+      {/* Indeterminate progress bar — visible only during refetch */}
       {isRefetching && (
         <div className="absolute top-0 left-0 right-0 h-0.75 bg-primary-100 overflow-hidden z-20">
           <style>{`
@@ -31,7 +37,7 @@ export function Table({
         </div>
       )}
 
-      {/* WRAPPER TABEL: Mengatur opacity dan mencegah klik jika sedang loading */}
+      {/* Scrollable table container — dims and blocks interaction while refetching */}
       <div
         className={cn(
           "w-full overflow-x-auto transition-opacity duration-300",
@@ -51,6 +57,7 @@ export function Table({
   );
 }
 
+/** Standard `<thead>` wrapper. */
 export function TableHead({
   children,
   className,
@@ -63,6 +70,19 @@ export function TableHead({
   );
 }
 
+/**
+ * Smart `<tbody>` that handles three render states:
+ *
+ * 1. **Loading** (`loading=true`): renders skeleton placeholder rows.
+ *    The first column shows an avatar + text skeleton, the last column shows
+ *    action button skeletons, and middle columns show text bar skeletons.
+ * 2. **Error** (`error` is a non-empty string): renders a full-width error
+ *    message with an icon, spanning all columns.
+ * 3. **Data** (default): renders children as normal table rows.
+ *
+ * @param columnCount - Number of columns, used for skeleton layout and error colspan.
+ * @param rowCount - Number of skeleton rows to display during loading.
+ */
 export function TableBody({
   children,
   className,
@@ -160,6 +180,7 @@ export function TableBody({
   );
 }
 
+/** Table row with hover highlight and `group` class for child hover effects. */
 export function TableRow({
   children,
   className,
@@ -175,6 +196,7 @@ export function TableRow({
   );
 }
 
+/** Column header cell with uppercase label styling and consistent padding. */
 export function TableHeaderCell({
   children,
   className,
@@ -193,6 +215,7 @@ export function TableHeaderCell({
   );
 }
 
+/** Standard table data cell with consistent padding. */
 export function TableCell({
   children,
   className,
@@ -205,6 +228,8 @@ export function TableCell({
   );
 }
 
+// ─── Badge ──────────────────────────────────────────────────────────────────────
+
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?:
     | "primary"
@@ -216,6 +241,13 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   showDot?: boolean;
 }
 
+/**
+ * Inline status badge with a colored dot indicator.
+ * Used inside table cells to display categorical status (e.g. role, state).
+ *
+ * @param variant - Color theme mapped to the design system palette.
+ * @param showDot - Whether to show the small circular dot before the label. Defaults to true.
+ */
 export function Badge({
   children,
   variant = "neutral",
@@ -258,6 +290,7 @@ export function Badge({
   );
 }
 
+/** Animated pulse placeholder used inside skeleton loading states. */
 export function Skeleton({
   className,
   ...props
@@ -270,6 +303,8 @@ export function Skeleton({
   );
 }
 
+// ─── TablePagination ────────────────────────────────────────────────────────────
+
 export interface TablePaginationProps extends React.HTMLAttributes<HTMLDivElement> {
   currentPage?: number;
   totalPages?: number;
@@ -278,6 +313,15 @@ export interface TablePaginationProps extends React.HTMLAttributes<HTMLDivElemen
   onPageChange?: (page: number) => void;
 }
 
+/**
+ * Pagination footer that displays "Showing X to Y of Z" text and page buttons.
+ *
+ * Page numbers are generated with ellipsis logic:
+ * - 5 or fewer pages: show all.
+ * - Current near start: [1, 2, 3, ..., last].
+ * - Current near end: [1, ..., last-2, last-1, last].
+ * - Otherwise: [1, ..., prev, current, next, ..., last].
+ */
 export function TablePagination({
   currentPage = 1,
   totalPages = 1,
@@ -287,6 +331,11 @@ export function TablePagination({
   className,
   ...props
 }: TablePaginationProps) {
+  /**
+   * Generates an array of page numbers and ellipsis markers ("...").
+   * Keeps the pagination compact while always showing the first, last,
+   * and pages adjacent to the current page.
+   */
   const generatePagination = (current: number, total: number) => {
     if (total <= 5) {
       return Array.from({ length: total }, (_, i) => i + 1);

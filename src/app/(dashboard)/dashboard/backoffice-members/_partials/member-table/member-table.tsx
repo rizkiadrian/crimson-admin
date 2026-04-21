@@ -20,6 +20,11 @@ import { getNameInitials } from "@lib/utils";
 import { PATHS } from "@config/routing";
 import { useCallback } from "react";
 
+/**
+ * Column definitions for the backoffice members table.
+ * Each entry describes how a single column header and cell should render.
+ * Defined outside the component to avoid re-creation on every render.
+ */
 const columns: TableColumn<IBackofficeUser>[] = [
   {
     key: "name",
@@ -90,7 +95,18 @@ const columns: TableColumn<IBackofficeUser>[] = [
   },
 ];
 
+/**
+ * Backoffice members table page component.
+ *
+ * Demonstrates the standard pattern for building a table page:
+ * 1. Define columns as a static array outside the component.
+ * 2. Use `useTableData` to handle fetching, pagination, and loading states.
+ * 3. Compose `TableCard` + `TableCardHeader` + `TableCardContent` + `TableCardPagination`.
+ *
+ * This pattern can be replicated for any new CRUD listing page.
+ */
 export function MemberTable() {
+  // Wrap the service call in useCallback to keep a stable reference for useTableData
   const fetcher = useCallback(
     (params: IBackofficeUserParams) =>
       backofficeMembersService.backofficeMembers(params),
@@ -110,6 +126,7 @@ export function MemberTable() {
     perPage: 10,
   });
 
+  // Prevent rendering until client-side hydration is complete
   if (!isMounted) return null;
 
   return (
