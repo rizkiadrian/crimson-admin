@@ -1,5 +1,7 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Loader2 } from "lucide-react";
+import { Button } from "@app/components/ui/Button";
 
 // ─── FormCard ───────────────────────────────────────────────────────────────────
 
@@ -107,6 +109,66 @@ export function FormCardFooter({ children, className }: FormCardFooterProps) {
       )}
     >
       {children}
+    </div>
+  );
+}
+
+// ─── FormCardLoading ────────────────────────────────────────────────────────────
+
+/**
+ * Full-card loading state with a centered spinner.
+ * Use inside a FormCard when fetching data for an edit/detail page.
+ *
+ * @example
+ * ```tsx
+ * if (isLoading) return <FormCard><FormCardLoading /></FormCard>;
+ * ```
+ */
+export function FormCardLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-80">
+      <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+    </div>
+  );
+}
+
+// ─── FormCardError ──────────────────────────────────────────────────────────────
+
+export interface FormCardErrorProps {
+  /** Error message to display. */
+  message: string;
+  /** Title text above the error message. Defaults to "Failed to load data". */
+  title?: string;
+  /** URL to navigate back to. When provided, shows a "Go Back" button. */
+  backHref?: string;
+  /** Label for the back button. Defaults to "Go Back". */
+  backLabel?: string;
+}
+
+/**
+ * Full-card error state with an error message and optional back button.
+ * Use inside a FormCard when a fetch fails on an edit/detail page.
+ *
+ * @example
+ * ```tsx
+ * if (error) return <FormCard><FormCardError message={error} backHref="/members" /></FormCard>;
+ * ```
+ */
+export function FormCardError({
+  message,
+  title = "Failed to load data",
+  backHref,
+  backLabel = "Go Back",
+}: FormCardErrorProps) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-80 gap-3">
+      <p className="text-[15px] font-bold text-text-main">{title}</p>
+      <p className="text-sm text-text-muted">{message}</p>
+      {backHref && (
+        <Button variant="outlined" size="sm" href={backHref} className="mt-2">
+          {backLabel}
+        </Button>
+      )}
     </div>
   );
 }

@@ -5,6 +5,8 @@ const DASHBOARD_SERVICES = {
 const BACKOFFICEMEMBERS_SERVICES = {
   backofficeMembers: "/dashboard/backoffice-members",
   backofficeMembersCreate: "/dashboard/backoffice-members/create",
+  backofficeMembersEdit: (id: number) =>
+    `/dashboard/backoffice-members/${id}/edit`,
 };
 
 export const PATHS = {

@@ -20,4 +20,11 @@ export interface IBackofficeCreatePayload {
   password: string;
 }
 
+export interface IBackofficeUpdatePayload {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+}
+
 export type IBackofficeUserParams = IPaginationParams;

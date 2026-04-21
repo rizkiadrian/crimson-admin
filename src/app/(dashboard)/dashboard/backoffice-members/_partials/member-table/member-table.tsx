@@ -78,13 +78,15 @@ const columns: TableColumn<IBackofficeUser>[] = [
     key: "actions",
     header: "Actions",
     headerClassName: "text-right",
-    render: () => (
+    render: (member) => (
       <TableCell>
         <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
             className="h-auto w-auto p-2 rounded-lg hover:text-primary-600 hover:bg-primary-50 hover:border-transparent"
+            href={PATHS.backofficeMembersEdit(member.id)}
+            aria-label="Edit"
           >
             <Pencil size={16} />
           </Button>
@@ -92,6 +94,7 @@ const columns: TableColumn<IBackofficeUser>[] = [
             variant="ghost"
             size="icon"
             className="h-auto w-auto p-2 rounded-lg hover:text-error-600 hover:bg-error-50 hover:border-transparent"
+            aria-label="Delete"
           >
             <Trash2 size={16} />
           </Button>

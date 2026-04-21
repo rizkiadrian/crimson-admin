@@ -166,12 +166,14 @@ import {
 } from "@app/components/ui/FormCard";
 ```
 
-| Component        | Description                                                                 |
-| ---------------- | --------------------------------------------------------------------------- |
-| `FormCard`       | Card wrapper with the same rounded corners, shadow, and border as TableCard |
-| `FormCardHeader` | Title + description + optional badge or custom actions on the right         |
-| `FormCardBody`   | Padded content area with vertical spacing for form fields                   |
-| `FormCardFooter` | Right-aligned action bar with top border (Cancel + Submit buttons)          |
+| Component         | Description                                                                 |
+| ----------------- | --------------------------------------------------------------------------- |
+| `FormCard`        | Card wrapper with the same rounded corners, shadow, and border as TableCard |
+| `FormCardHeader`  | Title + description + optional badge or custom actions on the right         |
+| `FormCardBody`    | Padded content area with vertical spacing for form fields                   |
+| `FormCardFooter`  | Right-aligned action bar with top border (Cancel + Submit buttons)          |
+| `FormCardLoading` | Centered spinner for loading state inside a FormCard                        |
+| `FormCardError`   | Error message with optional title and back button                           |
 
 **FormCardHeader props:**
 
@@ -181,6 +183,15 @@ import {
 | `description` | `string`    | —       | Subtitle text below the title                            |
 | `badge`       | `string`    | —       | Small badge label on the right (e.g. "Authorized only")  |
 | `actions`     | `ReactNode` | —       | Custom right-side content. Takes precedence over `badge` |
+
+**FormCardError props:**
+
+| Prop        | Type     | Default                 | Description                                  |
+| ----------- | -------- | ----------------------- | -------------------------------------------- |
+| `message`   | `string` | —                       | Error message to display                     |
+| `title`     | `string` | `"Failed to load data"` | Title text above the error message           |
+| `backHref`  | `string` | —                       | URL for the back button. Hidden when not set |
+| `backLabel` | `string` | `"Go Back"`             | Label for the back button                    |
 
 #### FilterPopup System
 
@@ -256,70 +267,6 @@ import { TableHeader } from "@app/components/ui/TableHeader";
 <TableHeader title="Members" badge="12 total" actions={<Button>Add</Button>} />;
 ```
 
-#### FilterPopup System
-
-A composable modal popup for table filters. Includes chip selectors, range sliders, and date range pickers.
-
-```tsx
-import {
-  FilterPopup,
-  FilterSection,
-  FilterChipGroup,
-  FilterRangeSlider,
-  FilterDateRange,
-} from "@app/components/ui/FilterPopup/FilterPopup";
-```
-
-| Component           | Description                                                            |
-| ------------------- | ---------------------------------------------------------------------- |
-| `FilterPopup`       | Modal overlay with header, scrollable body, and footer (Apply / Reset) |
-| `FilterSection`     | Labeled section inside the popup with optional right-side content      |
-| `FilterChipGroup`   | Selectable chip/pill buttons, single or multi-select                   |
-| `FilterRangeSlider` | Dual-thumb range slider for numeric filtering                          |
-| `FilterDateRange`   | Two side-by-side date inputs for start/end date filtering              |
-
-**FilterPopup props:**
-
-| Prop      | Type         | Default | Description                                   |
-| --------- | ------------ | ------- | --------------------------------------------- |
-| `open`    | `boolean`    | —       | Whether the popup is visible                  |
-| `onClose` | `() => void` | —       | Called on backdrop click, Escape, or X button |
-| `title`   | `string`     | —       | Header title                                  |
-| `onApply` | `() => void` | —       | Called when "Apply Filters" is clicked        |
-| `onReset` | `() => void` | —       | Called when "Reset Filters" is clicked        |
-
-**FilterChipGroup props:**
-
-| Prop       | Type                           | Default | Description                   |
-| ---------- | ------------------------------ | ------- | ----------------------------- |
-| `options`  | `FilterChipOption[]`           | —       | `{ label, value }` pairs      |
-| `selected` | `string[]`                     | —       | Currently selected values     |
-| `onChange` | `(selected: string[]) => void` | —       | Called when selection changes |
-| `multiple` | `boolean`                      | `true`  | Allow multiple selections     |
-
-**FilterRangeSlider props:**
-
-| Prop          | Type                                    | Default  | Description                            |
-| ------------- | --------------------------------------- | -------- | -------------------------------------- |
-| `min`         | `number`                                | —        | Minimum possible value                 |
-| `max`         | `number`                                | —        | Maximum possible value                 |
-| `step`        | `number`                                | `1`      | Step increment                         |
-| `value`       | `[number, number]`                      | —        | Current range `[low, high]`            |
-| `onChange`    | `(value: [number, number]) => void`     | —        | Called when the range changes          |
-| `formatLabel` | `(value: number) => string`             | `String` | Format min/max labels below the slider |
-| `formatRange` | `(low: number, high: number) => string` | —        | Format the selected range display      |
-
-**FilterDateRange props:**
-
-| Prop                | Type                     | Default        | Description                    |
-| ------------------- | ------------------------ | -------------- | ------------------------------ |
-| `startDate`         | `string`                 | —              | Start date (ISO or empty)      |
-| `endDate`           | `string`                 | —              | End date (ISO or empty)        |
-| `onStartDateChange` | `(date: string) => void` | —              | Called when start date changes |
-| `onEndDateChange`   | `(date: string) => void` | —              | Called when end date changes   |
-| `startPlaceholder`  | `string`                 | `"Start date"` | Placeholder for start input    |
-| `endPlaceholder`    | `string`                 | `"End date"`   | Placeholder for end input      |
-
 #### GlobalNotification
 
 Toast notification anchored to top-center. Driven by Zustand store.
@@ -384,6 +331,30 @@ const {
 | `setParams`        | `(params) => void`       | Update filters (resets to page 1)  |
 | `refetch`          | `() => void`             | Re-fetch with current params       |
 | `isMounted`        | `boolean`                | Hydration-safe mount flag          |
+
+#### useDetailData
+
+Generic hook for fetching a single resource (detail/show endpoint). Handles loading state, error capture, and refetch. Designed for edit pages, detail views, or any page that loads one item.
+
+```tsx
+import { useDetailData } from "@lib/hooks/use-detail-data";
+
+const { data, isLoading, error, refetch } = useDetailData<IBackofficeUser>({
+  fetcher: () => backofficeMembersService.backofficeMembersDetail(id),
+});
+```
+
+| Option    | Type                             | Description                                 |
+| --------- | -------------------------------- | ------------------------------------------- |
+| `fetcher` | `() => Promise<IApiResponse<T>>` | Service function that returns a single item |
+| `enabled` | `boolean`                        | Whether to fetch on mount (default: `true`) |
+
+| Return      | Type             | Description                               |
+| ----------- | ---------------- | ----------------------------------------- |
+| `data`      | `TData \| null`  | Fetched item, or `null` if not yet loaded |
+| `isLoading` | `boolean`        | True while the fetch is in progress       |
+| `error`     | `string \| null` | Error message if fetch failed             |
+| `refetch`   | `() => void`     | Re-trigger the fetch                      |
 
 ---
 
@@ -514,3 +485,95 @@ export default function CreateProductPage() {
   );
 }
 ```
+
+---
+
+### Building a New Edit Page
+
+Combine `useDetailData` + `FormCard` + `FormCardLoading`/`FormCardError` for a consistent edit page:
+
+```tsx
+"use client";
+import { useCallback, useState } from "react";
+import {
+  FormCard,
+  FormCardHeader,
+  FormCardBody,
+  FormCardFooter,
+  FormCardLoading,
+  FormCardError,
+} from "@app/components/ui/FormCard";
+import { FormInput } from "@app/components/ui/FormInput";
+import { Button } from "@app/components/ui/Button";
+import { useDetailData } from "@lib/hooks/use-detail-data";
+import { useParams } from "next/navigation";
+import { Check } from "lucide-react";
+
+export default function EditProductPage() {
+  const { id } = useParams();
+  const fetcher = useCallback(() => productService.detail(Number(id)), [id]);
+  const { data, isLoading, error } = useDetailData<IProduct>({ fetcher });
+
+  // Show loading spinner while fetching
+  if (isLoading)
+    return (
+      <FormCard>
+        <FormCardLoading />
+      </FormCard>
+    );
+
+  // Show error with back button if fetch failed
+  if (error || !data)
+    return (
+      <FormCard>
+        <FormCardError message={error || "Not found"} backHref="/products" />
+      </FormCard>
+    );
+
+  // Render form only after data is available (avoids useEffect for state sync)
+  return <ProductEditForm product={data} />;
+}
+
+function ProductEditForm({ product }: { product: IProduct }) {
+  const [formData, setFormData] = useState(() => ({
+    name: product.name,
+    sku: product.sku,
+  }));
+
+  return (
+    <FormCard>
+      <FormCardHeader
+        title="Edit Product"
+        description="Update product details."
+      />
+      <form onSubmit={handleSubmit}>
+        <FormCardBody>
+          <FormInput
+            id="name"
+            label="Name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          <FormInput
+            id="sku"
+            label="SKU"
+            value={formData.sku}
+            onChange={handleChange}
+          />
+        </FormCardBody>
+        <FormCardFooter>
+          <Button variant="ghost" href="/products">
+            Cancel
+          </Button>
+          <Button type="submit" variant="primary">
+            <Check size={16} className="mr-2" />
+            Save
+          </Button>
+        </FormCardFooter>
+      </form>
+    </FormCard>
+  );
+}
+```
+
+Key pattern: split into a **page component** (handles loading/error) and an **inner form component** (receives data as props, initializes state directly). This avoids `useEffect` for syncing API data into form state — compliant with React 19.
