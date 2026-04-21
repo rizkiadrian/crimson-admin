@@ -17,7 +17,7 @@ export interface IBackofficeCreatePayload {
   name: string;
   email: string;
   phone: string;
-  password: string; // Tambahan sesuai request prompt-mu
+  password: string;
 }
 
 export type IBackofficeUserParams = IPaginationParams;

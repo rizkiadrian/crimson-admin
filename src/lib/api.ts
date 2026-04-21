@@ -7,15 +7,20 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
+export interface IFieldErrors {
+  [key: string]: string[];
+}
 export interface ApiErrorResponse {
   message?: string;
   error?: string;
   statusCode?: number;
+  errors?: IFieldErrors;
 }
 
 export interface CustomApiError {
   message: string;
   status?: number;
+  errors?: IFieldErrors;
 }
 
 // Interface untuk item dalam antrean failed requests
@@ -90,6 +95,7 @@ apiClient.interceptors.response.use(
         error.message ||
         "Terjadi kesalahan server",
       status: error.response?.status,
+      errors: error.response?.data?.errors,
     };
     return Promise.reject(customError);
   }

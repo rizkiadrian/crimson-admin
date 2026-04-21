@@ -20,6 +20,7 @@ import {
 } from "@services/backoffice/backoffice-members";
 import { IApiError, IPagination } from "@services/general";
 import { getNameInitials } from "@lib/utils";
+import { PATHS } from "@config/routing";
 
 export function MemberTable() {
   // 1. Inisialisasi State
@@ -91,10 +92,11 @@ export function MemberTable() {
           <>
             <Button
               variant="primary"
+              href={PATHS.backofficeMembersCreate}
               className="rounded-xl gap-2 shadow-md shadow-primary-200/60 h-auto py-2.5 px-5"
             >
               <Plus size={16} strokeWidth={2.5} />
-              Add New Customer
+              Add New
             </Button>
             <Button
               variant="ghost"

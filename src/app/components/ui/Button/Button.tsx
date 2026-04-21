@@ -2,10 +2,10 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@lib/utils";
-import { Loader2 } from "lucide-react"; // 1. Import icon spinner
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 const buttonVariants = cva(
-  // Base styles: Fleksibel, transisi halus, dan state focus/disabled
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-bg-app transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer font-semibold",
   {
     variants: {
@@ -44,36 +44,54 @@ export interface ButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  isLoading?: boolean; // 2. Tambahkan prop isLoading
+  isLoading?: boolean;
+  href?: string; // 2. Tambahkan prop href (opsional)
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant, size, isLoading, disabled, children, ...props },
+    { className, variant, size, isLoading, disabled, href, children, ...props },
     ref
   ) => {
-    return (
-      <button
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        // 3. Otomatis disable tombol jika sedang loading ATAU jika prop disabled di-set true
-        disabled={disabled || isLoading}
-        {...props}
-      >
-        {/* 4. Render spinner jika isLoading true */}
+    const content = (
+      <>
         {isLoading && (
           <Loader2
             className={cn(
               "animate-spin",
-              // Beri jarak margin kanan (mr-2) jika tombol memiliki teks/children.
-              // Jika tombol hanya icon (tanpa teks), jangan beri margin agar tetap di tengah.
               children ? "mr-2 h-4 w-4" : "h-4 w-4"
             )}
           />
         )}
-
-        {/* Render isi tombol (teks atau ikon lain) */}
         {children}
+      </>
+    );
+
+    // 3. JIKA ADA HREF: Render sebagai Next.js Link
+    if (href) {
+      return (
+        <Link
+          href={href}
+          className={cn(
+            buttonVariants({ variant, size, className }),
+            // Jika Link diset loading/disabled, matikan event pointer-nya
+            (disabled || isLoading) && "pointer-events-none opacity-50"
+          )}
+        >
+          {content}
+        </Link>
+      );
+    }
+
+    // 4. JIKA TIDAK ADA HREF: Render sebagai Button standar
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        disabled={disabled || isLoading}
+        {...props}
+      >
+        {content}
       </button>
     );
   }

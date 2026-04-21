@@ -11,7 +11,8 @@ export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputEleme
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   containerClassName?: string;
-  format?: "phone" | "default"; // Props baru untuk menentukan format input
+  format?: "phone" | "default";
+  error?: string;
 }
 
 export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
@@ -24,9 +25,11 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
       rightIcon,
       containerClassName,
       type = "text",
-      format = "default", // Default tidak ada format khusus
-      onChange, // Ekstrak onChange bawaan parent
-      ...props // Sisa props seperti value, placeholder, required, dll
+      format = "default",
+      error,
+      onChange,
+      value, // Kita ekstrak value untuk diformat secara visual
+      ...props
     },
     ref
   ) => {
@@ -38,38 +41,60 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         : "password"
       : type;
 
+    // --- HELPER UNTUK VISUAL DISPLAY (+62 8XX-XXXX) ---
+    const getDisplayValue = (
+      val: string | number | readonly string[] | undefined
+    ) => {
+      if (format !== "phone" || typeof val !== "string") return val;
+
+      let cleaned = val.replace(/[^\d+]/g, "");
+      if (cleaned.startsWith("0")) cleaned = "62" + cleaned.slice(1);
+      else if (cleaned.startsWith("8")) cleaned = "628" + cleaned.slice(1);
+      else if (cleaned.startsWith("+62")) cleaned = "62" + cleaned.substring(3);
+
+      const digits = cleaned.replace(/\D/g, "");
+      if (digits.startsWith("62")) {
+        let formatted = "+62";
+        if (digits.length > 2) formatted += " " + digits.substring(2, 5);
+        if (digits.length > 5) formatted += "-" + digits.substring(5, 9);
+        if (digits.length > 9) formatted += "-" + digits.substring(9, 15);
+        return formatted;
+      }
+      return cleaned;
+    };
+
+    // --- HELPER UNTUK DATABASE RAW VALUE (628XX) ---
+    const getRawValue = (val: string) => {
+      let cleaned = val.replace(/[^\d+]/g, "");
+      if (cleaned.startsWith("0")) cleaned = "62" + cleaned.slice(1);
+      else if (cleaned.startsWith("8")) cleaned = "628" + cleaned.slice(1);
+      else if (cleaned.startsWith("+62")) cleaned = "62" + cleaned.substring(3);
+      return cleaned.replace(/\D/g, ""); // Kembalikan hanya angka
+    };
+
     // --- INTERCEPTOR ONCHANGE ---
-    // Fungsi ini mencegat ketikan user, memformatnya, baru mengirimnya ke parent
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (format === "phone") {
-        const value = e.target.value;
+        const rawValue = getRawValue(e.target.value);
 
-        // Jika tidak kosong, jalankan formatter
-        if (value) {
-          let cleaned = value.replace(/[^\d+]/g, "");
+        if (onChange) {
+          // Membuat event tiruan (synthetic clone) agar state parent menerima angka mentah
+          const clonedEvent = {
+            ...e,
+            target: {
+              ...e.target,
+              id: e.target.id,
+              name: e.target.name,
+              value: rawValue,
+            },
+          } as React.ChangeEvent<HTMLInputElement>;
 
-          if (cleaned.startsWith("0")) cleaned = "+62" + cleaned.slice(1);
-          else if (cleaned.startsWith("8")) cleaned = "+628" + cleaned.slice(1);
-          else if (cleaned.startsWith("62")) cleaned = "+" + cleaned;
-
-          const digits = cleaned.replace(/\D/g, "");
-          if (digits.startsWith("62")) {
-            let formatted = "+62";
-            if (digits.length > 2) formatted += " " + digits.substring(2, 5);
-            if (digits.length > 5) formatted += "-" + digits.substring(5, 9);
-            if (digits.length > 9) formatted += "-" + digits.substring(9, 15);
-
-            // Timpa value event dengan value yang sudah rapi
-            e.target.value = formatted;
-          } else {
-            e.target.value = cleaned;
-          }
+          onChange(clonedEvent);
         }
-      }
-
-      // Lempar event yang sudah dimodifikasi (atau tidak dimodifikasi) ke parent
-      if (onChange) {
-        onChange(e);
+      } else {
+        if (onChange) {
+          onChange(e);
+        }
       }
     };
 
@@ -84,14 +109,21 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
 
         <div
           className={cn(
-            "flex items-center w-full overflow-hidden transition-colors border",
-            "bg-neutral-50 border-neutral-200 rounded-xl",
-            "focus-within:ring-2 focus-within:ring-secondary-900/10 focus-within:border-secondary-900 focus-within:bg-white",
+            "flex items-center w-full overflow-hidden transition-colors border rounded-xl",
+            !error &&
+              "bg-neutral-50 border-neutral-200 focus-within:ring-2 focus-within:ring-secondary-900/10 focus-within:border-secondary-900 focus-within:bg-white",
+            error &&
+              "bg-white border-error-500 focus-within:ring-2 focus-within:ring-error-500/20 focus-within:border-error-500",
             containerClassName
           )}
         >
           {leftIcon && (
-            <div className="flex items-center justify-center pl-4 text-secondary-500">
+            <div
+              className={cn(
+                "flex items-center justify-center pl-4",
+                error ? "text-error-500" : "text-secondary-500"
+              )}
+            >
               {leftIcon}
             </div>
           )}
@@ -100,7 +132,8 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             id={id}
             ref={ref}
             type={currentType}
-            onChange={handleInputChange} // Gunakan fungsi interceptor di sini
+            onChange={handleInputChange}
+            value={getDisplayValue(value)} // Gunakan formatter visual di sini
             className={cn(
               "flex-1 bg-transparent py-3.5 px-4 outline-none text-secondary-900 placeholder:text-secondary-400 text-base",
               className
@@ -112,7 +145,12 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="flex items-center justify-center pr-4 text-secondary-400 hover:text-secondary-700 transition-colors focus:outline-none"
+              className={cn(
+                "flex items-center justify-center pr-4 transition-colors focus:outline-none",
+                error
+                  ? "text-error-400 hover:text-error-600"
+                  : "text-secondary-400 hover:text-secondary-700"
+              )}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -122,11 +160,20 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               )}
             </button>
           ) : rightIcon ? (
-            <div className="flex items-center justify-center pr-4 text-secondary-400 pointer-events-none">
+            <div
+              className={cn(
+                "flex items-center justify-center pr-4 pointer-events-none",
+                error ? "text-error-400" : "text-secondary-400"
+              )}
+            >
               {rightIcon}
             </div>
           ) : null}
         </div>
+
+        {error && (
+          <p className="mt-1.5 text-xs font-medium text-error-600">{error}</p>
+        )}
       </div>
     );
   }

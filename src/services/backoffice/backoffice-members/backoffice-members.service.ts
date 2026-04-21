@@ -1,9 +1,13 @@
 import { api } from "@lib/api";
 import {
+  IBackofficeCreatePayload,
   IBackofficeUser,
   IBackofficeUserParams,
 } from "./backoffice-members.types";
-import { IApiListResponse } from "@services/general/general.types";
+import {
+  IApiListResponse,
+  IApiResponse,
+} from "@services/general/general.types";
 
 export const backofficeMembersService = {
   backofficeMembers: async (
@@ -12,5 +16,10 @@ export const backofficeMembersService = {
     return await api.get("/backoffice/backoffice-members", {
       params,
     });
+  },
+  backofficeMembersCreate: async (
+    body: IBackofficeCreatePayload
+  ): Promise<IApiResponse<IBackofficeUser>> => {
+    return await api.post("/backoffice/backoffice-members", body);
   },
 };

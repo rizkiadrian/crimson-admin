@@ -3,24 +3,47 @@
 import React, { useState } from "react";
 import { FormInput } from "@app/components/ui/FormInput";
 import { Button } from "@app/components/ui/Button";
-import { IBackofficeCreatePayload } from "@services/backoffice/backoffice-members";
+import {
+  backofficeMembersService,
+  IBackofficeCreatePayload,
+} from "@services/backoffice/backoffice-members";
+import { handleFormError } from "@lib/utils";
+import { useNotificationStore } from "@store/useNotificationStore";
+import { useRouter } from "next/navigation";
+import { PATHS } from "@config/routing";
 
 export default function BackofficeMemberCreatePage() {
+  const router = useRouter();
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   const [formData, setFormData] = useState<IBackofficeCreatePayload>({
     name: "",
     email: "",
     phone: "",
     password: "",
   });
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Call API
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      setSubmitting(true);
+      const resp =
+        await backofficeMembersService.backofficeMembersCreate(formData);
+      showNotification(resp.message, "success");
+      router.push(PATHS.backofficeMembers);
+    } catch (err: unknown) {
+      handleFormError(err, setFormErrors);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -33,16 +56,16 @@ export default function BackofficeMemberCreatePage() {
         <div className="px-8 pt-8 pb-6 border-b border-border-subtle flex items-start justify-between">
           <div>
             <h2 className="text-xl font-bold text-text-main mb-1">
-              Client Registration
+              Backoffice Registration
             </h2>
             <p className="text-[13px] font-medium text-text-muted">
-              Add a new executive profile to the Crimson database. Fill in all
+              Add a new backoffice profile to the Lingkar member. Fill in all
               required information below.
             </p>
           </div>
           {/* Badge "Admin Interface" sesuai gambar */}
           <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-neutral-100 text-text-muted">
-            Admin Interface
+            Authorized only
           </span>
         </div>
 
@@ -61,7 +84,7 @@ export default function BackofficeMemberCreatePage() {
                 placeholder="e.g. Alexander Sterling"
                 value={formData.name}
                 onChange={handleChange}
-                required
+                error={formErrors.name}
               />
 
               {/* Kolom 2: Email Address */}
@@ -72,7 +95,7 @@ export default function BackofficeMemberCreatePage() {
                 placeholder="alexander.s@vanguard.com"
                 value={formData.email}
                 onChange={handleChange}
-                required
+                error={formErrors.email}
               />
 
               {/* Kolom 3: Phone Number (Sesuai request prompt) */}
@@ -84,7 +107,7 @@ export default function BackofficeMemberCreatePage() {
                 format="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                required
+                error={formErrors.phone}
               />
 
               {/* Kolom 4: Password (Sesuai request prompt) */}
@@ -95,7 +118,7 @@ export default function BackofficeMemberCreatePage() {
                 placeholder="Set initial password"
                 value={formData.password}
                 onChange={handleChange}
-                required
+                error={formErrors.password}
               />
             </div>
 
@@ -109,6 +132,7 @@ export default function BackofficeMemberCreatePage() {
             <Button
               type="button"
               variant="ghost"
+              href={PATHS.backofficeMembers}
               className="text-text-muted hover:text-text-main hover:bg-neutral-100 px-6 font-medium"
             >
               Cancel Change
@@ -119,6 +143,7 @@ export default function BackofficeMemberCreatePage() {
               type="submit"
               variant="primary"
               className="px-8 shadow-md shadow-primary-200/60"
+              isLoading={submitting}
             >
               {/* Tambahkan Ikon Check di kiri jika diinginkan */}
               <svg
