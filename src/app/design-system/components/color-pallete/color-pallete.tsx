@@ -67,7 +67,7 @@ export function ColorPalette() {
               style={{ backgroundColor: `var(--color-${color.prefix}-500)` }}
             >
               <span>{color.name}</span>
-              <span className="uppercase tracking-wider opacity-90">
+              <span className="uppercase tracking-wider">
                 {baseColors[color.prefix] || "..."}
               </span>
             </div>

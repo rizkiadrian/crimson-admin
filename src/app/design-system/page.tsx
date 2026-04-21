@@ -10,13 +10,13 @@ import { FilterPopupShowcase } from "./components/filter-popup-showcase";
 export default function DesignSystemPage() {
   return (
     <div className="min-h-screen bg-[#EAEAEA] p-8 md:p-12 font-sans">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <main className="max-w-7xl mx-auto space-y-12">
         {/* Header Design System */}
         <div className="mb-10 border-b border-neutral-300 pb-6">
           <h1 className="text-4xl font-bold text-secondary-900 flex items-center gap-3">
             <span className="text-primary-500">❖</span> Crimson Admin
           </h1>
-          <p className="text-secondary-500 mt-2">
+          <p className="text-secondary-700 mt-2">
             Design System & Component Library
           </p>
         </div>
@@ -86,7 +86,7 @@ export default function DesignSystemPage() {
           </h2>
           <FilterPopupShowcase />
         </section>
-      </div>
+      </main>
     </div>
   );
 }

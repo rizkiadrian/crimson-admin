@@ -380,6 +380,7 @@ export function FilterRangeSlider({
           step={step}
           value={low}
           onChange={handleLowChange}
+          aria-label="Range minimum value"
           className="filter-range-thumb absolute w-full"
         />
 
@@ -391,6 +392,7 @@ export function FilterRangeSlider({
           step={step}
           value={high}
           onChange={handleHighChange}
+          aria-label="Range maximum value"
           className="filter-range-thumb absolute w-full"
         />
       </div>

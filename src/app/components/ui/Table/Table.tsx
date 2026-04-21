@@ -205,7 +205,7 @@ export function TableHeaderCell({
   return (
     <th
       className={cn(
-        "px-4 py-5 text-[11px] font-bold text-neutral-400 uppercase tracking-widest border-b border-border-subtle first:pl-8 last:pr-8",
+        "px-4 py-5 text-[11px] font-bold text-neutral-500 uppercase tracking-widest border-b border-border-subtle first:pl-8 last:pr-8",
         className
       )}
       {...props}

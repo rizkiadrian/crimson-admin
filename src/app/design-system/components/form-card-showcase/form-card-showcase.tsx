@@ -18,7 +18,7 @@ export function FormCardShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             Complete Form Card
           </Text>

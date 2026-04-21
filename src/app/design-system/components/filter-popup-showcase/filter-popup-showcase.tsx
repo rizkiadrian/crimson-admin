@@ -37,7 +37,7 @@ export function FilterPopupShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             Filter Popup
           </Text>
@@ -64,7 +64,7 @@ export function FilterPopupShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             Chip Group (Standalone)
           </Text>
@@ -86,7 +86,7 @@ export function FilterPopupShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             Range Slider (Standalone)
           </Text>
@@ -114,7 +114,7 @@ export function FilterPopupShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             Date Range (Standalone)
           </Text>

@@ -64,6 +64,7 @@ export function AppTable() {
               variant="ghost"
               size="icon"
               className="rounded-xl h-auto w-auto p-2.5"
+              aria-label="Filter"
             >
               <ListFilter size={18} />
             </Button>
@@ -72,6 +73,7 @@ export function AppTable() {
               variant="ghost"
               size="icon"
               className="rounded-xl h-auto w-auto p-2.5"
+              aria-label="Download"
             >
               <Download size={18} />
             </Button>
@@ -133,6 +135,7 @@ export function AppTable() {
                     variant="ghost"
                     size="icon"
                     className="h-auto w-auto p-2 rounded-lg hover:text-primary-600 hover:bg-primary-50 hover:border-transparent"
+                    aria-label="Edit"
                   >
                     <Pencil size={16} />
                   </Button>
@@ -142,6 +145,7 @@ export function AppTable() {
                     variant="ghost"
                     size="icon"
                     className="h-auto w-auto p-2 rounded-lg hover:text-error-600 hover:bg-error-50 hover:border-transparent"
+                    aria-label="Delete"
                   >
                     <Trash2 size={16} />
                   </Button>

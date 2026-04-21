@@ -12,7 +12,7 @@ export function ButtonShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             Standard
           </Text>
@@ -32,7 +32,7 @@ export function ButtonShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             Icon Only
           </Text>
@@ -40,20 +40,20 @@ export function ButtonShowcase() {
 
         {/* Row flex sesuai gambar desain */}
         <div className="flex gap-4 mt-6">
-          <Button variant="iconPrimary" size="icon">
+          <Button variant="iconPrimary" size="icon" aria-label="Edit">
             <PenSquare className="w-4 h-4" />
           </Button>
-          <Button variant="iconSecondary" size="icon">
+          <Button variant="iconSecondary" size="icon" aria-label="Home">
             <Home className="w-4 h-4" />
           </Button>
-          <Button variant="iconTertiary" size="icon">
+          <Button variant="iconTertiary" size="icon" aria-label="Tag">
             <Tag className="w-4 h-4" />
           </Button>
-          {/* Anda bisa menambahkan utility class langsung untuk menimpa warna spesifik jika butuh */}
           <Button
             variant="iconPrimary"
             size="icon"
             className="bg-primary-700 hover:bg-primary-800"
+            aria-label="Delete"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -65,7 +65,7 @@ export function ButtonShowcase() {
         <div className="absolute top-6 left-6">
           <Text
             variant="label"
-            className="text-secondary-400 uppercase tracking-wider"
+            className="text-secondary-600 uppercase tracking-wider"
           >
             With Icon & Sizes
           </Text>
