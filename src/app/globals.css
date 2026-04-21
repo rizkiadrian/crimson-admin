@@ -273,3 +273,50 @@
     @apply text-text-accent hover:underline;
   }
 }
+
+/* =========================================
+   5. COMPONENT STYLES
+   ========================================= */
+
+/* FilterRangeSlider — dual-thumb range input styling.
+   Removes native appearance and applies design-system tokens. */
+.filter-range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: none;
+  background: transparent;
+  height: 24px;
+  margin: 0;
+}
+
+.filter-range-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: all;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--color-primary-500);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.filter-range-thumb::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px var(--color-primary-100);
+}
+
+.filter-range-thumb::-moz-range-thumb {
+  pointer-events: all;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--color-primary-500);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.filter-range-thumb::-moz-range-thumb:hover {
+  box-shadow: 0 0 0 4px var(--color-primary-100);
+}

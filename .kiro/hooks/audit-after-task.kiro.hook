@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "NPM Audit After Task",
+  "description": "Runs npm audit after every agent execution to ensure no new vulnerabilities are introduced. If vulnerabilities are found, the agent will flag them immediately.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npm audit",
+    "timeout": 30
+  }
+}

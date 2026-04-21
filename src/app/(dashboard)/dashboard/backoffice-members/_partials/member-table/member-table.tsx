@@ -10,6 +10,12 @@ import {
 } from "@app/components/ui/Table";
 import type { TableColumn } from "@app/components/ui/Table";
 import { Button } from "@app/components/ui/Button";
+import {
+  FilterPopup,
+  FilterSection,
+  FilterChipGroup,
+  FilterDateRange,
+} from "@app/components/ui/FilterPopup";
 import { useTableData } from "@lib/hooks/use-table-data";
 import {
   backofficeMembersService,
@@ -18,7 +24,7 @@ import {
 } from "@services/backoffice/backoffice-members";
 import { getNameInitials } from "@lib/utils";
 import { PATHS } from "@config/routing";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * Column definitions for the backoffice members table.
@@ -95,6 +101,27 @@ const columns: TableColumn<IBackofficeUser>[] = [
   },
 ];
 
+/** Role filter options for the chip group. */
+const ROLE_OPTIONS = [
+  { label: "Admin", value: "admin" },
+  { label: "Member", value: "member" },
+  { label: "Viewer", value: "viewer" },
+];
+
+/** Verification status filter options. */
+const STATUS_OPTIONS = [
+  { label: "Verified", value: "verified" },
+  { label: "Unverified", value: "unverified" },
+];
+
+/** Default state for all filter fields. */
+const DEFAULT_FILTERS = {
+  roles: [] as string[],
+  statuses: [] as string[],
+  dateFrom: "",
+  dateTo: "",
+};
+
 /**
  * Backoffice members table page component.
  *
@@ -102,8 +129,7 @@ const columns: TableColumn<IBackofficeUser>[] = [
  * 1. Define columns as a static array outside the component.
  * 2. Use `useTableData` to handle fetching, pagination, and loading states.
  * 3. Compose `TableCard` + `TableCardHeader` + `TableCardContent` + `TableCardPagination`.
- *
- * This pattern can be replicated for any new CRUD listing page.
+ * 4. Use `FilterPopup` for the filter modal triggered by the filter button.
  */
 export function MemberTable() {
   // Wrap the service call in useCallback to keep a stable reference for useTableData
@@ -126,56 +152,112 @@ export function MemberTable() {
     perPage: 10,
   });
 
+  // Filter popup state
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+
+  const handleApplyFilters = () => {
+    // TODO: integrate filters with useTableData.setParams when API supports filtering
+    setFilterOpen(false);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+  };
+
   // Prevent rendering until client-side hydration is complete
   if (!isMounted) return null;
 
   return (
-    <TableCard>
-      <TableCardHeader
-        title="Backoffice Members"
-        actions={
-          <>
-            <Button
-              variant="primary"
-              href={PATHS.backofficeMembersCreate}
-              className="rounded-xl gap-2 shadow-md shadow-primary-200/60 h-auto py-2.5 px-5"
-            >
-              <Plus size={16} strokeWidth={2.5} />
-              Add New
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-xl h-auto w-auto p-2.5"
-            >
-              <ListFilter size={18} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-xl h-auto w-auto p-2.5"
-            >
-              <Download size={18} />
-            </Button>
-          </>
-        }
-      />
+    <>
+      <TableCard>
+        <TableCardHeader
+          title="Backoffice Members"
+          actions={
+            <>
+              <Button
+                variant="primary"
+                href={PATHS.backofficeMembersCreate}
+                className="rounded-xl gap-2 shadow-md shadow-primary-200/60 h-auto py-2.5 px-5"
+              >
+                <Plus size={16} strokeWidth={2.5} />
+                Add New
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl h-auto w-auto p-2.5"
+                onClick={() => setFilterOpen(true)}
+              >
+                <ListFilter size={18} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl h-auto w-auto p-2.5"
+              >
+                <Download size={18} />
+              </Button>
+            </>
+          }
+        />
 
-      <TableCardContent
-        columns={columns}
-        data={members}
-        keyExtractor={(member) => member.id}
-        isRefetching={isRefetching}
-        isLoading={isInitialLoad}
-        error={error}
-      />
+        <TableCardContent
+          columns={columns}
+          data={members}
+          keyExtractor={(member) => member.id}
+          isRefetching={isRefetching}
+          isLoading={isInitialLoad}
+          error={error}
+        />
 
-      <TableCardPagination
-        pagination={pagination}
-        isInitialLoad={isInitialLoad}
-        error={error}
-        onPageChange={handlePageChange}
-      />
-    </TableCard>
+        <TableCardPagination
+          pagination={pagination}
+          isInitialLoad={isInitialLoad}
+          error={error}
+          onPageChange={handlePageChange}
+        />
+      </TableCard>
+
+      {/* Filter popup modal */}
+      <FilterPopup
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        title="Filter Members"
+        onApply={handleApplyFilters}
+        onReset={handleResetFilters}
+      >
+        <FilterSection label="Role">
+          <FilterChipGroup
+            options={ROLE_OPTIONS}
+            selected={filters.roles}
+            onChange={(roles) => setFilters((prev) => ({ ...prev, roles }))}
+          />
+        </FilterSection>
+
+        <FilterSection label="Verification Status">
+          <FilterChipGroup
+            options={STATUS_OPTIONS}
+            selected={filters.statuses}
+            onChange={(statuses) =>
+              setFilters((prev) => ({ ...prev, statuses }))
+            }
+          />
+        </FilterSection>
+
+        <FilterSection label="Date Joined">
+          <FilterDateRange
+            startDate={filters.dateFrom}
+            endDate={filters.dateTo}
+            onStartDateChange={(dateFrom) =>
+              setFilters((prev) => ({ ...prev, dateFrom }))
+            }
+            onEndDateChange={(dateTo) =>
+              setFilters((prev) => ({ ...prev, dateTo }))
+            }
+          />
+        </FilterSection>
+      </FilterPopup>
+    </>
   );
 }

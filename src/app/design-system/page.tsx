@@ -1,9 +1,11 @@
-// src/app/page.tsx
 import { ColorPalette } from "./components/color-pallete";
 import { TypographyShowcase } from "./components/typography";
 import { ButtonShowcase } from "./components/button-showcase";
 import { FormInputShowcase } from "./components/input-showcase";
+import { BadgeShowcase } from "./components/badge-showcase";
 import { AppTable } from "./components/member-table";
+import { FormCardShowcase } from "./components/form-card-showcase";
+import { FilterPopupShowcase } from "./components/filter-popup-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -35,7 +37,7 @@ export default function DesignSystemPage() {
           <TypographyShowcase />
         </section>
 
-        {/* Section 3: Button */}
+        {/* Section 3: Buttons */}
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-secondary-800">
             3. Buttons
@@ -50,15 +52,39 @@ export default function DesignSystemPage() {
           </h2>
           <FormInputShowcase />
         </section>
-        {/* Section 5: Data Table */}
+
+        {/* Section 5: Badges */}
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-secondary-800">
-            5. Data Tables
+            5. Badges
           </h2>
-          {/* Bungkus dengan div tambahan jika ingin membatasi lebar tabel di showcase */}
+          <BadgeShowcase />
+        </section>
+
+        {/* Section 6: Data Tables */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            6. Data Tables
+          </h2>
           <div className="w-full">
             <AppTable />
           </div>
+        </section>
+
+        {/* Section 7: Form Card */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            7. Form Card
+          </h2>
+          <FormCardShowcase />
+        </section>
+
+        {/* Section 8: Filter Popup */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            8. Filter Popup
+          </h2>
+          <FilterPopupShowcase />
         </section>
       </div>
     </div>

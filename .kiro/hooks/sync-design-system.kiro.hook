@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Sync Design System Page",
+  "description": "When a UI component or hook file is edited, reminds the agent to check if the /design-system page needs a new or updated showcase section to reflect the changes.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/app/components/ui/**/*.tsx",
+      "src/lib/hooks/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A UI component or hook file was just modified. Check if the /design-system page (src/app/design-system/) needs to be updated — either a new showcase component added or an existing one adjusted to reflect the changes. If the change is purely internal with no visual impact, skip the update."
+  }
+}

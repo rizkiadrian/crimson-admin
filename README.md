@@ -80,7 +80,7 @@ import { Text } from "@app/components/ui/Text";
 
 #### FormInput
 
-Form input with label, icons, password toggle, phone number formatting, and error state.
+Form input with label, icons, password toggle, phone number formatting, calendar date picker, and error state.
 
 ```tsx
 import { FormInput } from "@app/components/ui/FormInput";
@@ -88,17 +88,21 @@ import { FormInput } from "@app/components/ui/FormInput";
 <FormInput label="Email" id="email" type="email" />
 <FormInput label="Password" id="password" type="password" />
 <FormInput label="Phone" id="phone" format="phone" />
+<FormInput label="Date of Birth" id="dob" format="date" />
 <FormInput label="Name" id="name" error="Required field" />
 ```
 
-| Prop        | Type                     | Default     | Description                               |
-| ----------- | ------------------------ | ----------- | ----------------------------------------- |
-| `label`     | `string`                 | —           | Input label (required)                    |
-| `id`        | `string`                 | —           | HTML id (required)                        |
-| `leftIcon`  | `ReactNode`              | —           | Icon inside input (left)                  |
-| `rightIcon` | `ReactNode`              | —           | Icon inside input (right)                 |
-| `format`    | `"phone"` \| `"default"` | `"default"` | Auto-formats phone to `+62 XXX-XXXX-XXXX` |
-| `error`     | `string`                 | —           | Error message, triggers error styling     |
+| Prop                | Type                                 | Default          | Description                                                                              |
+| ------------------- | ------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------- |
+| `label`             | `string`                             | —                | Input label (required)                                                                   |
+| `id`                | `string`                             | —                | HTML id (required)                                                                       |
+| `leftIcon`          | `ReactNode`                          | —                | Icon inside input (left). Overridden by calendar icon when `format="date"`               |
+| `rightIcon`         | `ReactNode`                          | —                | Icon inside input (right)                                                                |
+| `format`            | `"phone"` \| `"date"` \| `"default"` | `"default"`      | `phone`: auto-formats as `+62 XXX-XXXX-XXXX`. `date`: calendar popover, emits ISO string |
+| `error`             | `string`                             | —                | Error message, triggers error styling                                                    |
+| `dateDisplayFormat` | `string`                             | `"MMM dd, yyyy"` | Display format for date values (date-fns tokens)                                         |
+| `hideLabel`         | `boolean`                            | `false`          | Hide the label. Useful inside compact layouts                                            |
+| `inputSize`         | `"default"` \| `"sm"`                | `"default"`      | Size variant. `"sm"` reduces padding for compact contexts                                |
 
 #### Table System
 
@@ -178,6 +182,70 @@ import {
 | `badge`       | `string`    | —       | Small badge label on the right (e.g. "Authorized only")  |
 | `actions`     | `ReactNode` | —       | Custom right-side content. Takes precedence over `badge` |
 
+#### FilterPopup System
+
+A composable modal popup for table filters. Includes chip selectors, range sliders, and date range pickers.
+
+```tsx
+import {
+  FilterPopup,
+  FilterSection,
+  FilterChipGroup,
+  FilterRangeSlider,
+  FilterDateRange,
+} from "@app/components/ui/FilterPopup";
+```
+
+| Component           | Description                                                            |
+| ------------------- | ---------------------------------------------------------------------- |
+| `FilterPopup`       | Modal overlay with header, scrollable body, and footer (Apply / Reset) |
+| `FilterSection`     | Labeled section inside the popup with optional right-side content      |
+| `FilterChipGroup`   | Selectable chip/pill buttons, single or multi-select                   |
+| `FilterRangeSlider` | Dual-thumb range slider for numeric filtering                          |
+| `FilterDateRange`   | Two side-by-side date inputs for start/end date filtering              |
+
+**FilterPopup props:**
+
+| Prop      | Type         | Default | Description                                   |
+| --------- | ------------ | ------- | --------------------------------------------- |
+| `open`    | `boolean`    | —       | Whether the popup is visible                  |
+| `onClose` | `() => void` | —       | Called on backdrop click, Escape, or X button |
+| `title`   | `string`     | —       | Header title                                  |
+| `onApply` | `() => void` | —       | Called when "Apply Filters" is clicked        |
+| `onReset` | `() => void` | —       | Called when "Reset Filters" is clicked        |
+
+**FilterChipGroup props:**
+
+| Prop       | Type                           | Default | Description                   |
+| ---------- | ------------------------------ | ------- | ----------------------------- |
+| `options`  | `FilterChipOption[]`           | —       | `{ label, value }` pairs      |
+| `selected` | `string[]`                     | —       | Currently selected values     |
+| `onChange` | `(selected: string[]) => void` | —       | Called when selection changes |
+| `multiple` | `boolean`                      | `true`  | Allow multiple selections     |
+
+**FilterRangeSlider props:**
+
+| Prop          | Type                                    | Default  | Description                            |
+| ------------- | --------------------------------------- | -------- | -------------------------------------- |
+| `min`         | `number`                                | —        | Minimum possible value                 |
+| `max`         | `number`                                | —        | Maximum possible value                 |
+| `step`        | `number`                                | `1`      | Step increment                         |
+| `value`       | `[number, number]`                      | —        | Current range `[low, high]`            |
+| `onChange`    | `(value: [number, number]) => void`     | —        | Called when the range changes          |
+| `formatLabel` | `(value: number) => string`             | `String` | Format min/max labels below the slider |
+| `formatRange` | `(low: number, high: number) => string` | —        | Format the selected range display      |
+
+**FilterDateRange props:**
+
+| Prop                | Type                     | Default        | Description                    |
+| ------------------- | ------------------------ | -------------- | ------------------------------ |
+| `startDate`         | `string`                 | —              | Start date (ISO or empty)      |
+| `endDate`           | `string`                 | —              | End date (ISO or empty)        |
+| `onStartDateChange` | `(date: string) => void` | —              | Called when start date changes |
+| `onEndDateChange`   | `(date: string) => void` | —              | Called when end date changes   |
+| `startPlaceholder`  | `string`                 | `"Start date"` | Placeholder for start input    |
+| `endPlaceholder`    | `string`                 | `"End date"`   | Placeholder for end input      |
+
 #### TableHeader
 
 Standalone header bar with title, optional badge, and action slot.
@@ -187,6 +255,70 @@ import { TableHeader } from "@app/components/ui/TableHeader";
 
 <TableHeader title="Members" badge="12 total" actions={<Button>Add</Button>} />;
 ```
+
+#### FilterPopup System
+
+A composable modal popup for table filters. Includes chip selectors, range sliders, and date range pickers.
+
+```tsx
+import {
+  FilterPopup,
+  FilterSection,
+  FilterChipGroup,
+  FilterRangeSlider,
+  FilterDateRange,
+} from "@app/components/ui/FilterPopup/FilterPopup";
+```
+
+| Component           | Description                                                            |
+| ------------------- | ---------------------------------------------------------------------- |
+| `FilterPopup`       | Modal overlay with header, scrollable body, and footer (Apply / Reset) |
+| `FilterSection`     | Labeled section inside the popup with optional right-side content      |
+| `FilterChipGroup`   | Selectable chip/pill buttons, single or multi-select                   |
+| `FilterRangeSlider` | Dual-thumb range slider for numeric filtering                          |
+| `FilterDateRange`   | Two side-by-side date inputs for start/end date filtering              |
+
+**FilterPopup props:**
+
+| Prop      | Type         | Default | Description                                   |
+| --------- | ------------ | ------- | --------------------------------------------- |
+| `open`    | `boolean`    | —       | Whether the popup is visible                  |
+| `onClose` | `() => void` | —       | Called on backdrop click, Escape, or X button |
+| `title`   | `string`     | —       | Header title                                  |
+| `onApply` | `() => void` | —       | Called when "Apply Filters" is clicked        |
+| `onReset` | `() => void` | —       | Called when "Reset Filters" is clicked        |
+
+**FilterChipGroup props:**
+
+| Prop       | Type                           | Default | Description                   |
+| ---------- | ------------------------------ | ------- | ----------------------------- |
+| `options`  | `FilterChipOption[]`           | —       | `{ label, value }` pairs      |
+| `selected` | `string[]`                     | —       | Currently selected values     |
+| `onChange` | `(selected: string[]) => void` | —       | Called when selection changes |
+| `multiple` | `boolean`                      | `true`  | Allow multiple selections     |
+
+**FilterRangeSlider props:**
+
+| Prop          | Type                                    | Default  | Description                            |
+| ------------- | --------------------------------------- | -------- | -------------------------------------- |
+| `min`         | `number`                                | —        | Minimum possible value                 |
+| `max`         | `number`                                | —        | Maximum possible value                 |
+| `step`        | `number`                                | `1`      | Step increment                         |
+| `value`       | `[number, number]`                      | —        | Current range `[low, high]`            |
+| `onChange`    | `(value: [number, number]) => void`     | —        | Called when the range changes          |
+| `formatLabel` | `(value: number) => string`             | `String` | Format min/max labels below the slider |
+| `formatRange` | `(low: number, high: number) => string` | —        | Format the selected range display      |
+
+**FilterDateRange props:**
+
+| Prop                | Type                     | Default        | Description                    |
+| ------------------- | ------------------------ | -------------- | ------------------------------ |
+| `startDate`         | `string`                 | —              | Start date (ISO or empty)      |
+| `endDate`           | `string`                 | —              | End date (ISO or empty)        |
+| `onStartDateChange` | `(date: string) => void` | —              | Called when start date changes |
+| `onEndDateChange`   | `(date: string) => void` | —              | Called when end date changes   |
+| `startPlaceholder`  | `string`                 | `"Start date"` | Placeholder for start input    |
+| `endPlaceholder`    | `string`                 | `"End date"`   | Placeholder for end input      |
 
 #### GlobalNotification
 
