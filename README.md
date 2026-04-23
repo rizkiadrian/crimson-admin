@@ -314,11 +314,12 @@ const {
 });
 ```
 
-| Option          | Type                                    | Description                       |
-| --------------- | --------------------------------------- | --------------------------------- |
-| `fetcher`       | `(params) => Promise<IApiListResponse>` | Service function to call          |
-| `initialParams` | `Partial<TParams>`                      | Extra params beyond page/per_page |
-| `perPage`       | `number`                                | Items per page (default: 10)      |
+| Option          | Type                                    | Description                                                                                       |
+| --------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `fetcher`       | `(params) => Promise<IApiListResponse>` | Service function to call                                                                          |
+| `initialParams` | `Partial<TParams>`                      | Extra params beyond page/per_page                                                                 |
+| `perPage`       | `number`                                | Items per page (default: 10)                                                                      |
+| `syncUrl`       | `boolean`                               | Sync current page to `?page=N` URL query param. Reads on init, pushes on change (default: `true`) |
 
 | Return             | Type                     | Description                        |
 | ------------------ | ------------------------ | ---------------------------------- |
@@ -490,7 +491,7 @@ export default function CreateProductPage() {
 
 ### Building a New Edit Page
 
-Combine `useDetailData` + `FormCard` + `FormCardLoading`/`FormCardError` for a consistent edit page:
+Combine `useDetailData` + `FormCard` + `FormCardLoading`/`FormCardError` for a consistent edit page with return-page support:
 
 ```tsx
 "use client";
@@ -506,39 +507,73 @@ import {
 import { FormInput } from "@app/components/ui/FormInput";
 import { Button } from "@app/components/ui/Button";
 import { useDetailData } from "@lib/hooks/use-detail-data";
-import { useParams } from "next/navigation";
+import { handleFormError } from "@lib/utils";
+import { useNotificationStore } from "@store/useNotificationStore";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 
 export default function EditProductPage() {
   const { id } = useParams();
+  const searchParams = useSearchParams();
+  const returnPage = searchParams.get("returnPage");
+
+  // Build back URL preserving the page the user came from
+  const backUrl = returnPage ? `/products?page=${returnPage}` : "/products";
+
   const fetcher = useCallback(() => productService.detail(Number(id)), [id]);
   const { data, isLoading, error } = useDetailData<IProduct>({ fetcher });
 
-  // Show loading spinner while fetching
   if (isLoading)
     return (
       <FormCard>
         <FormCardLoading />
       </FormCard>
     );
-
-  // Show error with back button if fetch failed
   if (error || !data)
     return (
       <FormCard>
-        <FormCardError message={error || "Not found"} backHref="/products" />
+        <FormCardError message={error || "Not found"} backHref={backUrl} />
       </FormCard>
     );
 
-  // Render form only after data is available (avoids useEffect for state sync)
-  return <ProductEditForm product={data} />;
+  return <ProductEditForm product={data} backUrl={backUrl} />;
 }
 
-function ProductEditForm({ product }: { product: IProduct }) {
+// Inner form — only mounts after data is available.
+// Initializes state directly from props (no useEffect needed — React 19 compliant).
+function ProductEditForm({
+  product,
+  backUrl,
+}: {
+  product: IProduct;
+  backUrl: string;
+}) {
+  const router = useRouter();
+  const showNotification = useNotificationStore((s) => s.showNotification);
   const [formData, setFormData] = useState(() => ({
     name: product.name,
     sku: product.sku,
   }));
+  const [submitting, setSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSubmitting(true);
+      const resp = await productService.update(product.id, formData);
+      showNotification(resp.message, "success");
+      router.push(backUrl); // Returns to the same page the user came from
+    } catch (err) {
+      handleFormError(err, setFormErrors);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <FormCard>
@@ -553,19 +588,21 @@ function ProductEditForm({ product }: { product: IProduct }) {
             label="Name"
             value={formData.name}
             onChange={handleChange}
+            error={formErrors.name}
           />
           <FormInput
             id="sku"
             label="SKU"
             value={formData.sku}
             onChange={handleChange}
+            error={formErrors.sku}
           />
         </FormCardBody>
         <FormCardFooter>
-          <Button variant="ghost" href="/products">
+          <Button variant="ghost" href={backUrl}>
             Cancel
           </Button>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" isLoading={submitting}>
             <Check size={16} className="mr-2" />
             Save
           </Button>
@@ -576,4 +613,8 @@ function ProductEditForm({ product }: { product: IProduct }) {
 }
 ```
 
-Key pattern: split into a **page component** (handles loading/error) and an **inner form component** (receives data as props, initializes state directly). This avoids `useEffect` for syncing API data into form state — compliant with React 19.
+Key patterns:
+
+- **Page + inner form split**: page component handles loading/error, inner form receives data as props and initializes state directly. No `useEffect` for syncing API data — React 19 compliant.
+- **Return page preservation**: table edit links include `?returnPage=N`, edit page reads it and redirects back to the same page after submit or cancel. Handled via `useSearchParams`.
+- **URL-synced pagination**: `useTableData` reads `?page=N` from the URL and pushes page changes back, so table pages are bookmarkable and support browser back/forward.

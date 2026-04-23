@@ -25,6 +25,7 @@ import {
 import { getNameInitials } from "@lib/utils";
 import { PATHS } from "@config/routing";
 import { useCallback, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 /**
  * Column definitions for the backoffice members table.
@@ -80,29 +81,46 @@ const columns: TableColumn<IBackofficeUser>[] = [
     headerClassName: "text-right",
     render: (member) => (
       <TableCell>
-        <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-auto w-auto p-2 rounded-lg hover:text-primary-600 hover:bg-primary-50 hover:border-transparent"
-            href={PATHS.backofficeMembersEdit(member.id)}
-            aria-label="Edit"
-          >
-            <Pencil size={16} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-auto w-auto p-2 rounded-lg hover:text-error-600 hover:bg-error-50 hover:border-transparent"
-            aria-label="Delete"
-          >
-            <Trash2 size={16} />
-          </Button>
-        </div>
+        <MemberActions memberId={member.id} />
       </TableCell>
     ),
   },
 ];
+
+/**
+ * Action buttons for each table row.
+ * Reads the current page from URL search params and appends it to the edit link
+ * so the edit page can redirect back to the same page after submit.
+ */
+function MemberActions({ memberId }: { memberId: number }) {
+  const searchParams = useSearchParams();
+  const currentPage = searchParams.get("page");
+  const editHref = currentPage
+    ? `${PATHS.backofficeMembersEdit(memberId)}?returnPage=${currentPage}`
+    : PATHS.backofficeMembersEdit(memberId);
+
+  return (
+    <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-auto w-auto p-2 rounded-lg hover:text-primary-600 hover:bg-primary-50 hover:border-transparent"
+        href={editHref}
+        aria-label="Edit"
+      >
+        <Pencil size={16} />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-auto w-auto p-2 rounded-lg hover:text-error-600 hover:bg-error-50 hover:border-transparent"
+        aria-label="Delete"
+      >
+        <Trash2 size={16} />
+      </Button>
+    </div>
+  );
+}
 
 /** Role filter options for the chip group. */
 const ROLE_OPTIONS = [

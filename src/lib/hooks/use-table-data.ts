@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import type {
   IApiError,
   IApiListResponse,
@@ -29,6 +30,12 @@ export interface UseTableDataOptions<TData, TParams extends IPaginationParams> {
   initialParams?: Omit<TParams, "page" | "per_page">;
   /** Number of items per page. Defaults to 10. */
   perPage?: number;
+  /**
+   * Sync the current page to the URL query parameter `?page=N`.
+   * When true, the initial page is read from the URL and page changes
+   * are pushed back to the URL. Defaults to true.
+   */
+  syncUrl?: boolean;
 }
 
 export interface UseTableDataReturn<TData, TParams extends IPaginationParams> {
@@ -56,6 +63,7 @@ export interface UseTableDataReturn<TData, TParams extends IPaginationParams> {
  * Generic hook that encapsulates the full data-fetching lifecycle for table pages.
  *
  * Handles:
+ * - URL sync: reads initial page from `?page=N` and pushes page changes back.
  * - Hydration safety (delays fetch until after mount to avoid SSR mismatch).
  * - Loading states split into initial load vs. refetch so the UI can show
  *   skeletons on first load and a progress bar on subsequent fetches.
@@ -78,25 +86,46 @@ export function useTableData<
   fetcher,
   initialParams,
   perPage = 10,
+  syncUrl = true,
 }: UseTableDataOptions<TData, TParams>): UseTableDataReturn<TData, TParams> {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Read initial page from URL query param, fallback to 1
+  const urlPage = syncUrl
+    ? Math.max(1, Number(searchParams.get("page")) || 1)
+    : 1;
+
   const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<TData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [params, setParamsState] = useState<TParams>({
-    page: 1,
+    page: urlPage,
     per_page: perPage,
     ...initialParams,
   } as TParams);
   const [pagination, setPagination] = useState<IPagination>({
     ...DEFAULT_PAGINATION,
     per_page: perPage,
+    current_page: urlPage,
   });
 
   // Mark component as mounted so we only fetch on the client (avoids hydration mismatch).
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Sync URL → state when the browser back/forward buttons change the query param.
+  useEffect(() => {
+    if (!syncUrl || !isMounted) return;
+    const pageFromUrl = Math.max(1, Number(searchParams.get("page")) || 1);
+    setParamsState((prev) => {
+      if (prev.page === pageFromUrl) return prev;
+      return { ...prev, page: pageFromUrl };
+    });
+  }, [searchParams, syncUrl, isMounted]);
 
   // Fetch data whenever params change. Skipped until mounted.
   useEffect(() => {
@@ -122,15 +151,46 @@ export function useTableData<
     fetchData();
   }, [params, isMounted, fetcher]);
 
-  /** Navigate to a specific page. */
-  const handlePageChange = useCallback((page: number) => {
-    setParamsState((prev) => ({ ...prev, page }));
-  }, []);
+  /**
+   * Navigate to a specific page.
+   * Updates internal state and syncs the page number to the URL query param.
+   */
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setParamsState((prev) => ({ ...prev, page }));
+
+      if (syncUrl) {
+        const newParams = new URLSearchParams(searchParams.toString());
+        if (page <= 1) {
+          newParams.delete("page");
+        } else {
+          newParams.set("page", String(page));
+        }
+        const query = newParams.toString();
+        router.push(`${pathname}${query ? `?${query}` : ""}`, {
+          scroll: false,
+        });
+      }
+    },
+    [syncUrl, searchParams, router, pathname]
+  );
 
   /** Merge new params (e.g. search query, filters) and reset to page 1. */
-  const setParams = useCallback((newParams: Partial<TParams>) => {
-    setParamsState((prev) => ({ ...prev, ...newParams, page: 1 }));
-  }, []);
+  const setParams = useCallback(
+    (newParams: Partial<TParams>) => {
+      setParamsState((prev) => ({ ...prev, ...newParams, page: 1 }));
+
+      if (syncUrl) {
+        const urlParams = new URLSearchParams(searchParams.toString());
+        urlParams.delete("page");
+        const query = urlParams.toString();
+        router.push(`${pathname}${query ? `?${query}` : ""}`, {
+          scroll: false,
+        });
+      }
+    },
+    [syncUrl, searchParams, router, pathname]
+  );
 
   /** Force a re-fetch with the current params by creating a new state reference. */
   const refetch = useCallback(() => {

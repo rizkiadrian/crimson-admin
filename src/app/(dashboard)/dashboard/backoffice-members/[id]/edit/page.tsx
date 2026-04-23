@@ -17,7 +17,9 @@ import {
   IBackofficeUpdatePayload,
 } from "@services/backoffice/backoffice-members";
 import { useDetailData } from "@lib/hooks/use-detail-data";
-import { useParams } from "next/navigation";
+import { handleFormError } from "@lib/utils";
+import { useNotificationStore } from "@store/useNotificationStore";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { PATHS } from "@config/routing";
 import { Check } from "lucide-react";
 
@@ -36,7 +38,14 @@ function toFormData(member: IBackofficeUser): IBackofficeUpdatePayload {
 
 export default function BackofficeMemberEditPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const memberId = Number(params.id);
+  const returnPage = searchParams.get("returnPage");
+
+  /** Build the back URL preserving the page the user came from. */
+  const backUrl = returnPage
+    ? `${PATHS.backofficeMembers}?page=${returnPage}`
+    : PATHS.backofficeMembers;
 
   const fetcher = useCallback(
     () => backofficeMembersService.backofficeMembersDetail(memberId),
@@ -69,7 +78,7 @@ export default function BackofficeMemberEditPage() {
           <FormCardError
             message={error || "Member not found"}
             title="Failed to load member"
-            backHref={PATHS.backofficeMembers}
+            backHref={backUrl}
             backLabel="Back to Members"
           />
         </FormCard>
@@ -77,7 +86,9 @@ export default function BackofficeMemberEditPage() {
     );
   }
 
-  return <MemberEditForm member={member} />;
+  return (
+    <MemberEditForm member={member} memberId={memberId} backUrl={backUrl} />
+  );
 }
 
 /**
@@ -85,11 +96,24 @@ export default function BackofficeMemberEditPage() {
  * This avoids the need for a useEffect to sync API data into form state —
  * the initial state is derived directly from the `member` prop.
  */
-function MemberEditForm({ member }: { member: IBackofficeUser }) {
+function MemberEditForm({
+  member,
+  memberId,
+  backUrl,
+}: {
+  member: IBackofficeUser;
+  memberId: number;
+  backUrl: string;
+}) {
+  const router = useRouter();
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
   const [formData, setFormData] = useState<IBackofficeUpdatePayload>(() =>
     toFormData(member)
   );
-  const [formErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -98,7 +122,27 @@ function MemberEditForm({ member }: { member: IBackofficeUser }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: implement submit logic
+    try {
+      setSubmitting(true);
+      setFormErrors({});
+
+      // Only include password in payload if user entered a new one
+      const payload: IBackofficeUpdatePayload = { ...formData };
+      if (!payload.password) {
+        delete payload.password;
+      }
+
+      const resp = await backofficeMembersService.backofficeMembersUpdate(
+        memberId,
+        payload
+      );
+      showNotification(resp.message, "success");
+      router.push(backUrl);
+    } catch (err: unknown) {
+      handleFormError(err, setFormErrors);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -161,7 +205,7 @@ function MemberEditForm({ member }: { member: IBackofficeUser }) {
             <Button
               type="button"
               variant="ghost"
-              href={PATHS.backofficeMembers}
+              href={backUrl}
               className="text-text-muted hover:text-text-main hover:bg-neutral-100 px-6 font-medium"
             >
               Cancel
@@ -171,6 +215,7 @@ function MemberEditForm({ member }: { member: IBackofficeUser }) {
               type="submit"
               variant="primary"
               className="px-8 shadow-md shadow-primary-200/60"
+              isLoading={submitting}
             >
               <Check size={16} strokeWidth={2.5} className="mr-2" />
               Save Changes
