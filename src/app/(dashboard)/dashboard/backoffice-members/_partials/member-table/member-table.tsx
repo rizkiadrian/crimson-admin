@@ -26,13 +26,14 @@ import { getNameInitials } from "@lib/utils";
 import { PATHS } from "@config/routing";
 import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useConfirmStore } from "@store/useConfirmStore";
+import { useNotificationStore } from "@store/useNotificationStore";
 
 /**
  * Column definitions for the backoffice members table.
- * Each entry describes how a single column header and cell should render.
- * Defined outside the component to avoid re-creation on every render.
+ * Accepts an `onDeleted` callback so the actions column can trigger a refetch after delete.
  */
-const columns: TableColumn<IBackofficeUser>[] = [
+const getColumns = (onDeleted: () => void): TableColumn<IBackofficeUser>[] => [
   {
     key: "name",
     header: "Name",
@@ -81,7 +82,7 @@ const columns: TableColumn<IBackofficeUser>[] = [
     headerClassName: "text-right",
     render: (member) => (
       <TableCell>
-        <MemberActions memberId={member.id} />
+        <MemberActions memberId={member.id} onDeleted={onDeleted} />
       </TableCell>
     ),
   },
@@ -92,12 +93,43 @@ const columns: TableColumn<IBackofficeUser>[] = [
  * Reads the current page from URL search params and appends it to the edit link
  * so the edit page can redirect back to the same page after submit.
  */
-function MemberActions({ memberId }: { memberId: number }) {
+function MemberActions({
+  memberId,
+  onDeleted,
+}: {
+  memberId: number;
+  onDeleted: () => void;
+}) {
   const searchParams = useSearchParams();
+  const showConfirm = useConfirmStore((s) => s.showConfirm);
+  const showNotification = useNotificationStore((s) => s.showNotification);
   const currentPage = searchParams.get("page");
   const editHref = currentPage
     ? `${PATHS.backofficeMembersEdit(memberId)}?returnPage=${currentPage}`
     : PATHS.backofficeMembersEdit(memberId);
+
+  const handleDelete = () => {
+    showConfirm({
+      title: "Hapus Data Backoffice?",
+      description:
+        "Tindakan ini tidak dapat dibatalkan. Seluruh data profil backoffice akan dihapus secara permanen dari sistem.",
+      onConfirm: async () => {
+        try {
+          const resp =
+            await backofficeMembersService.backofficeMembersDelete(memberId);
+          showNotification(resp.message, "success");
+          onDeleted();
+        } catch (err: unknown) {
+          const apiError = err as { message?: string };
+          showNotification(
+            apiError.message || "Gagal menghapus member",
+            "error"
+          );
+          throw err; // Re-throw so ConfirmDialog stops loading
+        }
+      },
+    });
+  };
 
   return (
     <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
@@ -115,6 +147,7 @@ function MemberActions({ memberId }: { memberId: number }) {
         size="icon"
         className="h-auto w-auto p-2 rounded-lg hover:text-error-600 hover:bg-error-50 hover:border-transparent"
         aria-label="Delete"
+        onClick={handleDelete}
       >
         <Trash2 size={16} />
       </Button>
@@ -167,11 +200,15 @@ export function MemberTable() {
     error,
     pagination,
     handlePageChange,
+    refetch,
     isMounted,
   } = useTableData<IBackofficeUser, IBackofficeUserParams>({
     fetcher,
     perPage: 10,
   });
+
+  // Build columns with refetch callback for delete action
+  const columns = getColumns(refetch);
 
   // Filter popup state
   const [filterOpen, setFilterOpen] = useState(false);

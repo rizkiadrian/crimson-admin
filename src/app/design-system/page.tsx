@@ -6,6 +6,7 @@ import { BadgeShowcase } from "./components/badge-showcase";
 import { AppTable } from "./components/member-table";
 import { FormCardShowcase } from "./components/form-card-showcase";
 import { FilterPopupShowcase } from "./components/filter-popup-showcase";
+import { ConfirmDialogShowcase } from "./components/confirm-dialog-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -85,6 +86,14 @@ export default function DesignSystemPage() {
             8. Filter Popup
           </h2>
           <FilterPopupShowcase />
+        </section>
+
+        {/* Section 9: Confirm Dialog */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            9. Confirm Dialog
+          </h2>
+          <ConfirmDialogShowcase />
         </section>
       </main>
     </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SetupClient } from "@app/components/core/SetupClient";
 import { GlobalNotification } from "@app/components/ui/GlobalNotification";
+import { ConfirmDialog } from "@app/components/ui/ConfirmDialog";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -40,6 +41,7 @@ export default function RootLayout({
       <SetupClient />
       <body className="min-h-full flex flex-col">
         <GlobalNotification />
+        <ConfirmDialog />
         {children}
       </body>
     </html>

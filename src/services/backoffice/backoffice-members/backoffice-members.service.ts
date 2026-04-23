@@ -34,4 +34,7 @@ export const backofficeMembersService = {
   ): Promise<IApiResponse<IBackofficeUser>> => {
     return await api.put(`/backoffice/backoffice-members/${id}`, body);
   },
+  backofficeMembersDelete: async (id: number): Promise<IApiResponse<null>> => {
+    return await api.delete(`/backoffice/backoffice-members/${id}`);
+  },
 };

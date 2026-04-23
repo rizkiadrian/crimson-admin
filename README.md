@@ -278,6 +278,35 @@ const { showNotification } = useNotificationStore();
 showNotification("Saved successfully", "success"); // "success" | "error" | "info"
 ```
 
+#### ConfirmDialog
+
+Global confirmation dialog. Mount once in the root layout. Driven by `useConfirmStore`.
+
+```tsx
+import { useConfirmStore } from "@store/useConfirmStore";
+
+const { showConfirm } = useConfirmStore();
+showConfirm({
+  title: "Delete member?",
+  description: "This action cannot be undone.",
+  onConfirm: async () => {
+    await memberService.delete(id);
+  },
+});
+```
+
+**showConfirm options:**
+
+| Option         | Type                          | Default   | Description                                                          |
+| -------------- | ----------------------------- | --------- | -------------------------------------------------------------------- |
+| `title`        | `string`                      | —         | Dialog title (required)                                              |
+| `description`  | `string`                      | —         | Description text below the title (required)                          |
+| `confirmLabel` | `string`                      | `"Hapus"` | Label for the confirm button                                         |
+| `cancelLabel`  | `string`                      | `"Batal"` | Label for the cancel button                                          |
+| `onConfirm`    | `() => void \| Promise<void>` | —         | Callback on confirm. Async supported with loading spinner (required) |
+
+Closes on backdrop click, Escape key, or Cancel button. Confirm button shows a loading spinner during async `onConfirm` execution.
+
 ---
 
 ### Layout Components (`components/layout/`)
