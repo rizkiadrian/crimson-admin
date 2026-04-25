@@ -69,7 +69,44 @@ import { FormInput } from "@app/components/ui/FormInput";
 | `error`             | `string`                             | —                | Error message, triggers error styling                                                    |
 | `dateDisplayFormat` | `string`                             | `"MMM dd, yyyy"` | Display format for date values (date-fns tokens)                                         |
 | `hideLabel`         | `boolean`                            | `false`          | Hide the label. Useful inside compact layouts                                            |
+| `hideLabel`         | `boolean`                            | `false`          | Hide the label. Useful inside compact layouts                                            |
 | `inputSize`         | `"default"` \| `"sm"`                | `"default"`      | Size variant. `"sm"` reduces padding for compact contexts                                |
+
+### FormSelect
+
+Custom dropdown UI fully styled to match `FormInput` — supports click-outside, Escape key closing, smooth entry/exit animations (`.animate-dropdown`), optional left icons, and serves as a drop-in replacement by emitting synthetic `ChangeEvent<HTMLSelectElement>`.
+
+```tsx
+import { FormSelect } from "@app/components/ui/FormSelect";
+import { Tag } from "lucide-react";
+
+<FormSelect
+  id="priority"
+  label="Priority"
+  value={formData.priority}
+  onChange={handleChange}
+  options={[
+    { label: "Low", value: "low" },
+    { label: "Medium", value: "medium" },
+    { label: "High", value: "high" },
+  ]}
+  placeholder="Select priority"
+  error={formErrors.priority}
+  leftIcon={<Tag size={16} />}
+/>;
+```
+
+| Prop          | Type                  | Default     | Description                                      |
+| ------------- | --------------------- | ----------- | ------------------------------------------------ |
+| `label`       | `string`              | —           | Label text (required)                            |
+| `id`          | `string`              | —           | HTML id (required)                               |
+| `value`       | `string`              | —           | Controlled value                                 |
+| `onChange`    | `ChangeEventHandler`  | —           | Synthetic select change handler                  |
+| `options`     | `{ label, value }[]`  | —           | Options to render                                |
+| `placeholder` | `string`              | —           | Renders as default empty state                   |
+| `error`       | `string`              | —           | Error message, triggers error border & message   |
+| `leftIcon`    | `ReactNode`           | —           | Optional icon rendered inside the trigger (left) |
+| `inputSize`   | `"default"` \| `"sm"` | `"default"` | Size variant matching FormInput                  |
 
 ### Table System
 

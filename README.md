@@ -40,19 +40,20 @@ Open [http://localhost:3000](http://localhost:3000).
 | ------------------ | ---- | ------ | ---- | ---- | ------ | ------ | --------- |
 | Dashboard          | —    | —      | —    | —    | —      | —      | ✅        |
 | Backoffice Members | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| Client Members     | ✅   | ✅     | —    | ✅   | ✅     | ✅     |
-| Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     |
-| Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     |
-| Service Categories | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     |
+| Client Members     | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
+| Leads Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅        |
+| Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
+| Service Categories | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── components/ui/       # Button, FormInput, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart
+│   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart
 │   ├── components/layout/   # Sidebar (accordion), Navbar
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useDetailData (single resource)
 ├── services/                # API service layer per domain

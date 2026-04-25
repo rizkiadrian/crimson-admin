@@ -188,11 +188,74 @@ Reports
 
 ---
 
+---
+
+### FM-05: Sales Management — Leads
+
+**Route:** `/dashboard/leads`
+**API Base:** `/api/v1/backoffice/leads`
+**Priority:** P1 — Core
+
+| ID       | Feature                | Status  | Description                                                         |
+| -------- | ---------------------- | ------- | ------------------------------------------------------------------- |
+| FM-05-01 | List with pagination   | ✅ Done | URL-synced `?page=N`, search, skeleton loading, refetch overlay     |
+| FM-05-02 | Create lead            | ✅ Done | FormCard with type, name, source (required), email, phone, priority |
+| FM-05-03 | Edit lead              | ✅ Done | Pre-fills all fields via `useDetailData`, return-page preservation  |
+| FM-05-04 | Delete lead            | ✅ Done | Global confirm dialog with async loading                            |
+| FM-05-05 | Update pipeline status | ✅ Done | Inline status dropdown per row, PATCH to `/status` endpoint         |
+| FM-05-06 | Convert lead           | ✅ Done | Modal dialog with `converted_user_id` input, PATCH to `/convert`    |
+| FM-05-07 | Filter popup           | ✅ Done | Type chips (client/mitra), 7-stage status chips, priority chips     |
+| FM-05-08 | Dashboard integration  | ✅ Done | Total Leads StatCard + Pipeline BarChart on dashboard home          |
+
+**Pipeline Status Flow:**
+
+```
+new → contacted → qualified → proposal → negotiation → won
+                                                      ↘ lost
+```
+
+**Status Badge Colors:**
+
+| Status      | Badge Variant |
+| ----------- | ------------- |
+| new         | neutral       |
+| contacted   | primary       |
+| qualified   | tertiary      |
+| proposal    | warning       |
+| negotiation | primary       |
+| won         | success       |
+| lost        | error         |
+
+**API Endpoints:**
+
+| Method | Endpoint                   | Request Body                                  | Response                              |
+| ------ | -------------------------- | --------------------------------------------- | ------------------------------------- |
+| GET    | `/leads?page=N&per_page=N` | —                                             | Paginated list with `meta.pagination` |
+| POST   | `/leads`                   | `{ type, name, source, email?, phone?, ... }` | Created lead object                   |
+| GET    | `/leads/{id}`              | —                                             | Lead detail                           |
+| PUT    | `/leads/{id}`              | All fields optional                           | Updated lead object                   |
+| DELETE | `/leads/{id}`              | —                                             | `null`                                |
+| PATCH  | `/leads/{id}/status`       | `{ status }`                                  | Updated lead with new status          |
+| PATCH  | `/leads/{id}/convert`      | `{ converted_user_id }`                       | Updated lead (status → won)           |
+
+**Acceptance Criteria:**
+
+- Table shows type, status, and priority as colored badges
+- Status can be updated inline from a dropdown without navigating away
+- Convert action opens a modal dialog, not a new page
+- Phone number field auto-formats using `FormInput format="phone"`
+- All `select` fields (type, priority, status) use `FormSelect` component
+- Dashboard shows total leads count and pipeline distribution chart
+- Sidebar shows "Leads" under "Sales Management" accordion group
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
 | -------- | --------------------------- | -------- | ---------- |
 | FM-03-07 | Mitra verify UI button      | P1       | 🔲 Planned |
+| FM-05    | Leads Management            | P1       | ✅ Done    |
 | FM-06    | Deposit Management          | P2       | 🔲 Planned |
 | FM-07    | Service Category Management | P2       | 🔲 Planned |
 | FM-08    | Dashboard Analytics         | P2       | ✅ Done    |

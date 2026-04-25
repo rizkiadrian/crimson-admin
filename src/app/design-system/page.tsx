@@ -2,6 +2,7 @@ import { ColorPalette } from "./components/color-pallete";
 import { TypographyShowcase } from "./components/typography";
 import { ButtonShowcase } from "./components/button-showcase";
 import { FormInputShowcase } from "./components/input-showcase";
+import { FormSelectShowcase } from "./components/form-select-showcase";
 import { BadgeShowcase } from "./components/badge-showcase";
 import { AppTable } from "./components/member-table";
 import { FormCardShowcase } from "./components/form-card-showcase";
@@ -52,12 +53,15 @@ export default function DesignSystemPage() {
           <ButtonShowcase />
         </section>
 
-        {/* Section 4: Input Fields */}
+        {/* Section 4: Input & Select Fields */}
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-secondary-800">
-            4. Input Fields
+            4. Input & Select Fields
           </h2>
-          <FormInputShowcase />
+          <div className="flex flex-col gap-8">
+            <FormInputShowcase />
+            <FormSelectShowcase />
+          </div>
         </section>
 
         {/* Section 5: Badges */}

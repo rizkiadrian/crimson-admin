@@ -16,6 +16,8 @@ import {
   Plus,
   ChevronDown,
   X,
+  TrendingUp,
+  Users2,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -59,6 +61,17 @@ const NAV_ENTRIES: NavEntry[] = [
         label: "Mitra Members",
         href: PATHS.mitraMembers,
         icon: Wrench,
+      },
+    ],
+  },
+  {
+    label: "Sales Management",
+    icon: TrendingUp,
+    items: [
+      {
+        label: "Leads",
+        href: PATHS.leads,
+        icon: Users2,
       },
     ],
   },

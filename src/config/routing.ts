@@ -21,10 +21,17 @@ const MITRAMEMBERS_SERVICES = {
   mitraMembersEdit: (id: number) => `/dashboard/mitra-members/${id}/edit`,
 };
 
+const LEADS_SERVICES = {
+  leads: "/dashboard/leads",
+  leadsCreate: "/dashboard/leads/create",
+  leadsEdit: (id: number) => `/dashboard/leads/${id}/edit`,
+};
+
 export const PATHS = {
   login: "/login",
   ...DASHBOARD_SERVICES,
   ...BACKOFFICEMEMBERS_SERVICES,
   ...CLIENTMEMBERS_SERVICES,
   ...MITRAMEMBERS_SERVICES,
+  ...LEADS_SERVICES,
 };

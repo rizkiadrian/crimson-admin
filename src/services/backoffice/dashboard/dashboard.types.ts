@@ -21,8 +21,28 @@ export interface IRecentBackoffice {
   updated_at: string;
 }
 
+export interface ILeadsByStatus {
+  new: number;
+  contacted: number;
+  qualified: number;
+  proposal: number;
+  negotiation: number;
+  won: number;
+  lost: number;
+}
+
+export interface ILeadsSummary {
+  total: number;
+  by_type: {
+    client: number;
+    mitra: number;
+  };
+  by_status: ILeadsByStatus;
+}
+
 export interface IDashboardData {
   clients: IClientSummary;
   mitra: IMitraSummary;
+  leads: ILeadsSummary;
   recent_backoffice: IRecentBackoffice[];
 }

@@ -55,6 +55,13 @@ src/
 │   │       │   ├── [id]/page.tsx               # Show/detail page (with document viewer)
 │   │       │   ├── [id]/edit/page.tsx          # Edit form (basic info only)
 │   │       │   └── _partials/mitra-table/      # Table component
+│   │       ├── leads/
+│   │       │   ├── page.tsx                    # List page
+│   │       │   ├── create/page.tsx             # Create form
+│   │       │   ├── [id]/edit/page.tsx          # Edit form
+│   │       │   └── _partials/
+│   │       │       ├── lead-table/             # Table with status/priority badges
+│   │       │       └── convert-lead-modal/     # Modal for converting lead to user
 │   │       └── page.tsx                        # Dashboard home
 │   ├── design-system/          # Live component preview (/design-system)
 │   └── login/
@@ -68,7 +75,9 @@ src/
 │   └── backoffice/
 │       ├── backoffice-members/ # Types + service (list, create, detail, update, delete)
 │       ├── client-members/     # Types + service (list, create, detail, update, delete)
-│       └── mitra-members/      # Types + service (list, detail, update, delete)
+│       ├── mitra-members/      # Types + service (list, detail, update, delete)
+│       ├── leads/              # Types + service (list, create, detail, update, delete, updateStatus, convert)
+│       └── dashboard/          # Types + service (summary incl. leads stats)
 ├── store/
 │   ├── useNotificationStore.ts # Global toast (success/error/info)
 │   └── useConfirmStore.ts      # Global confirm dialog

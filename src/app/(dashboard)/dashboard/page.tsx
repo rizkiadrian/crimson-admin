@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Users, ShieldCheck, Wrench, Wifi, Clock } from "lucide-react";
+import { Users, ShieldCheck, Wrench, Clock, TrendingUp } from "lucide-react";
 import { StatCard } from "@app/components/ui/StatCard";
 import {
   ChartCard,
@@ -44,7 +44,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { clients, mitra, recent_backoffice } = data;
+  const { clients, mitra, leads, recent_backoffice } = data;
 
   const clientPieData = [
     {
@@ -78,6 +78,44 @@ export default function DashboardPage() {
     },
   ];
 
+  const leadsBarData = [
+    {
+      name: "New",
+      value: leads.by_status.new,
+      color: CHART_SETS.mitraStatus[1],
+    },
+    {
+      name: "Contacted",
+      value: leads.by_status.contacted,
+      color: CHART_SETS.verification[0],
+    },
+    {
+      name: "Qualified",
+      value: leads.by_status.qualified,
+      color: CHART_SETS.mitraStatus[0],
+    },
+    {
+      name: "Proposal",
+      value: leads.by_status.proposal,
+      color: CHART_SETS.mitraStatus[3],
+    },
+    {
+      name: "Negotiation",
+      value: leads.by_status.negotiation,
+      color: CHART_SETS.verification[1],
+    },
+    {
+      name: "Won",
+      value: leads.by_status.won,
+      color: CHART_SETS.mitraStatus[0],
+    },
+    {
+      name: "Lost",
+      value: leads.by_status.lost,
+      color: CHART_SETS.mitraStatus[2],
+    },
+  ];
+
   return (
     <div className="space-y-8">
       {/* Stat Cards */}
@@ -104,11 +142,11 @@ export default function DashboardPage() {
           iconVariant="tertiary"
         />
         <StatCard
-          title="Mitra Online"
-          value={mitra.online}
-          description={`${mitra.approved} approved`}
-          icon={Wifi}
-          iconVariant="success"
+          title="Total Leads"
+          value={leads.total}
+          description={`${leads.by_status.won} won · ${leads.by_type.client} client · ${leads.by_type.mitra} mitra`}
+          icon={TrendingUp}
+          iconVariant="primary"
         />
       </div>
 
@@ -126,6 +164,33 @@ export default function DashboardPage() {
           description="Breakdown by verification status"
         >
           <BarChartComponent data={mitraBarData} />
+        </ChartCard>
+
+        <ChartCard
+          title="Leads Pipeline"
+          description="Leads distribution across pipeline stages"
+        >
+          <BarChartComponent data={leadsBarData} />
+        </ChartCard>
+
+        <ChartCard
+          title="Mitra Online Status"
+          description="Currently online vs total approved mitra"
+        >
+          <DonutChart
+            data={[
+              {
+                name: "Online",
+                value: mitra.online,
+                color: CHART_SETS.mitraStatus[0],
+              },
+              {
+                name: "Offline",
+                value: mitra.approved - mitra.online,
+                color: CHART_SETS.mitraStatus[1],
+              },
+            ]}
+          />
         </ChartCard>
       </div>
 

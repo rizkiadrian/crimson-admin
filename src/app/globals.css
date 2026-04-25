@@ -320,3 +320,22 @@
 .filter-range-thumb::-moz-range-thumb:hover {
   box-shadow: 0 0 0 4px var(--color-primary-100);
 }
+
+/* =========================================
+   6. ANIMATIONS
+   ========================================= */
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-dropdown {
+  animation: slideDownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+}

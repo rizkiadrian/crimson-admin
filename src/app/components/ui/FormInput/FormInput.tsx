@@ -300,7 +300,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
           {isDate && calendarOpen && (
             <div
               ref={calendarPopoverRef}
-              className="absolute top-full left-0 mt-2 z-50 bg-bg-card rounded-xl shadow-2xl border border-border-subtle p-3 animate-in fade-in slide-in-from-top-2 duration-150"
+              className="absolute top-full left-0 mt-2 z-50 bg-bg-card rounded-xl shadow-2xl border border-border-subtle p-3 animate-dropdown"
               onClick={(e) => e.stopPropagation()}
             >
               <DayPicker
