@@ -221,6 +221,63 @@ import { SearchInput } from "@app/components/ui/SearchInput";
 
 Features: 400ms debounce, instant on Enter, clear button (X), search icon, URL sync via `useTableData.handleSearch`.
 
+### StatCard
+
+Summary stat card for dashboards. Displays a title, large value, optional description, and an icon.
+
+```tsx
+import { StatCard } from "@app/components/ui/StatCard";
+
+<StatCard
+  title="Total Clients"
+  value={128}
+  description="12 verified"
+  icon={Users}
+  iconVariant="primary"
+/>;
+```
+
+| Prop          | Type                                                                                  | Default     | Description                 |
+| ------------- | ------------------------------------------------------------------------------------- | ----------- | --------------------------- |
+| `title`       | `string`                                                                              | —           | Card title label            |
+| `value`       | `number \| string`                                                                    | —           | Main numeric value          |
+| `description` | `string`                                                                              | —           | Description below the value |
+| `icon`        | `LucideIcon`                                                                          | —           | Icon component              |
+| `iconVariant` | `"primary"` \| `"success"` \| `"warning"` \| `"error"` \| `"tertiary"` \| `"neutral"` | `"primary"` | Icon background color       |
+
+### Chart System
+
+Reusable chart components built on Recharts with design-system-mapped colors.
+
+```tsx
+import {
+  ChartCard,
+  DonutChart,
+  BarChartComponent,
+  CHART_COLORS,
+  CHART_SETS,
+} from "@app/components/ui/Chart";
+```
+
+| Component           | Description                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------- |
+| `ChartCard`         | Card wrapper with title, description, and padding for charts                          |
+| `DonutChart`        | Donut/pie chart with configurable inner/outer radius                                  |
+| `BarChartComponent` | Vertical bar chart with per-bar colors and rounded tops                               |
+| `CHART_COLORS`      | Color constants mapped to design system CSS variables                                 |
+| `CHART_SETS`        | Semantic color arrays for common chart types (verification, mitraStatus, categorical) |
+
+**CHART_COLORS** (mapped to globals.css):
+
+| Key        | Hex       | CSS Variable           |
+| ---------- | --------- | ---------------------- |
+| `primary`  | `#d32f2f` | `--color-primary-500`  |
+| `tertiary` | `#00799c` | `--color-tertiary-600` |
+| `success`  | `#10b981` | `--color-success-500`  |
+| `warning`  | `#f59e0b` | `--color-warning-500`  |
+| `error`    | `#d32f2f` | `--color-primary-500`  |
+| `neutral`  | `#adb5bd` | `--color-neutral-500`  |
+
 ### DetailCard System
 
 A composable card system for detail/show pages with clear visual separation between sections.
@@ -270,6 +327,83 @@ import {
 | --------- | ------------------- | ------- | ------------------------- |
 | `images`  | `DetailImageItem[]` | —       | Array of `{ label, src }` |
 | `columns` | `2 \| 3 \| 4`       | `2`     | Grid columns              |
+
+### StatCard
+
+Summary stat card for dashboards. Displays a title, large numeric value, optional description, and an icon.
+
+```tsx
+import { StatCard } from "@app/components/ui/StatCard";
+import { Users } from "lucide-react";
+
+<StatCard title="Total Users" value={1234} icon={Users} iconVariant="primary" />
+<StatCard title="Revenue" value="Rp 12.5M" description="+8% from last month" icon={TrendingUp} iconVariant="success" />
+```
+
+| Prop          | Type                                                                                  | Default     | Description                   |
+| ------------- | ------------------------------------------------------------------------------------- | ----------- | ----------------------------- |
+| `title`       | `string`                                                                              | —           | Card title label (required)   |
+| `value`       | `number \| string`                                                                    | —           | Main numeric value (required) |
+| `description` | `string`                                                                              | —           | Optional text below value     |
+| `icon`        | `LucideIcon`                                                                          | —           | Icon component from lucide    |
+| `iconVariant` | `"primary"` \| `"success"` \| `"warning"` \| `"error"` \| `"tertiary"` \| `"neutral"` | `"primary"` | Icon background color         |
+| `className`   | `string`                                                                              | —           | Additional className          |
+
+### Chart System
+
+Composable chart components built on Recharts with design-system-aligned colors.
+
+```tsx
+import {
+  ChartCard,
+  DonutChart,
+  BarChartComponent,
+  CHART_COLORS,
+  CHART_SETS,
+} from "@app/components/ui/Chart";
+
+<ChartCard title="User Verification" description="Verified vs unverified">
+  <DonutChart
+    data={[
+      { name: "Verified", value: 80, color: CHART_COLORS.success },
+      { name: "Unverified", value: 20, color: CHART_COLORS.warning },
+    ]}
+  />
+</ChartCard>;
+```
+
+| Component           | Description                                                         |
+| ------------------- | ------------------------------------------------------------------- |
+| `ChartCard`         | Card wrapper with title, optional description, and chart content    |
+| `DonutChart`        | Donut/pie chart with legend and tooltip                             |
+| `BarChartComponent` | Vertical bar chart with per-bar colors, grid, and tooltip           |
+| `CHART_COLORS`      | Color constants mapped to design system CSS variables               |
+| `CHART_SETS`        | Semantic color arrays for common chart types (verification, status) |
+
+**ChartCard props:**
+
+| Prop          | Type        | Default | Description                          |
+| ------------- | ----------- | ------- | ------------------------------------ |
+| `title`       | `string`    | —       | Chart title (required)               |
+| `description` | `string`    | —       | Optional description below the title |
+| `children`    | `ReactNode` | —       | Chart content (Recharts components)  |
+| `className`   | `string`    | —       | Additional className                 |
+
+**DonutChart props:**
+
+| Prop          | Type               | Default | Description                    |
+| ------------- | ------------------ | ------- | ------------------------------ |
+| `data`        | `DonutChartItem[]` | —       | `{ name, value, color }` items |
+| `height`      | `number`           | `260`   | Chart height in px             |
+| `innerRadius` | `number`           | `60`    | Inner radius of the donut      |
+| `outerRadius` | `number`           | `100`   | Outer radius of the donut      |
+
+**BarChartComponent props:**
+
+| Prop     | Type             | Default | Description                    |
+| -------- | ---------------- | ------- | ------------------------------ |
+| `data`   | `BarChartItem[]` | —       | `{ name, value, color }` items |
+| `height` | `number`         | `260`   | Chart height in px             |
 
 ---
 

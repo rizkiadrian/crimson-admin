@@ -31,13 +31,15 @@ Open [http://localhost:3000](http://localhost:3000).
 | HTTP      | Axios                               |
 | Calendar  | react-day-picker 9 + date-fns 4     |
 | Icons     | Lucide React                        |
+| Charts    | Recharts                            |
 | Quality   | ESLint, Prettier, Husky, commitlint |
 
 ## Feature Status
 
-| Module             | List | Create | Show | Edit | Delete | Filter |
-| ------------------ | ---- | ------ | ---- | ---- | ------ | ------ |
-| Backoffice Members | ✅   | ✅     | —    | ✅   | ✅     | ✅     |
+| Module             | List | Create | Show | Edit | Delete | Filter | Dashboard |
+| ------------------ | ---- | ------ | ---- | ---- | ------ | ------ | --------- |
+| Dashboard          | —    | —      | —    | —    | —      | —      | ✅        |
+| Backoffice Members | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
 | Client Members     | ✅   | ✅     | —    | ✅   | ✅     | ✅     |
 | Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     |
 | Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     |
@@ -48,7 +50,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ```
 src/
 ├── app/
-│   ├── components/ui/       # Button, FormInput, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput
+│   ├── components/ui/       # Button, FormInput, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart
 │   ├── components/layout/   # Sidebar (accordion), Navbar
 │   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members)
 │   └── design-system/       # Live component preview

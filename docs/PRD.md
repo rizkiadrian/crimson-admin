@@ -195,6 +195,6 @@ Reports
 | FM-03-07 | Mitra verify UI button      | P1       | 🔲 Planned |
 | FM-06    | Deposit Management          | P2       | 🔲 Planned |
 | FM-07    | Service Category Management | P2       | 🔲 Planned |
-| FM-08    | Dashboard Analytics         | P2       | 🔲 Planned |
+| FM-08    | Dashboard Analytics         | P2       | ✅ Done    |
 | FM-09    | Audit Log                   | P3       | 🔲 Planned |
 | FM-10    | Role-based UI visibility    | P3       | 🔲 Planned |

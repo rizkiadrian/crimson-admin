@@ -32,6 +32,8 @@ src/
 │   │   │   ├── TableHeader/
 │   │   │   ├── FilterPopup/     # Modal filter (chips, range slider, date range)
 │   │   │   ├── DetailCard/      # Card system for detail/show pages (sections, fields, image grid)
+│   │   │   ├── StatCard/        # Summary stat card for dashboards
+│   │   │   ├── SearchInput/     # Debounced search input with clear button
 │   │   │   ├── ConfirmDialog/   # Global confirm modal (Zustand-driven)
 │   │   │   └── GlobalNotification/  # Toast notifications (Zustand-driven)
 │   │   ├── layout/

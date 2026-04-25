@@ -10,6 +10,9 @@ import { ConfirmDialogShowcase } from "./components/confirm-dialog-showcase";
 import { DetailCardShowcase } from "./components/detail-card-showcase";
 import { SearchInputShowcase } from "./components/search-input-showcase";
 import { EmptyStateShowcase } from "./components/empty-state-showcase";
+import { StatCardShowcase } from "./components/stat-card-showcase";
+import { ChartShowcase } from "./components/chart-showcase";
+import { ChartCardShowcase } from "./components/chart-card-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -121,6 +124,30 @@ export default function DesignSystemPage() {
             12. Table Empty State
           </h2>
           <EmptyStateShowcase />
+        </section>
+
+        {/* Section 13: Stat Card */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            13. Stat Card
+          </h2>
+          <StatCardShowcase />
+        </section>
+
+        {/* Section 14: Charts */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            14. Charts
+          </h2>
+          <ChartShowcase />
+        </section>
+
+        {/* Section 14: Chart Card */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            14. Chart Card
+          </h2>
+          <ChartCardShowcase />
         </section>
       </main>
     </div>
