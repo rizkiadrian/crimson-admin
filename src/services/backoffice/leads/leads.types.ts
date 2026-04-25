@@ -84,7 +84,7 @@ export interface ILeadConvertPayload {
 // ─── Query Params ────────────────────────────────────────────────────────────
 
 export interface ILeadParams extends IPaginationParams {
-  type?: LeadType;
-  status?: LeadStatus;
-  priority?: LeadPriority;
+  type?: LeadType | string;
+  status?: LeadStatus | string;
+  priority?: LeadPriority | string;
 }

@@ -360,6 +360,7 @@ export function LeadTable() {
     searchQuery,
     refetch,
     isMounted,
+    setParams,
   } = useTableData<ILead, ILeadParams>({
     fetcher,
     perPage: 10,
@@ -369,8 +370,27 @@ export function LeadTable() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
-  const handleApplyFilters = () => setFilterOpen(false);
-  const handleResetFilters = () => setFilters(DEFAULT_FILTERS);
+  const handleApplyFilters = () => {
+    setParams({
+      type: filters.types.length > 0 ? filters.types.join(",") : undefined,
+      status:
+        filters.statuses.length > 0 ? filters.statuses.join(",") : undefined,
+      priority:
+        filters.priorities.length > 0
+          ? filters.priorities.join(",")
+          : undefined,
+    });
+    setFilterOpen(false);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+    setParams({
+      type: undefined,
+      status: undefined,
+      priority: undefined,
+    });
+  };
 
   if (!isMounted) return null;
 
