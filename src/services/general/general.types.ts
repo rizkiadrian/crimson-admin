@@ -5,6 +5,7 @@ export interface IBaseMeta {
 export interface IPaginationParams {
   page?: number;
   per_page?: number;
+  search?: string;
 }
 
 export interface IPagination {

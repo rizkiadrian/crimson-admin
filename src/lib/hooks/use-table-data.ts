@@ -53,6 +53,10 @@ export interface UseTableDataReturn<TData, TParams extends IPaginationParams> {
   handlePageChange: (page: number) => void;
   /** Merge new filter/search params and reset to page 1. */
   setParams: (params: Partial<TParams>) => void;
+  /** Set search query. Resets to page 1 and syncs to URL. */
+  handleSearch: (query: string) => void;
+  /** Current search query value. */
+  searchQuery: string;
   /** Re-trigger a fetch with the current params. */
   refetch: () => void;
   /** Whether the component has mounted (safe to render client-only content). */
@@ -92,10 +96,11 @@ export function useTableData<
   const router = useRouter();
   const pathname = usePathname();
 
-  // Read initial page from URL query param, fallback to 1
+  // Read initial page and search from URL query params
   const urlPage = syncUrl
     ? Math.max(1, Number(searchParams.get("page")) || 1)
     : 1;
+  const urlSearch = syncUrl ? searchParams.get("search") || "" : "";
 
   const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<TData[]>([]);
@@ -104,6 +109,7 @@ export function useTableData<
   const [params, setParamsState] = useState<TParams>({
     page: urlPage,
     per_page: perPage,
+    search: urlSearch || undefined,
     ...initialParams,
   } as TParams);
   const [pagination, setPagination] = useState<IPagination>({
@@ -192,6 +198,29 @@ export function useTableData<
     [syncUrl, searchParams, router, pathname]
   );
 
+  /**
+   * Set search query. Resets to page 1 and syncs search to URL.
+   */
+  const handleSearch = useCallback(
+    (query: string) => {
+      const search = query.trim() || undefined;
+      setParamsState((prev) => ({ ...prev, search, page: 1 }));
+
+      if (syncUrl) {
+        const urlParams = new URLSearchParams(searchParams.toString());
+        urlParams.delete("page");
+        if (search) {
+          urlParams.set("search", search);
+        } else {
+          urlParams.delete("search");
+        }
+        const qs = urlParams.toString();
+        router.push(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+      }
+    },
+    [syncUrl, searchParams, router, pathname]
+  );
+
   /** Force a re-fetch with the current params by creating a new state reference. */
   const refetch = useCallback(() => {
     setParamsState((prev) => ({ ...prev }));
@@ -209,6 +238,8 @@ export function useTableData<
     pagination,
     handlePageChange,
     setParams,
+    handleSearch,
+    searchQuery: (params.search as string) || "",
     refetch,
     isMounted,
   };

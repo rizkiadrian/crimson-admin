@@ -35,6 +35,7 @@ import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useConfirmStore } from "@store/useConfirmStore";
 import { useNotificationStore } from "@store/useNotificationStore";
+import { SearchInput } from "@app/components/ui/SearchInput";
 
 /**
  * Column definitions for the client members table.
@@ -224,6 +225,8 @@ export function ClientTable() {
     error,
     pagination,
     handlePageChange,
+    handleSearch,
+    searchQuery,
     refetch,
     isMounted,
   } = useTableData<IClientUser, IClientUserParams>({
@@ -253,6 +256,11 @@ export function ClientTable() {
           title="Client Members"
           actions={
             <>
+              <SearchInput
+                value={searchQuery}
+                onSearch={handleSearch}
+                placeholder="Search clients..."
+              />
               <Button
                 variant="primary"
                 href={PATHS.clientMembersCreate}

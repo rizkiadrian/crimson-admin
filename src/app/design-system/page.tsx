@@ -8,6 +8,7 @@ import { FormCardShowcase } from "./components/form-card-showcase";
 import { FilterPopupShowcase } from "./components/filter-popup-showcase";
 import { ConfirmDialogShowcase } from "./components/confirm-dialog-showcase";
 import { DetailCardShowcase } from "./components/detail-card-showcase";
+import { SearchInputShowcase } from "./components/search-input-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -103,6 +104,22 @@ export default function DesignSystemPage() {
             10. Detail Card
           </h2>
           <DetailCardShowcase />
+        </section>
+
+        {/* Section 11: Search Input */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            11. Search Input
+          </h2>
+          <SearchInputShowcase />
+        </section>
+
+        {/* Section 11: Search Input */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            11. Search Input
+          </h2>
+          <SearchInputShowcase />
         </section>
       </main>
     </div>

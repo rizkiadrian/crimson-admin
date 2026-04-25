@@ -140,6 +140,28 @@ Composable modal popup for table filters.
 | `FilterRangeSlider` | Dual-thumb range slider for numeric filtering                |
 | `FilterDateRange`   | Two side-by-side date inputs using FormInput `format="date"` |
 
+### SearchInput
+
+Debounced search input with clear button, designed for table toolbar use.
+
+```tsx
+import { SearchInput } from "@app/components/ui/SearchInput";
+
+<SearchInput
+  value={searchQuery}
+  onSearch={(q) => setParams({ search: q })}
+  placeholder="Search members..."
+/>;
+```
+
+| Prop          | Type                      | Default       | Description                                  |
+| ------------- | ------------------------- | ------------- | -------------------------------------------- |
+| `value`       | `string`                  | —             | Current search value (controlled)            |
+| `onSearch`    | `(value: string) => void` | —             | Called after debounce or Enter key           |
+| `placeholder` | `string`                  | `"Search..."` | Placeholder text                             |
+| `debounceMs`  | `number`                  | `400`         | Debounce delay in ms. Set to 0 to disable    |
+| `className`   | `string`                  | —             | Additional className for the outer container |
+
 ### TableHeader
 
 Standalone header bar with title, optional badge, and action slot.
@@ -175,6 +197,29 @@ showConfirm({
 | `confirmLabel` | `string`                      | `"Hapus"` | Confirm button label                |
 | `cancelLabel`  | `string`                      | `"Batal"` | Cancel button label                 |
 | `onConfirm`    | `() => void \| Promise<void>` | —         | Async callback with loading spinner |
+
+### SearchInput
+
+Debounced search input with clear button. Designed for table header integration.
+
+```tsx
+import { SearchInput } from "@app/components/ui/SearchInput";
+
+<SearchInput
+  value={searchQuery}
+  onSearch={handleSearch}
+  placeholder="Search members..."
+/>;
+```
+
+| Prop          | Type                      | Default       | Description                               |
+| ------------- | ------------------------- | ------------- | ----------------------------------------- |
+| `value`       | `string`                  | —             | Current search value (controlled)         |
+| `onSearch`    | `(value: string) => void` | —             | Called after debounce or Enter key        |
+| `placeholder` | `string`                  | `"Search..."` | Placeholder text                          |
+| `debounceMs`  | `number`                  | `400`         | Debounce delay in ms. Set to 0 to disable |
+
+Features: 400ms debounce, instant on Enter, clear button (X), search icon, URL sync via `useTableData.handleSearch`.
 
 ### DetailCard System
 
@@ -259,6 +304,8 @@ Paginated list fetching with URL sync, loading states, and pagination management
 | `pagination`       | `IPagination`      | Pagination metadata                  |
 | `handlePageChange` | `(page) => void`   | Navigate to page                     |
 | `setParams`        | `(params) => void` | Update filters (resets to page 1)    |
+| `handleSearch`     | `(query) => void`  | Set search query (resets to page 1)  |
+| `searchQuery`      | `string`           | Current search query value           |
 | `refetch`          | `() => void`       | Re-fetch current params              |
 | `isMounted`        | `boolean`          | Hydration-safe flag                  |
 

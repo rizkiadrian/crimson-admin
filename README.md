@@ -48,7 +48,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ```
 src/
 ├── app/
-│   ├── components/ui/       # Button, FormInput, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog
+│   ├── components/ui/       # Button, FormInput, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput
 │   ├── components/layout/   # Sidebar (accordion), Navbar
 │   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members)
 │   └── design-system/       # Live component preview

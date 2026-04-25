@@ -28,6 +28,7 @@ import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useConfirmStore } from "@store/useConfirmStore";
 import { useNotificationStore } from "@store/useNotificationStore";
+import { SearchInput } from "@app/components/ui/SearchInput";
 
 /**
  * Column definitions for the backoffice members table.
@@ -200,6 +201,8 @@ export function MemberTable() {
     error,
     pagination,
     handlePageChange,
+    handleSearch,
+    searchQuery,
     refetch,
     isMounted,
   } = useTableData<IBackofficeUser, IBackofficeUserParams>({
@@ -233,6 +236,11 @@ export function MemberTable() {
           title="Backoffice Members"
           actions={
             <>
+              <SearchInput
+                value={searchQuery}
+                onSearch={handleSearch}
+                placeholder="Search members..."
+              />
               <Button
                 variant="primary"
                 href={PATHS.backofficeMembersCreate}

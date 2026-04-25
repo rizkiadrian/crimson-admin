@@ -28,6 +28,7 @@ import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useConfirmStore } from "@store/useConfirmStore";
 import { useNotificationStore } from "@store/useNotificationStore";
+import { SearchInput } from "@app/components/ui/SearchInput";
 
 /** Map verification_status to badge variant. */
 const STATUS_VARIANT: Record<
@@ -194,6 +195,8 @@ export function MitraTable() {
     error,
     pagination,
     handlePageChange,
+    handleSearch,
+    searchQuery,
     refetch,
     isMounted,
   } = useTableData<IMitraUser, IMitraUserParams>({
@@ -215,6 +218,11 @@ export function MitraTable() {
           title="Mitra Members"
           actions={
             <>
+              <SearchInput
+                value={searchQuery}
+                onSearch={handleSearch}
+                placeholder="Search mitra..."
+              />
               <Button
                 variant="ghost"
                 size="icon"
