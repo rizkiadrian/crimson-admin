@@ -90,12 +90,12 @@ A composable table system split into low-level primitives and high-level card co
 
 **High-level card components:**
 
-| Component             | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `TableCard`           | Card wrapper with rounded corners, shadow, and border                   |
-| `TableCardHeader`     | Title + action buttons header bar                                       |
-| `TableCardContent`    | Declarative table: pass `columns` + `data`, get skeleton/error for free |
-| `TableCardPagination` | Conditional pagination, auto-hides when not needed                      |
+| Component             | Description                                                                   |
+| --------------------- | ----------------------------------------------------------------------------- |
+| `TableCard`           | Card wrapper with rounded corners, shadow, and border                         |
+| `TableCardHeader`     | Title + action buttons header bar                                             |
+| `TableCardContent`    | Declarative table: pass `columns` + `data`, get skeleton/error/empty for free |
+| `TableCardPagination` | Conditional pagination, auto-hides when not needed                            |
 
 ### FormCard System
 

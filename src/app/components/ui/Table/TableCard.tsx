@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { SearchX } from "lucide-react";
 import { cn } from "@lib/utils";
 import {
   Table,
@@ -80,6 +81,10 @@ export interface TableCardContentProps<T> {
   isLoading?: boolean;
   error?: string | null;
   skeletonRowCount?: number;
+  /** Title shown when data is empty. Defaults to "No data found". */
+  emptyTitle?: string;
+  /** Message shown when data is empty. Defaults to a generic message. */
+  emptyMessage?: string;
 }
 
 /**
@@ -101,7 +106,12 @@ export function TableCardContent<T>({
   isLoading,
   error,
   skeletonRowCount = 5,
+  emptyTitle = "No data found",
+  emptyMessage = "Try adjusting your search or filter to find what you're looking for.",
 }: TableCardContentProps<T>) {
+  // Show empty state when data is loaded but empty
+  const isEmpty = !isLoading && !error && data.length === 0;
+
   return (
     <Table isRefetching={isRefetching}>
       <TableHead>
@@ -120,15 +130,33 @@ export function TableCardContent<T>({
         columnCount={columns.length}
         rowCount={skeletonRowCount}
       >
-        {data.map((item, index) => (
-          <TableRow key={keyExtractor(item)}>
-            {columns.map((col) => (
-              <React.Fragment key={col.key}>
-                {col.render(item, index)}
-              </React.Fragment>
-            ))}
+        {isEmpty ? (
+          <TableRow className="hover:bg-transparent">
+            <td colSpan={columns.length} className="p-0">
+              <div className="flex flex-col items-center justify-center min-h-75 w-full text-center py-12">
+                <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400 mb-3">
+                  <SearchX size={24} strokeWidth={1.5} />
+                </div>
+                <p className="text-[15px] font-bold text-text-main mb-1">
+                  {emptyTitle}
+                </p>
+                <p className="text-sm text-text-muted max-w-xs">
+                  {emptyMessage}
+                </p>
+              </div>
+            </td>
           </TableRow>
-        ))}
+        ) : (
+          data.map((item, index) => (
+            <TableRow key={keyExtractor(item)}>
+              {columns.map((col) => (
+                <React.Fragment key={col.key}>
+                  {col.render(item, index)}
+                </React.Fragment>
+              ))}
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );

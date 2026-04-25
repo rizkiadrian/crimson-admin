@@ -9,6 +9,7 @@ import { FilterPopupShowcase } from "./components/filter-popup-showcase";
 import { ConfirmDialogShowcase } from "./components/confirm-dialog-showcase";
 import { DetailCardShowcase } from "./components/detail-card-showcase";
 import { SearchInputShowcase } from "./components/search-input-showcase";
+import { EmptyStateShowcase } from "./components/empty-state-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -114,12 +115,12 @@ export default function DesignSystemPage() {
           <SearchInputShowcase />
         </section>
 
-        {/* Section 11: Search Input */}
+        {/* Section 12: Table Empty State */}
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-secondary-800">
-            11. Search Input
+            12. Table Empty State
           </h2>
-          <SearchInputShowcase />
+          <EmptyStateShowcase />
         </section>
       </main>
     </div>
