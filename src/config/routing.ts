@@ -27,6 +27,12 @@ const LEADS_SERVICES = {
   leadsEdit: (id: number) => `/dashboard/leads/${id}/edit`,
 };
 
+const SALESMEMBERS_SERVICES = {
+  salesMembers: "/dashboard/sales-members",
+  salesMembersCreate: "/dashboard/sales-members/create",
+  salesMembersEdit: (id: number) => `/dashboard/sales-members/${id}/edit`,
+};
+
 export const PATHS = {
   login: "/login",
   ...DASHBOARD_SERVICES,
@@ -34,4 +40,5 @@ export const PATHS = {
   ...CLIENTMEMBERS_SERVICES,
   ...MITRAMEMBERS_SERVICES,
   ...LEADS_SERVICES,
+  ...SALESMEMBERS_SERVICES,
 };

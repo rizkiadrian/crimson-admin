@@ -144,6 +144,26 @@ const getColumns = (onRefetch: () => void): TableColumn<ILead>[] => [
     ),
   },
   {
+    key: "assigned_sales",
+    header: "Sales",
+    render: (lead) => (
+      <TableCell>
+        {lead.assigned_sales ? (
+          <div>
+            <p className="text-[13px] font-semibold text-text-main">
+              {lead.assigned_sales.name}
+            </p>
+            <p className="text-[11px] text-text-muted">
+              {lead.assigned_sales.sales_id}
+            </p>
+          </div>
+        ) : (
+          <p className="text-[13px] text-text-muted italic">Unassigned</p>
+        )}
+      </TableCell>
+    ),
+  },
+  {
     key: "actions",
     header: "Actions",
     headerClassName: "text-right",

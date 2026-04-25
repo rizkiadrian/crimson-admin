@@ -62,6 +62,11 @@ src/
 │   │       │   └── _partials/
 │   │       │       ├── lead-table/             # Table with status/priority badges
 │   │       │       └── convert-lead-modal/     # Modal for converting lead to user
+│   │       ├── sales-members/
+│   │       │   ├── page.tsx                    # List page
+│   │       │   ├── create/page.tsx             # Create form
+│   │       │   ├── [id]/edit/page.tsx          # Edit form
+│   │       │   └── _partials/sales-table/      # Table component
 │   │       └── page.tsx                        # Dashboard home
 │   ├── design-system/          # Live component preview (/design-system)
 │   └── login/
@@ -77,6 +82,7 @@ src/
 │       ├── client-members/     # Types + service (list, create, detail, update, delete)
 │       ├── mitra-members/      # Types + service (list, detail, update, delete)
 │       ├── leads/              # Types + service (list, create, detail, update, delete, updateStatus, convert)
+│       ├── sales-members/      # Types + service (list, create, detail, update, delete, list-dropdown)
 │       └── dashboard/          # Types + service (summary incl. leads stats)
 ├── store/
 │   ├── useNotificationStore.ts # Global toast (success/error/info)

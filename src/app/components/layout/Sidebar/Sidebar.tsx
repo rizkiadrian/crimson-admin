@@ -18,6 +18,7 @@ import {
   X,
   TrendingUp,
   Users2,
+  UserSquare2,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -72,6 +73,11 @@ const NAV_ENTRIES: NavEntry[] = [
         label: "Leads",
         href: PATHS.leads,
         icon: Users2,
+      },
+      {
+        label: "Sales Members",
+        href: PATHS.salesMembers,
+        icon: UserSquare2,
       },
     ],
   },

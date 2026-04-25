@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormInput } from "@app/components/ui/FormInput";
 import { FormSelect } from "@app/components/ui/FormSelect";
 import { Button } from "@app/components/ui/Button";
@@ -17,6 +17,10 @@ import {
   ILead,
   ILeadUpdatePayload,
 } from "@services/backoffice/leads";
+import {
+  salesMembersService,
+  ISalesListItem,
+} from "@services/backoffice/sales-members";
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
@@ -61,6 +65,7 @@ function toFormData(lead: ILead): ILeadUpdatePayload {
     priority: lead.priority,
     status: lead.status,
     notes: lead.notes ?? "",
+    assigned_sales_id: lead.assigned_sales_id ?? null,
   };
 }
 
@@ -133,6 +138,13 @@ function LeadEditForm({
   );
   const [submitting, setSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [salesList, setSalesList] = useState<ISalesListItem[]>([]);
+
+  useEffect(() => {
+    salesMembersService.salesMembersList().then((res) => {
+      setSalesList(res.data ?? []);
+    });
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -155,6 +167,7 @@ function LeadEditForm({
         phone: formData.phone || undefined,
         address: formData.address || undefined,
         notes: formData.notes || undefined,
+        assigned_sales_id: formData.assigned_sales_id || null,
       };
 
       const resp = await leadsService.leadsUpdate(leadId, payload);
@@ -243,6 +256,31 @@ function LeadEditForm({
                 onChange={handleChange}
                 options={STATUS_OPTIONS}
                 error={formErrors.status}
+              />
+
+              {/* Assign to Sales */}
+              <FormSelect
+                id="assigned_sales_id"
+                label="Assign to Sales"
+                value={
+                  formData.assigned_sales_id
+                    ? String(formData.assigned_sales_id)
+                    : ""
+                }
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    assigned_sales_id: e.target.value
+                      ? Number(e.target.value)
+                      : null,
+                  }))
+                }
+                options={salesList.map((s) => ({
+                  label: `${s.name} (${s.sales_id})`,
+                  value: String(s.id),
+                }))}
+                placeholder="Unassigned"
+                error={formErrors.assigned_sales_id}
               />
 
               <FormInput

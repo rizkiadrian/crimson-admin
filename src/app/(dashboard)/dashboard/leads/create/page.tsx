@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormInput } from "@app/components/ui/FormInput";
 import { FormSelect } from "@app/components/ui/FormSelect";
 import { Button } from "@app/components/ui/Button";
@@ -11,6 +11,10 @@ import {
   FormCardFooter,
 } from "@app/components/ui/FormCard";
 import { leadsService, ILeadCreatePayload } from "@services/backoffice/leads";
+import {
+  salesMembersService,
+  ISalesListItem,
+} from "@services/backoffice/sales-members";
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { useRouter } from "next/navigation";
@@ -49,6 +53,7 @@ const INITIAL_FORM: ILeadCreatePayload = {
   priority: "medium",
   status: "new",
   notes: "",
+  assigned_sales_id: null,
 };
 
 export default function LeadCreatePage() {
@@ -57,6 +62,13 @@ export default function LeadCreatePage() {
   const [formData, setFormData] = useState<ILeadCreatePayload>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [salesList, setSalesList] = useState<ISalesListItem[]>([]);
+
+  useEffect(() => {
+    salesMembersService.salesMembersList().then((res) => {
+      setSalesList(res.data ?? []);
+    });
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -80,6 +92,7 @@ export default function LeadCreatePage() {
         phone: formData.phone || undefined,
         address: formData.address || undefined,
         notes: formData.notes || undefined,
+        assigned_sales_id: formData.assigned_sales_id || null,
       };
 
       const resp = await leadsService.leadsCreate(payload);
@@ -175,6 +188,31 @@ export default function LeadCreatePage() {
                 onChange={handleChange}
                 options={STATUS_OPTIONS}
                 error={formErrors.status}
+              />
+
+              {/* Assign to Sales */}
+              <FormSelect
+                id="assigned_sales_id"
+                label="Assign to Sales"
+                value={
+                  formData.assigned_sales_id
+                    ? String(formData.assigned_sales_id)
+                    : ""
+                }
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    assigned_sales_id: e.target.value
+                      ? Number(e.target.value)
+                      : null,
+                  }))
+                }
+                options={salesList.map((s) => ({
+                  label: `${s.name} (${s.sales_id})`,
+                  value: String(s.id),
+                }))}
+                placeholder="Unassigned"
+                error={formErrors.assigned_sales_id}
               />
 
               {/* Address */}

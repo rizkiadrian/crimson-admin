@@ -34,6 +34,8 @@ export interface ILead {
   status: LeadStatus;
   notes: string | null;
   assigned_to: number | null;
+  assigned_sales_id: number | null;
+  assigned_sales: { id: number; name: string; sales_id: string } | null;
   converted_user_id: number | null;
   service_category_id: number | null;
   contacted_at: string | null;
@@ -56,6 +58,7 @@ export interface ILeadCreatePayload {
   status?: LeadStatus;
   notes?: string;
   assigned_to?: number | null;
+  assigned_sales_id?: number | null;
   service_category_id?: number | null;
 }
 
@@ -70,6 +73,7 @@ export interface ILeadUpdatePayload {
   status?: LeadStatus;
   notes?: string;
   assigned_to?: number | null;
+  assigned_sales_id?: number | null;
   service_category_id?: number | null;
 }
 

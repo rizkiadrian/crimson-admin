@@ -247,6 +247,41 @@ new → contacted → qualified → proposal → negotiation → won
 - All `select` fields (type, priority, status) use `FormSelect` component
 - Dashboard shows total leads count and pipeline distribution chart
 - Sidebar shows "Leads" under "Sales Management" accordion group
+- Can optionally assign a Lead to a specific Sales member
+
+---
+
+### FM-06: Sales Management — Sales Members
+
+**Route:** `/dashboard/sales-members`
+**API Base:** `/api/v1/backoffice/sales-members`
+**Priority:** P1 — Core
+
+| ID       | Feature                | Status  | Description                                                         |
+| -------- | ---------------------- | ------- | ------------------------------------------------------------------- |
+| FM-06-01 | List with pagination   | ✅ Done | URL-synced `?page=N`, search, skeleton loading, refetch overlay     |
+| FM-06-02 | Create sales member    | ✅ Done | FormCard with name, email, phone, password                          |
+| FM-06-03 | Edit sales member      | ✅ Done | Pre-fills all fields via `useDetailData`, return-page preservation  |
+| FM-06-04 | Delete sales member    | ✅ Done | Global confirm dialog with async loading                            |
+| FM-06-05 | Auto-generated ID      | ✅ Done | Backend automatically assigns `SLS-XXXX` ID on creation             |
+| FM-06-06 | Dropdown list endpoint | ✅ Done | `/sales-members-list` lightweight endpoint for Lead form assignment |
+
+**API Endpoints:**
+
+| Method | Endpoint                           | Request Body                           | Response                              |
+| ------ | ---------------------------------- | -------------------------------------- | ------------------------------------- |
+| GET    | `/sales-members?page=N&per_page=N` | —                                      | Paginated list with `meta.pagination` |
+| POST   | `/sales-members`                   | `{ name, email, phone, password }`     | Created sales user object             |
+| GET    | `/sales-members/{id}`              | —                                      | Sales user detail                     |
+| PUT    | `/sales-members/{id}`              | `{ name?, email?, phone?, password? }` | Updated sales user object             |
+| DELETE | `/sales-members/{id}`              | —                                      | `null` (soft delete)                  |
+| GET    | `/sales-members-list`              | —                                      | Lightweight array of sales users      |
+
+**Acceptance Criteria:**
+
+- Sales member list displays auto-generated `sales_id` (e.g., SLS-0001)
+- Edit page shows `sales_id` as a badge in the header
+- Leads module integrated to allow assignment to sales members
 
 ---
 
@@ -256,8 +291,9 @@ new → contacted → qualified → proposal → negotiation → won
 | -------- | --------------------------- | -------- | ---------- |
 | FM-03-07 | Mitra verify UI button      | P1       | 🔲 Planned |
 | FM-05    | Leads Management            | P1       | ✅ Done    |
-| FM-06    | Deposit Management          | P2       | 🔲 Planned |
-| FM-07    | Service Category Management | P2       | 🔲 Planned |
-| FM-08    | Dashboard Analytics         | P2       | ✅ Done    |
-| FM-09    | Audit Log                   | P3       | 🔲 Planned |
-| FM-10    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-06    | Sales Members Management    | P1       | ✅ Done    |
+| FM-07    | Deposit Management          | P2       | 🔲 Planned |
+| FM-08    | Service Category Management | P2       | 🔲 Planned |
+| FM-09    | Dashboard Analytics         | P2       | ✅ Done    |
+| FM-10    | Audit Log                   | P3       | 🔲 Planned |
+| FM-11    | Role-based UI visibility    | P3       | 🔲 Planned |

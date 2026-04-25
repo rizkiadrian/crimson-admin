@@ -43,6 +43,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Client Members     | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
 | Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
 | Leads Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅        |
+| Sales Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
 | Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 | Service Categories | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 
@@ -53,7 +54,7 @@ src/
 ├── app/
 │   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart
 │   ├── components/layout/   # Sidebar (accordion), Navbar
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useDetailData (single resource)
 ├── services/                # API service layer per domain
