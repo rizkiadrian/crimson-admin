@@ -90,7 +90,7 @@ function SidebarGroup({
         className={cn(
           "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer",
           hasActiveChild
-            ? "text-[#CC2B2B]"
+            ? "text-primary-600"
             : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
         )}
       >
@@ -124,7 +124,7 @@ function SidebarGroup({
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition-all",
                   isActive
-                    ? "bg-red-50 text-[#CC2B2B]"
+                    ? "bg-primary-50 text-primary-600"
                     : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
                 )}
               >
@@ -160,7 +160,7 @@ export function Sidebar() {
         )}
       >
         <div className="p-6 md:p-8 flex items-center justify-between">
-          <h1 className="text-2xl font-black text-[#CC2B2B] tracking-tighter">
+          <h1 className="text-2xl font-black text-primary-600 tracking-tighter">
             Crimson Admin
           </h1>
           <button
@@ -172,7 +172,7 @@ export function Sidebar() {
         </div>
 
         <div className="px-6 mb-8">
-          <button className="w-full bg-[#CC2B2B] hover:bg-red-800 text-white rounded-xl py-3.5 px-4 flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-100 font-bold">
+          <button className="w-full bg-primary-600 hover:bg-primary-700 text-white rounded-xl py-3.5 px-4 flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary-100 font-bold">
             <Plus size={20} strokeWidth={3} />
             <span>New Report</span>
           </button>
@@ -198,7 +198,7 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all",
                   isActive
-                    ? "bg-red-50 text-[#CC2B2B]"
+                    ? "bg-primary-50 text-primary-600"
                     : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
                 )}
               >
@@ -230,7 +230,7 @@ export function Sidebar() {
 
         <div className="p-6 border-t border-neutral-100">
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer group">
-            <div className="w-11 h-11 rounded-xl bg-neutral-900 overflow-hidden ring-2 ring-neutral-100 group-hover:ring-red-100 transition-all">
+            <div className="w-11 h-11 rounded-xl bg-neutral-900 overflow-hidden ring-2 ring-neutral-100 group-hover:ring-primary-100 transition-all">
               {/* Avatar placeholder */}
             </div>
             <div className="flex-1 min-w-0">

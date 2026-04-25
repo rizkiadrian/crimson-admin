@@ -23,7 +23,7 @@ export function Navbar() {
           <input
             type="text"
             placeholder="Search executive database..."
-            className="w-full bg-neutral-100 border-none rounded-full py-2.5 pl-11 pr-4 text-sm font-medium text-neutral-900 placeholder:text-neutral-600 outline-none focus:ring-2 ring-red-200 transition-all"
+            className="w-full bg-neutral-100 border-none rounded-full py-2.5 pl-11 pr-4 text-sm font-medium text-neutral-900 placeholder:text-neutral-600 outline-none focus:ring-2 ring-primary-200 transition-all"
           />
         </div>
       </div>
@@ -31,7 +31,7 @@ export function Navbar() {
       <nav className="hidden lg:flex items-center gap-10 text-[15px] font-bold">
         <a
           href="#"
-          className="text-neutral-900 border-b-2 border-[#CC2B2B] pb-1 transition-all"
+          className="text-neutral-900 border-b-2 border-primary-600 pb-1 transition-all"
         >
           Overview
         </a>
@@ -57,7 +57,7 @@ export function Navbar() {
               strokeWidth={2}
               className="md:w-[22px] md:h-[22px]"
             />
-            <span className="absolute top-2 right-2 w-2 h-2 md:top-2.5 md:right-2.5 md:w-2.5 md:h-2.5 bg-[#CC2B2B] border-2 border-white rounded-full"></span>
+            <span className="absolute top-2 right-2 w-2 h-2 md:top-2.5 md:right-2.5 md:w-2.5 md:h-2.5 bg-primary-600 border-2 border-white rounded-full"></span>
           </button>
           <button className="p-2 text-neutral-800 hover:bg-neutral-100 rounded-full transition-all hidden sm:block">
             <Mail
@@ -74,7 +74,7 @@ export function Navbar() {
             />
           </button>
         </div>
-        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-neutral-900 overflow-hidden ring-2 ring-neutral-100 shadow-sm hover:ring-red-200 cursor-pointer transition-all shrink-0">
+        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-neutral-900 overflow-hidden ring-2 ring-neutral-100 shadow-sm hover:ring-primary-200 cursor-pointer transition-all shrink-0">
           {/* <img src="https://ui-avatars.com/api/?name=Admin&bg=222&color=fff" alt="Profile" /> */}
         </div>
       </div>
