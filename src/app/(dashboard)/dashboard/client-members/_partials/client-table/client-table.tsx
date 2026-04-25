@@ -1,5 +1,12 @@
 "use client";
-import { Plus, ListFilter, Download, Pencil, Trash2 } from "lucide-react";
+import {
+  Plus,
+  ListFilter,
+  Download,
+  Pencil,
+  Trash2,
+  ShieldCheck,
+} from "lucide-react";
 import {
   TableCard,
   TableCardHeader,
@@ -77,7 +84,11 @@ const getColumns = (onDeleted: () => void): TableColumn<IClientUser>[] => [
     headerClassName: "text-right",
     render: (member) => (
       <TableCell>
-        <ClientActions memberId={member.id} onDeleted={onDeleted} />
+        <ClientActions
+          memberId={member.id}
+          isVerified={member.is_verified}
+          onDeleted={onDeleted}
+        />
       </TableCell>
     ),
   },
@@ -88,9 +99,11 @@ const getColumns = (onDeleted: () => void): TableColumn<IClientUser>[] => [
  */
 function ClientActions({
   memberId,
+  isVerified,
   onDeleted,
 }: {
   memberId: number;
+  isVerified: boolean;
   onDeleted: () => void;
 }) {
   const searchParams = useSearchParams();
@@ -100,6 +113,30 @@ function ClientActions({
   const editHref = currentPage
     ? `${PATHS.clientMembersEdit(memberId)}?returnPage=${currentPage}`
     : PATHS.clientMembersEdit(memberId);
+
+  const handleVerify = () => {
+    showConfirm({
+      title: "Verifikasi Client?",
+      description:
+        "Client ini akan diverifikasi secara manual. Mereka akan mendapatkan akses penuh ke platform dan menerima email konfirmasi.",
+      confirmLabel: "Verifikasi",
+      cancelLabel: "Batal",
+      onConfirm: async () => {
+        try {
+          const resp = await clientMembersService.clientMembersVerify(memberId);
+          showNotification(resp.message, "success");
+          onDeleted(); // refetch table
+        } catch (err: unknown) {
+          const apiError = err as { message?: string };
+          showNotification(
+            apiError.message || "Gagal memverifikasi client",
+            "error"
+          );
+          throw err;
+        }
+      },
+    });
+  };
 
   const handleDelete = () => {
     showConfirm({
@@ -125,6 +162,17 @@ function ClientActions({
 
   return (
     <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+      {!isVerified && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-auto w-auto p-2 rounded-lg hover:text-success-600 hover:bg-success-50 hover:border-transparent"
+          aria-label="Verify"
+          onClick={handleVerify}
+        >
+          <ShieldCheck size={16} />
+        </Button>
+      )}
       <Button
         variant="ghost"
         size="icon"

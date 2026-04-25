@@ -73,15 +73,15 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 **API Base:** `/api/v1/backoffice/client-members`
 **Priority:** P0 — Core
 
-| ID       | Feature              | Status             | Description                                                            |
-| -------- | -------------------- | ------------------ | ---------------------------------------------------------------------- |
-| FM-02-01 | List with pagination | ✅ Done            | Shows verification status badge (Verified/Unverified)                  |
-| FM-02-02 | Create client        | ✅ Done            | Creates user + profile (async) + sends welcome email                   |
-| FM-02-03 | Edit client          | ✅ Done            | Updates user + syncs profile (async) + sends change notification email |
-| FM-02-04 | Delete client        | ✅ Done            | Soft deletes user + removes profile (async) + sends deletion email     |
-| FM-02-05 | Filter popup         | ✅ Done            | Verification status chips, date range                                  |
-| FM-02-06 | Manual verify        | ✅ Done (API only) | `PATCH .../verify` sets `is_verified=true` + sends verification email  |
-| FM-02-07 | Verify UI button     | 🔲 Planned         | Inline verify button in table row for unverified clients               |
+| ID       | Feature              | Status             | Description                                                                                             |
+| -------- | -------------------- | ------------------ | ------------------------------------------------------------------------------------------------------- |
+| FM-02-01 | List with pagination | ✅ Done            | Shows verification status badge (Verified/Unverified)                                                   |
+| FM-02-02 | Create client        | ✅ Done            | Creates user + profile (async) + sends welcome email                                                    |
+| FM-02-03 | Edit client          | ✅ Done            | Updates user + syncs profile (async) + sends change notification email                                  |
+| FM-02-04 | Delete client        | ✅ Done            | Soft deletes user + removes profile (async) + sends deletion email                                      |
+| FM-02-05 | Filter popup         | ✅ Done            | Verification status chips, date range                                                                   |
+| FM-02-06 | Manual verify        | ✅ Done (API only) | `PATCH .../verify` sets `is_verified=true` + sends verification email                                   |
+| FM-02-07 | Verify UI button     | ✅ Done            | Inline verify button (ShieldCheck icon) in table row, only for unverified clients. Uses confirm dialog. |
 
 **Backend Side Effects per Action:**
 
@@ -192,8 +192,6 @@ Reports
 
 | ID       | Feature                     | Priority | Status     |
 | -------- | --------------------------- | -------- | ---------- |
-| FM-02-07 | Client verify UI button     | P1       | 🔲 Planned |
-| FM-02-07 | Client verify UI button     | P1       | 🔲 Planned |
 | FM-03-07 | Mitra verify UI button      | P1       | 🔲 Planned |
 | FM-06    | Deposit Management          | P2       | 🔲 Planned |
 | FM-07    | Service Category Management | P2       | 🔲 Planned |

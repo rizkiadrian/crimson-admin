@@ -35,4 +35,9 @@ export const clientMembersService = {
   clientMembersDelete: async (id: number): Promise<IApiResponse<null>> => {
     return await api.delete(`/backoffice/client-members/${id}`);
   },
+  clientMembersVerify: async (
+    id: number
+  ): Promise<IApiResponse<IClientUser>> => {
+    return await api.patch(`/backoffice/client-members/${id}/verify`);
+  },
 };
