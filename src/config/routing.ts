@@ -9,8 +9,15 @@ const BACKOFFICEMEMBERS_SERVICES = {
     `/dashboard/backoffice-members/${id}/edit`,
 };
 
+const CLIENTMEMBERS_SERVICES = {
+  clientMembers: "/dashboard/client-members",
+  clientMembersCreate: "/dashboard/client-members/create",
+  clientMembersEdit: (id: number) => `/dashboard/client-members/${id}/edit`,
+};
+
 export const PATHS = {
   login: "/login",
   ...DASHBOARD_SERVICES,
   ...BACKOFFICEMEMBERS_SERVICES,
+  ...CLIENTMEMBERS_SERVICES,
 };
