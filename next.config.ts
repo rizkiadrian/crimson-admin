@@ -9,8 +9,17 @@ const nextConfig = {
         hostname: "ui-avatars.com",
         port: "",
         pathname: "/api/**",
+        search: "",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/storage/**",
+        search: "",
       },
     ],
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === 'development' ? true : false,
   },
   async rewrites() {
     return [

@@ -176,6 +176,56 @@ showConfirm({
 | `cancelLabel`  | `string`                      | `"Batal"` | Cancel button label                 |
 | `onConfirm`    | `() => void \| Promise<void>` | —         | Async callback with loading spinner |
 
+### DetailCard System
+
+A composable card system for detail/show pages with clear visual separation between sections.
+
+```tsx
+import {
+  DetailCard,
+  DetailCardHeader,
+  DetailCardBody,
+  DetailSection,
+  DetailField,
+  DetailFieldGrid,
+  DetailImageGrid,
+} from "@app/components/ui/DetailCard";
+```
+
+| Component          | Description                                               |
+| ------------------ | --------------------------------------------------------- |
+| `DetailCard`       | Card wrapper matching FormCard/TableCard visual treatment |
+| `DetailCardHeader` | Title + description + colored badge + action slot         |
+| `DetailCardBody`   | Body with `divide-y` borders between child sections       |
+| `DetailSection`    | Labeled section with horizontal line separator            |
+| `DetailFieldGrid`  | Grid container for DetailField items (2/3/4 columns)      |
+| `DetailField`      | Label-value pair with subtle background card and border   |
+| `DetailImageGrid`  | Grid of labeled images with click-to-open and placeholder |
+
+**DetailCardHeader props:**
+
+| Prop           | Type                                                   | Default     | Description                     |
+| -------------- | ------------------------------------------------------ | ----------- | ------------------------------- |
+| `title`        | `string`                                               | —           | Main heading                    |
+| `description`  | `string`                                               | —           | Subtitle below the title        |
+| `badge`        | `string`                                               | —           | Colored badge next to the title |
+| `badgeVariant` | `"neutral"` \| `"success"` \| `"warning"` \| `"error"` | `"neutral"` | Badge color                     |
+| `actions`      | `ReactNode`                                            | —           | Action buttons on the right     |
+
+**DetailField props:**
+
+| Prop    | Type        | Default | Description                       |
+| ------- | ----------- | ------- | --------------------------------- |
+| `label` | `string`    | —       | Uppercase label text              |
+| `value` | `ReactNode` | —       | Value content (text, badge, etc.) |
+
+**DetailImageGrid props:**
+
+| Prop      | Type                | Default | Description               |
+| --------- | ------------------- | ------- | ------------------------- |
+| `images`  | `DetailImageItem[]` | —       | Array of `{ label, src }` |
+| `columns` | `2 \| 3 \| 4`       | `2`     | Grid columns              |
+
 ---
 
 ## Layout Components (`components/layout/`)

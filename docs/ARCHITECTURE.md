@@ -31,6 +31,7 @@ src/
 │   │   │   ├── Table/           # Table system (primitives + TableCard composites)
 │   │   │   ├── TableHeader/
 │   │   │   ├── FilterPopup/     # Modal filter (chips, range slider, date range)
+│   │   │   ├── DetailCard/      # Card system for detail/show pages (sections, fields, image grid)
 │   │   │   ├── ConfirmDialog/   # Global confirm modal (Zustand-driven)
 │   │   │   └── GlobalNotification/  # Toast notifications (Zustand-driven)
 │   │   ├── layout/
@@ -47,6 +48,11 @@ src/
 │   │       │   ├── [id]/edit/page.tsx          # Edit form
 │   │       │   └── _partials/member-table/     # Table component
 │   │       ├── client-members/                 # Same structure as backoffice-members
+│   │       ├── mitra-members/
+│   │       │   ├── page.tsx                    # List page
+│   │       │   ├── [id]/page.tsx               # Show/detail page (with document viewer)
+│   │       │   ├── [id]/edit/page.tsx          # Edit form (basic info only)
+│   │       │   └── _partials/mitra-table/      # Table component
 │   │       └── page.tsx                        # Dashboard home
 │   ├── design-system/          # Live component preview (/design-system)
 │   └── login/
@@ -59,7 +65,8 @@ src/
 ├── services/
 │   └── backoffice/
 │       ├── backoffice-members/ # Types + service (list, create, detail, update, delete)
-│       └── client-members/     # Types + service (list, create, detail, update, delete)
+│       ├── client-members/     # Types + service (list, create, detail, update, delete)
+│       └── mitra-members/      # Types + service (list, detail, update, delete)
 ├── store/
 │   ├── useNotificationStore.ts # Global toast (success/error/info)
 │   └── useConfirmStore.ts      # Global confirm dialog

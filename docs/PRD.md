@@ -114,7 +114,41 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 
 ---
 
-### FM-03: Navigation
+### FM-03: User Management — Mitra Members
+
+**Route:** `/dashboard/mitra-members`
+**API Base:** `/api/v1/backoffice/mitra-members`
+**Priority:** P0 — Core
+
+| ID       | Feature                    | Status             | Description                                                              |
+| -------- | -------------------------- | ------------------ | ------------------------------------------------------------------------ |
+| FM-03-01 | List with pagination       | ✅ Done            | Shows verification status badge (4 states) + service category            |
+| FM-03-02 | Show detail page           | ✅ Done            | DetailCard with account info, mitra profile, and document viewer         |
+| FM-03-03 | Edit basic info            | ✅ Done            | Update name, email, phone (mitra manages their own profile/docs)         |
+| FM-03-04 | Delete member              | ✅ Done            | Global confirm dialog with async loading                                 |
+| FM-03-05 | Filter popup               | ✅ Done            | Verification status chips (4 states), date range                         |
+| FM-03-06 | Update verification status | ✅ Done (API only) | `PATCH .../verification-status` with pending/approved/rejected/suspended |
+
+**Key differences from Client Members:**
+
+- No "Create" — mitras self-register via the public API
+- Show page with document viewer (photo, KTP, selfie KTP, SKCK)
+- 4-state verification status instead of boolean `is_verified`
+- Table shows service category under the mitra's name
+
+**API Endpoints:**
+
+| Method | Endpoint                                  | Request Body                | Response                                             |
+| ------ | ----------------------------------------- | --------------------------- | ---------------------------------------------------- |
+| GET    | `/mitra-members?page=N&per_page=N`        | —                           | Paginated list with mitra profile + service category |
+| GET    | `/mitra-members/{id}`                     | —                           | User detail with mitra profile and documents         |
+| PUT    | `/mitra-members/{id}`                     | `{ name?, email?, phone? }` | Updated user with mitra profile                      |
+| PATCH  | `/mitra-members/{id}/verification-status` | `{ verification_status }`   | Updated user with new status                         |
+| DELETE | `/mitra-members/{id}`                     | —                           | `null` (soft delete)                                 |
+
+---
+
+### FM-04: Navigation
 
 **Priority:** P1 — UX
 
@@ -159,7 +193,8 @@ Reports
 | ID       | Feature                     | Priority | Status     |
 | -------- | --------------------------- | -------- | ---------- |
 | FM-02-07 | Client verify UI button     | P1       | 🔲 Planned |
-| FM-05    | Mitra Management            | P1       | 🔲 Planned |
+| FM-02-07 | Client verify UI button     | P1       | 🔲 Planned |
+| FM-03-07 | Mitra verify UI button      | P1       | 🔲 Planned |
 | FM-06    | Deposit Management          | P2       | 🔲 Planned |
 | FM-07    | Service Category Management | P2       | 🔲 Planned |
 | FM-08    | Dashboard Analytics         | P2       | 🔲 Planned |

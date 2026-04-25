@@ -15,9 +15,16 @@ const CLIENTMEMBERS_SERVICES = {
   clientMembersEdit: (id: number) => `/dashboard/client-members/${id}/edit`,
 };
 
+const MITRAMEMBERS_SERVICES = {
+  mitraMembers: "/dashboard/mitra-members",
+  mitraMembersShow: (id: number) => `/dashboard/mitra-members/${id}`,
+  mitraMembersEdit: (id: number) => `/dashboard/mitra-members/${id}/edit`,
+};
+
 export const PATHS = {
   login: "/login",
   ...DASHBOARD_SERVICES,
   ...BACKOFFICEMEMBERS_SERVICES,
   ...CLIENTMEMBERS_SERVICES,
+  ...MITRAMEMBERS_SERVICES,
 };

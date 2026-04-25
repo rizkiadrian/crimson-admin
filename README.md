@@ -35,22 +35,22 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Feature Status
 
-| Module             | List | Create | Edit | Delete | Filter |
-| ------------------ | ---- | ------ | ---- | ------ | ------ |
-| Backoffice Members | ✅   | ✅     | ✅   | ✅     | ✅     |
-| Client Members     | ✅   | ✅     | ✅   | ✅     | ✅     |
-| Mitra Management   | 🔲   | 🔲     | 🔲   | 🔲     | 🔲     |
-| Deposit Management | 🔲   | 🔲     | 🔲   | 🔲     | 🔲     |
-| Service Categories | 🔲   | 🔲     | 🔲   | 🔲     | 🔲     |
+| Module             | List | Create | Show | Edit | Delete | Filter |
+| ------------------ | ---- | ------ | ---- | ---- | ------ | ------ |
+| Backoffice Members | ✅   | ✅     | —    | ✅   | ✅     | ✅     |
+| Client Members     | ✅   | ✅     | —    | ✅   | ✅     | ✅     |
+| Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     |
+| Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     |
+| Service Categories | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     |
 
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── components/ui/       # Button, FormInput, Table, FormCard, FilterPopup, ConfirmDialog
+│   ├── components/ui/       # Button, FormInput, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog
 │   ├── components/layout/   # Sidebar (accordion), Navbar
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useDetailData (single resource)
 ├── services/                # API service layer per domain

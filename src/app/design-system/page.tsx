@@ -7,6 +7,7 @@ import { AppTable } from "./components/member-table";
 import { FormCardShowcase } from "./components/form-card-showcase";
 import { FilterPopupShowcase } from "./components/filter-popup-showcase";
 import { ConfirmDialogShowcase } from "./components/confirm-dialog-showcase";
+import { DetailCardShowcase } from "./components/detail-card-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -94,6 +95,14 @@ export default function DesignSystemPage() {
             9. Confirm Dialog
           </h2>
           <ConfirmDialogShowcase />
+        </section>
+
+        {/* Section 10: Detail Card */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            10. Detail Card
+          </h2>
+          <DetailCardShowcase />
         </section>
       </main>
     </div>
