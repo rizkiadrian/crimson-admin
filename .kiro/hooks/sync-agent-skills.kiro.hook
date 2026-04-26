@@ -1,0 +1,13 @@
+{
+  "name": "Agent Skills Updated",
+  "version": "1.0.0",
+  "description": "When .agent/skills/ files are edited, reminds the agent that these are the single source of truth. Kiro steering files reference them via #[[file:...]]. CLAUDE.md summarizes them.",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [".agent/skills/*.md"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "An .agent/skills/ file was updated. These are the single source of truth for all AI agents. Kiro steering files (.kiro/steering/) reference these via #[[file:...]] so they auto-sync. However, CLAUDE.md sections 7-9 contain summaries that may need updating if the skill content changed significantly. Check if the CLAUDE.md summary tables still match the skill file content."
+  }
+}

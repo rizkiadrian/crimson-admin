@@ -73,12 +73,18 @@ This document serves as the master reference for the Lingkar Fullstack project. 
    - Inputs: `FormInput` (text, password, phone format, date format with calendar)
    - Search: `SearchInput` (debounced, with clear button)
    - Modals: `FilterPopup`, `ConfirmDialog`
-   - Do NOT use plain `<input>` or `<select>`; always use `FormInput` and `FormSelect`.
-   - Do NOT use `<img>`; always use Next.js `<Image>` with proper `remotePatterns` config.
+   - **FORBIDDEN native elements:** Do NOT use `<button>`, `<input>`, `<select>`, `<a>`, or `<img>` directly. Always use:
+     - `<button>` → `Button` from `@app/components/ui/Button`
+     - `<input>` → `FormInput` from `@app/components/ui/FormInput`
+     - `<select>` → `FormSelect` from `@app/components/ui/FormSelect`
+     - `<a>` → `Button` with `href` prop (renders as Next.js `Link`)
+     - `<img>` → Next.js `<Image>` with proper `remotePatterns` config
+   - **Button as list item pattern:** When using `Button` for clickable list items (e.g., notification rows), override defaults: `className="w-full h-auto justify-start items-start text-left rounded-none border-none hover:border-none"`
 5. **Global Modals/Toasts:** Use `useNotificationStore().showNotification` for toasts and `useConfirmStore().showConfirm` for confirmation modals. Do not mount custom `<Modal>` components.
 6. **Sidebar Navigation:** Uses accordion pattern with `NavGroup` type. Groups auto-expand when child route is active. Active detection uses `pathname.startsWith()`.
 7. **Notification Bell:** `NotificationBell` component in Navbar with `useBackofficeNotificationStore` (Zustand). Polls unread count every 30s. Dropdown shows latest 5 notifications. Full page at `/dashboard/notifications`.
-8. **Design System Page:** Live component preview at `/design-system`. Currently 14 sections. Must be updated when components change (Kiro hook `sync-design-system` reminds).
+8. **Design System Page:** Live component preview at `/design-system`. Currently 16 sections. Must be updated when components change (Kiro hook `sync-design-system` reminds). Every new component or visual change MUST add a showcase to `/design-system` and update `docs/DESIGN_SYSTEM.md`.
+9. **Zustand Store Naming:** `useXxxStore` for global UI state (toasts, confirm dialog). `useBackofficeXxxStore` for domain-specific state (notifications). Page-level state stays in component `useState`.
 
 ---
 
@@ -118,101 +124,81 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 
 ## 6. Development Guidelines for AI Agents
 
-1. **Implementation Plans First:** Always provide an implementation plan artifact before writing code for any medium to large feature updates.
-2. **Double Check Types:** Both projects are strictly typed (PHPStan for backend, TypeScript for frontend). Do not leave `any` or loose typings.
-3. **Docs Update — UI Components:** If an update impacts UI components, you MUST update `docs/DESIGN_SYSTEM.md` and the frontend showcase page at `src/app/design-system/page.tsx`.
-4. **Docs Update — Features & APIs:** If a new feature or API is added, you MUST update `README.md` in both backend and frontend, update the Postman collection (`postman/Lingkar_ID_API.postman_collection.json`), and update the Product Requirements in `docs/PRD.md` (frontend).
-5. **Docs Update — Architecture:** If there is a change to the folder hierarchy or a new library is introduced to the frontend, you MUST update `docs/ARCHITECTURE.md`.
-6. **No Hallucinations on External Libraries:** Stick strictly to Tailwind 4 utility classes for styling. Do NOT use Tailwind CSS v3 arbitrary value syntax if v4 handles it natively.
-7. **NPM Audit:** A Kiro hook runs `npm audit` after every agent execution. Ensure zero new vulnerabilities when adding packages.
-8. **Chart Colors:** Always use `CHART_COLORS` and `CHART_SETS` from `components/ui/Chart/chart-colors.ts`. Never hardcode hex values in chart components.
-9. **PHP Syntax Check:** After creating/modifying PHP files, always run `php -l <file>` to verify syntax.
-10. **TypeScript Build Check:** After frontend changes, always run `npx tsc --noEmit` to verify compilation.
-11. **Browser Testing:** After implementing or modifying a frontend feature, use Chrome DevTools MCP to verify the change works in the browser. Test flow:
-    - Navigate to the affected page (`mcp_chrome_devtools_navigate_page`)
-    - Wait for content to load (`mcp_chrome_devtools_wait_for`)
-    - Take a snapshot to verify elements render correctly (`mcp_chrome_devtools_take_snapshot`)
-    - Check console for errors (`mcp_chrome_devtools_list_console_messages` with types `["error"]`)
-    - Check network requests for failed API calls (`mcp_chrome_devtools_list_network_requests`)
-    - If login is required, log in first via the `/login` page using `admin@example.com` / `Password123`
-    - For visual verification, take a screenshot (`mcp_chrome_devtools_take_screenshot`)
-    - For accessibility audits, use `mcp_chrome_devtools_lighthouse_audit`
-    - For database verification, use a temp PHP script with PDO connecting to `127.0.0.1:5432` (parse `.env` for credentials)
+> **Detailed skills:** See `.agent/skills/` directory for checklists and patterns.
+
+1. **Implementation Plans First:** Always provide an implementation plan before writing code for medium to large features.
+2. **Strict Types:** TypeScript for frontend, PHPStan for backend. No `any` or loose typings.
+3. **Docs Update:** After any change, check `.agent/skills/documentation-update-guide.md` for which docs to update.
+4. **No Hallucinations:** Stick to Tailwind 4 utility classes. Do NOT use Tailwind CSS v3 syntax.
+5. **NPM Audit:** Ensure zero new vulnerabilities when adding packages.
+6. **Chart Colors:** Always use `CHART_COLORS`/`CHART_SETS` from `chart-colors.ts`. Never hardcode hex.
+7. **TypeScript Build Check:** Always run `npx tsc --noEmit` after frontend changes.
+8. **PHP Syntax Check:** Always run `php -l <file>` after backend changes.
+9. **Testing:** See `.agent/skills/testing-workflows.md` for Kiro and CLI testing workflows.
 
 ---
 
-## 7. Testing Without Kiro (CLI-Only)
+## 7. Component Usage Rules
 
-If you're working outside Kiro (e.g., in a standard terminal, VS Code, or another AI agent without MCP tools), use these equivalent workflows:
+> **Full reference:** `.agent/skills/component-rules.md`
 
-### Frontend Verification
+**NEVER use native HTML elements** when a design system component exists.
+
+| Forbidden          | Use Instead           | Import From                     |
+| ------------------ | --------------------- | ------------------------------- |
+| `<button>`         | `<Button>`            | `@app/components/ui/Button`     |
+| `<input>`          | `<FormInput>`         | `@app/components/ui/FormInput`  |
+| `<select>`         | `<FormSelect>`        | `@app/components/ui/FormSelect` |
+| `<a>`              | `<Button href="...">` | `@app/components/ui/Button`     |
+| `<img>`            | `<Image>`             | `next/image`                    |
+| `window.alert()`   | `showNotification()`  | `@store/useNotificationStore`   |
+| `window.confirm()` | `showConfirm()`       | `@store/useConfirmStore`        |
+
+For Button override patterns (list items, action buttons), see `.agent/skills/component-rules.md`.
+
+---
+
+## 8. New Feature Checklist
+
+> **Full reference:** `.agent/skills/new-feature-checklist.md`
+
+When building a new feature, read the full checklist at `.agent/skills/new-feature-checklist.md`. Key items:
+
+- Backend: Service → Controller → FormRequest → Routes → Postman → README
+- Frontend: Service layer → Zustand store → Pages → Routing → Sidebar → TypeScript check
+- Docs: PRD.md, DESIGN_SYSTEM.md, ARCHITECTURE.md, README.md, /design-system showcase, CLAUDE.md
+
+---
+
+## 9. Agent Skills Directory
+
+All reusable skills and patterns are in `.agent/skills/`:
+
+| File                            | Description                                                     |
+| ------------------------------- | --------------------------------------------------------------- |
+| `README.md`                     | Index — which skill to read when                                |
+| `component-rules.md`            | Forbidden native elements, Button variants, Zustand naming      |
+| `new-feature-checklist.md`      | Complete checklist for new features (backend + frontend + docs) |
+| `documentation-update-guide.md` | Which docs to update after each type of change                  |
+| `testing-workflows.md`          | Verification commands for Kiro (MCP) and CLI                    |
+| `fullstack-feature-pattern.md`  | Step-by-step template for fullstack features                    |
+
+These files are the **single source of truth**. Kiro steering files (`.kiro/steering/`) reference them via `#[[file:...]]`. CLAUDE.md summarizes them. If you update a skill, the changes propagate to all agents.
+
+---
+
+## 10. Testing Without Kiro (CLI-Only)
+
+> **Full reference:** `.agent/skills/testing-workflows.md`
+
+Quick commands:
 
 ```bash
-# 1. TypeScript build check
-cd lingkar-crm
-npx tsc --noEmit
-
-# 2. NPM vulnerability audit
-npm audit
-
-# 3. Dev server (run in background)
-npm run dev
-
-# 4. Open browser manually to test pages:
-#    - Dashboard: http://localhost:3000/dashboard
-#    - Backoffice Members: http://localhost:3000/dashboard/backoffice-members
-#    - Client Members: http://localhost:3000/dashboard/client-members
-#    - Mitra Members: http://localhost:3000/dashboard/mitra-members
-#    - Design System: http://localhost:3000/design-system
-#    - Notifications: http://localhost:3000/dashboard/notifications
-#    - Login: http://localhost:3000/login (admin@example.com / Password123)
-
-# 5. Lighthouse audit (Chrome DevTools → Lighthouse tab, or CLI)
-npx lighthouse http://localhost:3000/design-system --only-categories=accessibility,best-practices,seo --output=json
+npx tsc --noEmit          # TypeScript check (must pass)
+npm audit                 # No new vulnerabilities
+npm run dev               # Start dev server at localhost:3000
 ```
 
-### Backend Verification
+Test pages: Dashboard, Backoffice Members, Client Members, Mitra Members, Design System, Notifications. Login: `admin@example.com` / `Password123`.
 
-```bash
-cd lingkar-id-backend
-
-# 1. PHP syntax check on modified files
-php -l app/Services/Backoffice/ClientMemberService.php
-php -l app/Http/Controllers/Api/v1/Backoffice/ClientMemberController.php
-
-# 2. Run artisan commands inside Docker
-docker exec lingkarid.local php artisan route:list --path=backoffice
-docker exec lingkarid.local php artisan db:seed --class=MitraUserSeeder
-
-# 3. Test API with curl (login first to get token)
-TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -d '{"login":"admin@example.com","password":"Password123"}' \
-  | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['access_token'])")
-
-# 4. Test list endpoint with search
-curl -s http://localhost:8000/api/v1/backoffice/client-members?search=john \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Accept: application/json" | python3 -m json.tool
-
-# 5. Test dashboard endpoint
-curl -s http://localhost:8000/api/v1/backoffice/dashboard \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Accept: application/json" | python3 -m json.tool
-
-# 6. Database verification via psql
-docker exec -it lingkar-id-backend-pgsql-1 psql -U sail -d lingkar_id -c \
-  "SELECT u.id, u.name, u.email, r.name as role FROM users u JOIN roles r ON u.role_id = r.id LIMIT 10;"
-
-# 7. Check specific table schema
-docker exec -it lingkar-id-backend-pgsql-1 psql -U sail -d lingkar_id -c \
-  "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' ORDER BY ordinal_position;"
-```
-
-### Postman Testing
-
-1. Import `lingkar-id-backend/postman/Lingkar_ID_API.postman_collection.json`
-2. Set environment variable `APP_URL` = `http://localhost:8000`
-3. Run "Login" request first — it auto-saves `ACCESS_TOKEN` and `REFRESH_TOKEN`
-4. Test any endpoint — all use `Bearer {{ACCESS_TOKEN}}` auth
+For detailed testing workflows (browser testing, backend curl commands, database verification, Postman setup), see `.agent/skills/testing-workflows.md`.
