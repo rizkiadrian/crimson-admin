@@ -77,7 +77,8 @@ This document serves as the master reference for the Lingkar Fullstack project. 
    - Do NOT use `<img>`; always use Next.js `<Image>` with proper `remotePatterns` config.
 5. **Global Modals/Toasts:** Use `useNotificationStore().showNotification` for toasts and `useConfirmStore().showConfirm` for confirmation modals. Do not mount custom `<Modal>` components.
 6. **Sidebar Navigation:** Uses accordion pattern with `NavGroup` type. Groups auto-expand when child route is active. Active detection uses `pathname.startsWith()`.
-7. **Design System Page:** Live component preview at `/design-system`. Currently 14 sections. Must be updated when components change (Kiro hook `sync-design-system` reminds).
+7. **Notification Bell:** `NotificationBell` component in Navbar with `useBackofficeNotificationStore` (Zustand). Polls unread count every 30s. Dropdown shows latest 5 notifications. Full page at `/dashboard/notifications`.
+8. **Design System Page:** Live component preview at `/design-system`. Currently 14 sections. Must be updated when components change (Kiro hook `sync-design-system` reminds).
 
 ---
 
@@ -163,6 +164,7 @@ npm run dev
 #    - Client Members: http://localhost:3000/dashboard/client-members
 #    - Mitra Members: http://localhost:3000/dashboard/mitra-members
 #    - Design System: http://localhost:3000/design-system
+#    - Notifications: http://localhost:3000/dashboard/notifications
 #    - Login: http://localhost:3000/login (admin@example.com / Password123)
 
 # 5. Lighthouse audit (Chrome DevTools → Lighthouse tab, or CLI)

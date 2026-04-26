@@ -44,6 +44,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
 | Leads Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅        |
 | Sales Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| Notifications      | ✅   | —      | —    | —    | —      | —      | ✅        |
 | Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 | Service Categories | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 
@@ -53,11 +54,11 @@ Open [http://localhost:3000](http://localhost:3000).
 src/
 ├── app/
 │   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart
-│   ├── components/layout/   # Sidebar (accordion), Navbar
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members)
+│   ├── components/layout/   # Sidebar (accordion), Navbar (with NotificationBell dropdown)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useDetailData (single resource)
 ├── services/                # API service layer per domain
-├── store/                   # Zustand stores (notifications, confirm dialog)
+├── store/                   # Zustand stores (notifications, confirm dialog, backoffice notifications)
 └── config/                  # Routing paths, environment
 ```

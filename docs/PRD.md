@@ -20,6 +20,7 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 - **Global Confirm Dialog** — Zustand-driven confirmation modal for destructive actions with async loading state
 - **Filter System** — Composable filter popups with chip selectors, range sliders, and date pickers
 - **Design System** — Comprehensive component library with live preview at `/design-system`
+- **Notifications** — Real-time notification bell with unread badge, dropdown panel, and full page view for backoffice users
 
 ---
 
@@ -164,9 +165,14 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 Dashboard
 ▼ User Management (accordion)
   ├── Backoffice Members
-  └── Client Members
+  ├── Client Members
+  └── Mitra Members
+▼ Sales Management (accordion)
+  ├── Leads
+  └── Sales Members
 Analytics
 Reports
+Notifikasi
 ── System ──
   Settings
   Help Center
@@ -285,6 +291,55 @@ new → contacted → qualified → proposal → negotiation → won
 
 ---
 
+### FM-07: Backoffice Notifications
+
+**Route:** `/dashboard/notifications` (full page) + Navbar bell dropdown
+**API Base:** `/api/v1/backoffice/notifications`
+**Priority:** P1 — Core
+
+| ID       | Feature                 | Status  | Description                                                                  |
+| -------- | ----------------------- | ------- | ---------------------------------------------------------------------------- |
+| FM-07-01 | Bell icon with badge    | ✅ Done | Navbar bell shows unread count, polls every 30s                              |
+| FM-07-02 | Dropdown panel          | ✅ Done | Shows latest 5 notifications with type badges, timestamps, read/unread state |
+| FM-07-03 | Mark as read            | ✅ Done | Click unread notification to mark as read, updates badge count               |
+| FM-07-04 | Mark all as read        | ✅ Done | "Tandai semua dibaca" button in dropdown and full page                       |
+| FM-07-05 | Full notifications page | ✅ Done | Paginated list using `useTableData`, sidebar entry                           |
+
+**Architecture:**
+
+- `useBackofficeNotificationStore` (Zustand) manages unread count, recent notifications, dropdown state
+- `NotificationBell` component in Navbar handles dropdown UI + outside-click dismiss
+- Full page at `/dashboard/notifications` uses `TableCard` + `TableCardPagination`
+- Service layer at `services/backoffice/notifications/`
+
+**Notification Types:**
+
+| Type                  | Badge Color | Source                         |
+| --------------------- | ----------- | ------------------------------ |
+| `activity_log`        | Tertiary    | Sales creates/updates activity |
+| `lead_assign_request` | Warning     | Sales requests lead assignment |
+| `lead_status_request` | Success     | Sales requests status change   |
+
+**API Endpoints:**
+
+| Method | Endpoint                           | Request Body | Response                              |
+| ------ | ---------------------------------- | ------------ | ------------------------------------- |
+| GET    | `/notifications?page=N&per_page=N` | —            | Paginated list with `meta.pagination` |
+| GET    | `/notifications/unread-count`      | —            | `{ unread_count: number }`            |
+| PATCH  | `/notifications/{id}/read`         | —            | Updated notification object           |
+| PATCH  | `/notifications/read-all`          | —            | `{ marked_count: number }`            |
+
+**Acceptance Criteria:**
+
+- Bell badge shows numeric count (max "99+"), hidden when 0
+- Dropdown closes on outside click (uses `mouseup` for React 19 compliance)
+- Unread notifications have primary-50 background tint and bold text
+- Read notifications have muted styling
+- Polling interval is 30 seconds for unread count
+- Full page uses same card-based layout as other table pages
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -292,8 +347,9 @@ new → contacted → qualified → proposal → negotiation → won
 | FM-03-07 | Mitra verify UI button      | P1       | 🔲 Planned |
 | FM-05    | Leads Management            | P1       | ✅ Done    |
 | FM-06    | Sales Members Management    | P1       | ✅ Done    |
-| FM-07    | Deposit Management          | P2       | 🔲 Planned |
-| FM-08    | Service Category Management | P2       | 🔲 Planned |
-| FM-09    | Dashboard Analytics         | P2       | ✅ Done    |
-| FM-10    | Audit Log                   | P3       | 🔲 Planned |
-| FM-11    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-07    | Backoffice Notifications    | P1       | ✅ Done    |
+| FM-08    | Deposit Management          | P2       | 🔲 Planned |
+| FM-09    | Service Category Management | P2       | 🔲 Planned |
+| FM-10    | Dashboard Analytics         | P2       | ✅ Done    |
+| FM-11    | Audit Log                   | P3       | 🔲 Planned |
+| FM-12    | Role-based UI visibility    | P3       | 🔲 Planned |

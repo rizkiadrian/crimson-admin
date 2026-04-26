@@ -8,7 +8,8 @@
         "navigate_page",
         "take_screenshot",
         "lighthouse_audit",
-        "list_pages"
+        "list_pages",
+        "take_snapshot"
       ]
     }
   }

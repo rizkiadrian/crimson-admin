@@ -19,6 +19,7 @@ import {
   TrendingUp,
   Users2,
   UserSquare2,
+  Bell,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -83,6 +84,7 @@ const NAV_ENTRIES: NavEntry[] = [
   },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Reports", href: "/reports", icon: FileText },
+  { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
 ];
 
 /**

@@ -1,8 +1,9 @@
 "use client";
 
 // src/components/layout/Navbar.tsx
-import { Search, Bell, Mail, MessageSquare, Menu } from "lucide-react";
+import { Search, Mail, MessageSquare, Menu } from "lucide-react";
 import { useSidebarStore } from "@store/useSidebarStore";
+import { NotificationBell } from "./NotificationBell";
 
 export function Navbar() {
   const toggleSidebar = useSidebarStore((state) => state.toggle);
@@ -51,14 +52,7 @@ export function Navbar() {
 
       <div className="flex items-center gap-2 md:gap-4">
         <div className="flex items-center gap-1 md:gap-2 mr-1 md:mr-2">
-          <button className="p-2 text-neutral-800 hover:bg-neutral-100 rounded-full relative transition-all">
-            <Bell
-              size={20}
-              strokeWidth={2}
-              className="md:w-[22px] md:h-[22px]"
-            />
-            <span className="absolute top-2 right-2 w-2 h-2 md:top-2.5 md:right-2.5 md:w-2.5 md:h-2.5 bg-primary-600 border-2 border-white rounded-full"></span>
-          </button>
+          <NotificationBell />
           <button className="p-2 text-neutral-800 hover:bg-neutral-100 rounded-full transition-all hidden sm:block">
             <Mail
               size={20}

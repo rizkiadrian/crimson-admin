@@ -38,7 +38,7 @@ src/
 │   │   │   └── GlobalNotification/  # Toast notifications (Zustand-driven)
 │   │   ├── layout/
 │   │   │   ├── Sidebar/         # Accordion navigation with grouped items
-│   │   │   └── Navbar/
+│   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown, profile
 │   │   └── core/
 │   │       ├── BackofficeStatus/
 │   │       └── SetupClient/
@@ -67,6 +67,8 @@ src/
 │   │       │   ├── create/page.tsx             # Create form
 │   │       │   ├── [id]/edit/page.tsx          # Edit form
 │   │       │   └── _partials/sales-table/      # Table component
+│   │       ├── notifications/
+│   │       │   └── page.tsx                    # Full notifications list page
 │   │       └── page.tsx                        # Dashboard home
 │   ├── design-system/          # Live component preview (/design-system)
 │   └── login/
@@ -83,10 +85,12 @@ src/
 │       ├── mitra-members/      # Types + service (list, detail, update, delete)
 │       ├── leads/              # Types + service (list, create, detail, update, delete, updateStatus, convert)
 │       ├── sales-members/      # Types + service (list, create, detail, update, delete, list-dropdown)
+│       ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)
 │       └── dashboard/          # Types + service (summary incl. leads stats)
 ├── store/
-│   ├── useNotificationStore.ts # Global toast (success/error/info)
-│   └── useConfirmStore.ts      # Global confirm dialog
+│   ├── useNotificationStore.ts          # Global toast (success/error/info)
+│   ├── useConfirmStore.ts               # Global confirm dialog
+│   └── useBackofficeNotificationStore.ts # Notification bell state (unread count, dropdown, polling)
 ├── config/
 │   ├── env.ts
 │   └── routing.ts              # Centralized PATHS object
@@ -131,6 +135,7 @@ src/
 
 - `useNotificationStore` — toast notifications (success/error/info with auto-dismiss)
 - `useConfirmStore` — confirm dialog (title, description, async onConfirm)
+- `useBackofficeNotificationStore` — notification bell (unread count polling, recent list, dropdown state, mark-as-read)
 - Page-level state (form data, filters, loading) stays in component `useState`
 
 ### ADR-04: URL as Source of Truth for Pagination

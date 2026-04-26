@@ -33,6 +33,10 @@ const SALESMEMBERS_SERVICES = {
   salesMembersEdit: (id: number) => `/dashboard/sales-members/${id}/edit`,
 };
 
+const NOTIFICATIONS_SERVICES = {
+  notifications: "/dashboard/notifications",
+};
+
 export const PATHS = {
   login: "/login",
   ...DASHBOARD_SERVICES,
@@ -41,4 +45,5 @@ export const PATHS = {
   ...MITRAMEMBERS_SERVICES,
   ...LEADS_SERVICES,
   ...SALESMEMBERS_SERVICES,
+  ...NOTIFICATIONS_SERVICES,
 };

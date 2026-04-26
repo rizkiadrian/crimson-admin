@@ -14,6 +14,7 @@ import { EmptyStateShowcase } from "./components/empty-state-showcase";
 import { StatCardShowcase } from "./components/stat-card-showcase";
 import { ChartShowcase } from "./components/chart-showcase";
 import { ChartCardShowcase } from "./components/chart-card-showcase";
+import { NotificationShowcase } from "./components/notification-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -149,9 +150,17 @@ export default function DesignSystemPage() {
         {/* Section 14: Chart Card */}
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-secondary-800">
-            14. Chart Card
+            15. Chart Card
           </h2>
           <ChartCardShowcase />
+        </section>
+
+        {/* Section 16: Notification System */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            16. Notification System
+          </h2>
+          <NotificationShowcase />
         </section>
       </main>
     </div>

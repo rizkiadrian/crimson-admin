@@ -446,10 +446,55 @@ import {
 
 ## Layout Components (`components/layout/`)
 
-| Component | Description                                              |
-| --------- | -------------------------------------------------------- |
-| `Sidebar` | Fixed left sidebar with accordion navigation groups      |
-| `Navbar`  | Top bar with search, navigation tabs, notification icons |
+| Component          | Description                                                                  |
+| ------------------ | ---------------------------------------------------------------------------- |
+| `Sidebar`          | Fixed left sidebar with accordion navigation groups                          |
+| `Navbar`           | Top bar with search, navigation tabs, NotificationBell dropdown, and profile |
+| `NotificationBell` | Bell icon with unread badge + dropdown panel (Zustand-driven)                |
+
+### NotificationBell
+
+Real-time notification bell component in the Navbar. Shows unread count badge, opens a dropdown with recent notifications, and supports mark-as-read actions.
+
+**Architecture:**
+
+- `useBackofficeNotificationStore` (Zustand) manages unread count, recent notifications, dropdown state
+- Polls unread count every 30 seconds via `setInterval`
+- Outside-click dismiss uses `mouseup` event (React 19 compliant)
+- Dropdown shows latest 5 notifications with type badges, timestamps, read/unread state
+
+```tsx
+// Automatically included in Navbar — no manual usage needed.
+// The store is available for programmatic access:
+import { useBackofficeNotificationStore } from "@store/useBackofficeNotificationStore";
+
+const { unreadCount, fetchUnreadCount, markAllAsRead } =
+  useBackofficeNotificationStore();
+```
+
+**Store API:**
+
+| Method                | Type                            | Description                             |
+| --------------------- | ------------------------------- | --------------------------------------- |
+| `unreadCount`         | `number`                        | Current unread notification count       |
+| `recentNotifications` | `INotification[]`               | Latest 5 notifications for dropdown     |
+| `isDropdownOpen`      | `boolean`                       | Whether dropdown is visible             |
+| `fetchUnreadCount`    | `() => Promise<void>`           | Fetch unread count from API             |
+| `fetchRecent`         | `() => Promise<void>`           | Fetch recent notifications for dropdown |
+| `markAsRead`          | `(id: number) => Promise<void>` | Mark single notification as read        |
+| `markAllAsRead`       | `() => Promise<void>`           | Mark all notifications as read          |
+| `toggleDropdown`      | `() => void`                    | Toggle dropdown visibility              |
+| `closeDropdown`       | `() => void`                    | Close dropdown                          |
+
+**Notification Type Badges:**
+
+| Type                  | Badge Color                         | Description                 |
+| --------------------- | ----------------------------------- | --------------------------- |
+| `activity_log`        | `bg-tertiary-100 text-tertiary-700` | Sales activity log updates  |
+| `lead_assign_request` | `bg-warning-100 text-warning-700`   | Lead assignment requests    |
+| `lead_status_request` | `bg-success-100 text-success-700`   | Lead status change requests |
+
+**Full Page:** `/dashboard/notifications` — paginated list using `useTableData` + `TableCard`.
 
 ---
 
