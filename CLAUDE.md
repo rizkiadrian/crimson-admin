@@ -127,3 +127,90 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 8. **Chart Colors:** Always use `CHART_COLORS` and `CHART_SETS` from `components/ui/Chart/chart-colors.ts`. Never hardcode hex values in chart components.
 9. **PHP Syntax Check:** After creating/modifying PHP files, always run `php -l <file>` to verify syntax.
 10. **TypeScript Build Check:** After frontend changes, always run `npx tsc --noEmit` to verify compilation.
+11. **Browser Testing:** After implementing or modifying a frontend feature, use Chrome DevTools MCP to verify the change works in the browser. Test flow:
+    - Navigate to the affected page (`mcp_chrome_devtools_navigate_page`)
+    - Wait for content to load (`mcp_chrome_devtools_wait_for`)
+    - Take a snapshot to verify elements render correctly (`mcp_chrome_devtools_take_snapshot`)
+    - Check console for errors (`mcp_chrome_devtools_list_console_messages` with types `["error"]`)
+    - Check network requests for failed API calls (`mcp_chrome_devtools_list_network_requests`)
+    - If login is required, log in first via the `/login` page using `admin@example.com` / `Password123`
+    - For visual verification, take a screenshot (`mcp_chrome_devtools_take_screenshot`)
+    - For accessibility audits, use `mcp_chrome_devtools_lighthouse_audit`
+    - For database verification, use a temp PHP script with PDO connecting to `127.0.0.1:5432` (parse `.env` for credentials)
+
+---
+
+## 7. Testing Without Kiro (CLI-Only)
+
+If you're working outside Kiro (e.g., in a standard terminal, VS Code, or another AI agent without MCP tools), use these equivalent workflows:
+
+### Frontend Verification
+
+```bash
+# 1. TypeScript build check
+cd lingkar-crm
+npx tsc --noEmit
+
+# 2. NPM vulnerability audit
+npm audit
+
+# 3. Dev server (run in background)
+npm run dev
+
+# 4. Open browser manually to test pages:
+#    - Dashboard: http://localhost:3000/dashboard
+#    - Backoffice Members: http://localhost:3000/dashboard/backoffice-members
+#    - Client Members: http://localhost:3000/dashboard/client-members
+#    - Mitra Members: http://localhost:3000/dashboard/mitra-members
+#    - Design System: http://localhost:3000/design-system
+#    - Login: http://localhost:3000/login (admin@example.com / Password123)
+
+# 5. Lighthouse audit (Chrome DevTools → Lighthouse tab, or CLI)
+npx lighthouse http://localhost:3000/design-system --only-categories=accessibility,best-practices,seo --output=json
+```
+
+### Backend Verification
+
+```bash
+cd lingkar-id-backend
+
+# 1. PHP syntax check on modified files
+php -l app/Services/Backoffice/ClientMemberService.php
+php -l app/Http/Controllers/Api/v1/Backoffice/ClientMemberController.php
+
+# 2. Run artisan commands inside Docker
+docker exec lingkarid.local php artisan route:list --path=backoffice
+docker exec lingkarid.local php artisan db:seed --class=MitraUserSeeder
+
+# 3. Test API with curl (login first to get token)
+TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"login":"admin@example.com","password":"Password123"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['access_token'])")
+
+# 4. Test list endpoint with search
+curl -s http://localhost:8000/api/v1/backoffice/client-members?search=john \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/json" | python3 -m json.tool
+
+# 5. Test dashboard endpoint
+curl -s http://localhost:8000/api/v1/backoffice/dashboard \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/json" | python3 -m json.tool
+
+# 6. Database verification via psql
+docker exec -it lingkar-id-backend-pgsql-1 psql -U sail -d lingkar_id -c \
+  "SELECT u.id, u.name, u.email, r.name as role FROM users u JOIN roles r ON u.role_id = r.id LIMIT 10;"
+
+# 7. Check specific table schema
+docker exec -it lingkar-id-backend-pgsql-1 psql -U sail -d lingkar_id -c \
+  "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' ORDER BY ordinal_position;"
+```
+
+### Postman Testing
+
+1. Import `lingkar-id-backend/postman/Lingkar_ID_API.postman_collection.json`
+2. Set environment variable `APP_URL` = `http://localhost:8000`
+3. Run "Login" request first — it auto-saves `ACCESS_TOKEN` and `REFRESH_TOKEN`
+4. Test any endpoint — all use `Bearer {{ACCESS_TOKEN}}` auth
