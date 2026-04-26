@@ -31,10 +31,38 @@ Read `CLAUDE.md` for the full reference. This is a condensed version for quick o
 
 6. **After every change, update docs:** PRD.md, DESIGN_SYSTEM.md, ARCHITECTURE.md, README.md, Postman collection, /design-system showcase.
 
-## Key Files to Read First
+## MANDATORY: Read Skills Before Writing Any Code
 
-- `CLAUDE.md` — Full project reference (single source of truth for all agents)
-- `.agent/skills/` — Modular skill files (component rules, checklists, patterns)
+> **CRITICAL — Not optional.** Unlike Kiro (which auto-injects skills via `.kiro/steering/`), Claude and Augment do NOT auto-load skills. You MUST read them manually at the start of every session before writing any code or making any changes.
+
+### Step 1 — Always Read (every session)
+
+```
+.agent/skills/component-rules.md       ← Read FIRST before writing any JSX
+```
+
+### Step 2 — Read Based on Task
+
+| Task Type                       | Read This Skill File                          |
+| ------------------------------- | --------------------------------------------- |
+| Building any feature            | `.agent/skills/new-feature-checklist.md`      |
+| Fullstack feature (API+UI)      | `.agent/skills/fullstack-feature-pattern.md`  |
+| Any state or data fetching work | `.agent/skills/state-management-patterns.md`  |
+| Any form submit or async action | `.agent/skills/error-handling-patterns.md`    |
+| After any change                | `.agent/skills/documentation-update-guide.md` |
+| Verifying / testing             | `.agent/skills/testing-workflows.md`          |
+
+### Agent Capabilities
+
+| Agent              | Browser Testing Tool    | Skills Auto-Loaded?      |
+| ------------------ | ----------------------- | ------------------------ |
+| Kiro               | `mcp_chrome_devtools_*` | ✅ via `.kiro/steering/` |
+| Antigravity/Claude | `browser_subagent`      | ❌ read manually         |
+| Augment            | Varies                  | ❌ read manually         |
+
+### Key Reference Files
+
+- `CLAUDE.md` — Full project reference (single source of truth)
 - `docs/ARCHITECTURE.md` — Project structure, ADRs, data flow
 - `docs/DESIGN_SYSTEM.md` — Component library reference
 - `docs/PRD.md` — Feature modules and acceptance criteria
@@ -42,8 +70,6 @@ Read `CLAUDE.md` for the full reference. This is a condensed version for quick o
 - `src/lib/api.ts` — Axios client with silent refresh
 - `src/lib/hooks/use-table-data.ts` — Paginated list hook
 - `src/lib/hooks/use-detail-data.ts` — Single resource hook
-
-> **Note:** `.kiro/steering/` files reference `.agent/skills/` via `#[[file:...]]` for Kiro auto-include. If you're using Augment/Claude, read `.agent/skills/` directly.
 
 ## Verification Commands
 

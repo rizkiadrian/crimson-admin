@@ -172,18 +172,38 @@ When building a new feature, read the full checklist at `.agent/skills/new-featu
 
 ## 9. Agent Skills Directory
 
-All reusable skills and patterns are in `.agent/skills/`:
+> **MANDATORY FOR CLAUDE/AUGMENT:** Kiro auto-injects these skills via `.kiro/steering/`. Claude and Augment do NOT — you must read them **manually before writing any code**. Skipping this will cause rule violations.
 
-| File                            | Description                                                     |
-| ------------------------------- | --------------------------------------------------------------- |
-| `README.md`                     | Index — which skill to read when                                |
-| `component-rules.md`            | Forbidden native elements, Button variants, Zustand naming      |
-| `new-feature-checklist.md`      | Complete checklist for new features (backend + frontend + docs) |
-| `documentation-update-guide.md` | Which docs to update after each type of change                  |
-| `testing-workflows.md`          | Verification commands for Kiro (MCP) and CLI                    |
-| `fullstack-feature-pattern.md`  | Step-by-step template for fullstack features                    |
+### Reading Order
 
-These files are the **single source of truth**. Kiro steering files (`.kiro/steering/`) reference them via `#[[file:...]]`. CLAUDE.md summarizes them. If you update a skill, the changes propagate to all agents.
+1. **Always:** `.agent/skills/component-rules.md` — before writing any JSX
+2. **New features:** `.agent/skills/new-feature-checklist.md`
+3. **Fullstack features:** `.agent/skills/fullstack-feature-pattern.md`
+4. **State / data fetching:** `.agent/skills/state-management-patterns.md`
+5. **Form submit / async actions:** `.agent/skills/error-handling-patterns.md`
+6. **After any change:** `.agent/skills/documentation-update-guide.md`
+7. **Verification:** `.agent/skills/testing-workflows.md`
+
+### Skill Files Reference
+
+| File                            | Description                                                               |
+| ------------------------------- | ------------------------------------------------------------------------- |
+| `README.md`                     | Index — which skill to read when                                          |
+| `component-rules.md`            | Forbidden elements, Button variants, FormCard, TableCard, hooks, mistakes |
+| `new-feature-checklist.md`      | Complete checklist (backend + frontend + routing + docs)                  |
+| `fullstack-feature-pattern.md`  | Step-by-step template with real module references                         |
+| `state-management-patterns.md`  | useState vs useTableData vs useDetailData vs Zustand + React 19 rules     |
+| `error-handling-patterns.md`    | handleFormError, showNotification, showConfirm, fetch errors              |
+| `documentation-update-guide.md` | Which docs to update after each type of change                            |
+| `testing-workflows.md`          | Kiro (MCP), Antigravity (browser_subagent), and CLI verification          |
+
+### Agent Capabilities
+
+| Agent              | Browser Testing         | Skills Auto-Loaded?      |
+| ------------------ | ----------------------- | ------------------------ |
+| Kiro               | `mcp_chrome_devtools_*` | ✅ via `.kiro/steering/` |
+| Antigravity/Claude | `browser_subagent`      | ❌ read manually         |
+| Augment            | Varies                  | ❌ read manually         |
 
 ---
 

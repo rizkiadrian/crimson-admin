@@ -13,7 +13,20 @@ After implementing or modifying a frontend feature:
 7. For visual verification, take a screenshot (`mcp_chrome_devtools_take_screenshot`)
 8. For accessibility audits, use `mcp_chrome_devtools_lighthouse_audit`
 
-## Without Kiro (CLI-Only)
+## With Antigravity / Claude (browser_subagent)
+
+After implementing or modifying a frontend feature:
+
+1. Use the `browser_subagent` tool to open the browser
+2. Navigate to `http://localhost:3000/login`
+3. Login with `admin@example.com` / `Password123`
+4. Navigate to the affected page
+5. Visually verify the page renders correctly (take screenshot if needed)
+6. Check for visible JS errors or broken UI
+
+> **Note:** Antigravity does NOT have Chrome DevTools MCP. Use `browser_subagent` for all browser-based verification. It records a `.webp` video to the artifacts directory.
+
+## Without Browser (CLI-Only)
 
 ### Frontend
 
