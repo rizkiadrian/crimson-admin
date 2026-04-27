@@ -54,7 +54,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ```
 src/
 ├── app/
-│   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart
+│   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart, ActivityCard (with attachment thumbnail preview)
 │   ├── components/layout/   # Sidebar (accordion), Navbar (with NotificationBell dropdown)
 │   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, sales-activities)
 │   └── design-system/       # Live component preview

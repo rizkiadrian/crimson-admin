@@ -25,11 +25,27 @@ export interface IActivityLog {
   title: string;
   description: string | null;
   attachment: string | null;
+  attachment_url: string | null;
+  thumbnail_url: string | null;
+  attachment_type: "image" | "file" | null;
   status: ActivityLogStatus;
   metadata: Record<string, unknown> | null;
   lead: IActivityLogLead | null;
   created_at: string;
   updated_at: string;
+}
+
+/** Payload type for creating an activity log */
+export interface ICreateActivityLogPayload {
+  lead_id?: string;
+  type: ActivityLogType;
+  title: string;
+  description?: string;
+  attachment?: File | null;
+  metadata?: {
+    requested_status?: string;
+    requested_sales_id?: string;
+  };
 }
 
 /** Query params for activity logs list endpoint */

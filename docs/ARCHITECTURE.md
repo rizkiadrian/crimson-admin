@@ -36,7 +36,7 @@ src/
 │   │   │   ├── SearchInput/     # Debounced search input with clear button
 │   │   │   ├── ConfirmDialog/   # Global confirm modal (Zustand-driven)
 │   │   │   ├── GlobalNotification/  # Toast notifications (Zustand-driven)
-│   │   │   └── ActivityCard/   # Activity item card, skeleton, and helpers (formatRelativeTime, getActivityTypeConfig, getStatusBadgeConfig)
+│   │   │   └── ActivityCard/   # Activity item card, skeleton, and helpers (formatRelativeTime, getActivityTypeConfig, getStatusBadgeConfig, getFileIconConfig)
 │   │   ├── layout/
 │   │   │   ├── Sidebar/         # Accordion navigation with grouped items
 │   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown, profile
@@ -96,7 +96,7 @@ src/
 │   │   ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)
 │   │   └── dashboard/          # Types + service (summary incl. leads stats)
 │   └── sales/
-│       └── activity-logs/      # Types + service (list, create) for sales activity timeline
+│       └── activity-logs/      # Types (IActivityLog, ICreateActivityLogPayload, ActivityLogType) + service (list, create with multipart/form-data support)
 ├── store/
 │   ├── useNotificationStore.ts          # Global toast (success/error/info)
 │   ├── useConfirmStore.ts               # Global confirm dialog
@@ -229,4 +229,60 @@ src/
             → useConfirmStore → ConfirmDialog renders modal
             → onConfirm: async → loading spinner → hideConfirm on success
             → Error: setLoading(false) → dialog stays open for retry
+```
+
+### Create Activity Report (Form with Conditional Fields + File Upload)
+
+```
+[CreateSalesActivityReportPage]
+    │
+    ├── useState → form state (type, title, description, attachment, metadata)
+    ├── useUserProfile → profile.sales_id (auto-populate conditional field)
+    │
+    ├── Type = "request_lead_assign"
+    │       → Show read-only "Requested Sales Member ID" field
+    │       → Value = profile.sales_id (auto-populated, not editable)
+    │
+    ├── Submit
+    │       ├── Client-side: title.trim() must not be empty
+    │       ├── Build ICreateActivityLogPayload (include metadata based on type)
+    │       ├── activityLogsService.createActivityLog(payload)
+    │       │       ├── File present → FormData + multipart/form-data
+    │       │       └── No file → JSON payload
+    │       ├── Success → showNotification(resp.message, "success") → router.push(PATHS.salesActivities)
+    │       ├── 422 → handleFormError(err, setFormErrors) → field-level errors
+    │       └── 500 → showNotification(err.message, "error")
+    │
+    └── Backend: ActivityLogService → ThumbnailService (generate thumbnail for images) → NotifyBackofficeUsers::dispatch()
+```
+
+### Attachment Thumbnail Flow (Backend → Frontend)
+
+```
+[Backend: Upload]
+    │
+    ├── ActivityLogService.handleAttachmentUpload()
+    │       ├── Store original file → storage/app/public/sales/activity-logs/{hash}.ext
+    │       └── ThumbnailService.generateThumbnail(storedPath)
+    │               ├── Image? → resize max 200×200 → store thumb_{hash}.ext → return path
+    │               └── Non-image? → return null (skip thumbnail)
+    │
+    ├── ActivityLog model $appends: ['attachment_url', 'thumbnail_url', 'attachment_type']
+    │       ├── attachment_url  → Storage::url(attachment) or null
+    │       ├── thumbnail_url   → Storage::url(thumb_path) if file exists, or null
+    │       └── attachment_type → 'image' | 'file' | null (based on extension)
+    │
+    └── API response includes all three fields automatically
+
+[Frontend: Display]
+    │
+    └── ActivityCard
+            ├── attachment_type === 'image' + thumbnail_url
+            │       → <Image src={thumbnail_url}> with skeleton loading
+            │       → Clickable: opens attachment_url in new tab
+            │       → onError: falls back to file icon badge
+            ├── attachment_type === 'file' + attachment_url
+            │       → File icon badge via getFileIconConfig(url)
+            │       → Clickable: opens attachment_url in new tab
+            └── No attachment → nothing rendered
 ```

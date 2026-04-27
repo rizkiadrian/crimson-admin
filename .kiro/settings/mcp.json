@@ -9,7 +9,15 @@
         "take_screenshot",
         "lighthouse_audit",
         "list_pages",
-        "take_snapshot"
+        "take_snapshot",
+        "fill_form",
+        "click",
+        "wait_for",
+        "evaluate_script",
+        "list_network_requests",
+        "fill",
+        "new_page",
+        "list_console_messages"
       ]
     }
   }

@@ -13,11 +13,20 @@ import { FormSelect } from "@app/components/ui/FormSelect";
 import type { FormSelectOption } from "@app/components/ui/FormSelect";
 import { Button } from "@app/components/ui/Button";
 import { activeLeadsService } from "@services/sales/active-leads";
+import {
+  activityLogsService,
+  type ICreateActivityLogPayload,
+  type ActivityLogType,
+} from "@services/sales/activity-logs";
+import { useUserProfile } from "@store/useUserProfile";
+import { useNotificationStore } from "@store/useNotificationStore";
+import { handleFormError } from "@lib/utils";
+import { PATHS } from "@config/routing";
+import type { CustomApiError } from "@lib/api";
 
-// Dummy type based on StoreActivityLogRequest
 interface ActivityReportForm {
   lead_id: string;
-  type: string;
+  type: ActivityLogType;
   title: string;
   description: string;
   attachment: File | null;
@@ -29,6 +38,10 @@ interface ActivityReportForm {
 
 export default function CreateSalesActivityReportPage() {
   const router = useRouter();
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  );
+  const profile = useUserProfile((state) => state.profile);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -70,6 +83,12 @@ export default function CreateSalesActivityReportPage() {
     }
 
     setForm((prev) => ({ ...prev, [name]: value }));
+
+    // Track selected lead option for preserving label when dropdown closes
+    if (name === "lead_id") {
+      const selectedOpt = leadOptions.find((o) => o.value === value);
+      selectedLeadRef.current = selectedOpt ?? null;
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,11 +98,14 @@ export default function CreateSalesActivityReportPage() {
   };
 
   // ─── Debounced lead search ───────────────────────────────────────────────
+  const selectedLeadRef = useRef<FormSelectOption | null>(null);
+
   const handleLeadSearch = useCallback((query: string) => {
     if (leadSearchTimer.current) clearTimeout(leadSearchTimer.current);
 
     if (!query.trim()) {
-      setLeadOptions([]);
+      // Keep the currently selected option visible when clearing search
+      setLeadOptions(selectedLeadRef.current ? [selectedLeadRef.current] : []);
       setIsLeadLoading(false);
       return;
     }
@@ -107,10 +129,58 @@ export default function CreateSalesActivityReportPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setFormErrors({});
-    // Template only - no submit function implementation requested
-    console.warn("Form Submitted: ", form);
+
+    // Client-side validation: title must not be empty
+    if (!form.title.trim()) {
+      setFormErrors({ title: "Title wajib diisi" });
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Build payload from form state
+      const payload: ICreateActivityLogPayload = {
+        type: form.type,
+        title: form.title.trim(),
+        ...(form.lead_id && { lead_id: form.lead_id }),
+        ...(form.description.trim() && {
+          description: form.description.trim(),
+        }),
+        ...(form.attachment && { attachment: form.attachment }),
+      };
+
+      // Include metadata based on activity type
+      if (form.type === "request_lead_assign" && profile?.sales_id) {
+        payload.metadata = {
+          requested_sales_id: profile.sales_id,
+        };
+      } else if (
+        form.type === "request_update_lead_status" &&
+        form.metadata.requested_status
+      ) {
+        payload.metadata = {
+          requested_status: form.metadata.requested_status,
+        };
+      }
+
+      const resp = await activityLogsService.createActivityLog(payload);
+      showNotification(resp.message, "success");
+      router.push(PATHS.salesActivities);
+    } catch (err: unknown) {
+      const apiError = err as CustomApiError;
+      handleFormError(err, setFormErrors);
+      // Show toast for general errors (no field-level errors)
+      if (!apiError?.errors) {
+        showNotification(
+          apiError?.message || "Terjadi kesalahan server",
+          "error"
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -164,7 +234,6 @@ export default function CreateSalesActivityReportPage() {
               value={form.title}
               onChange={handleChange}
               error={formErrors.title}
-              required
             />
 
             {/* Conditional Fields based on Activity Type */}
@@ -192,10 +261,14 @@ export default function CreateSalesActivityReportPage() {
                 id="metadata.requested_sales_id"
                 name="metadata.requested_sales_id"
                 label="Requested Sales Member ID"
-                placeholder="Enter Sales User ID"
-                value={form.metadata.requested_sales_id}
+                placeholder={
+                  profile?.sales_id ? undefined : "Sales ID tidak tersedia"
+                }
+                value={profile?.sales_id ?? ""}
                 onChange={handleChange}
                 error={formErrors["metadata.requested_sales_id"]}
+                readOnly
+                className="bg-neutral-100 cursor-not-allowed"
               />
             )}
 
@@ -225,7 +298,12 @@ export default function CreateSalesActivityReportPage() {
             <Button variant="ghost" type="button" onClick={() => router.back()}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit" isLoading={isSubmitting}>
+            <Button
+              variant="primary"
+              type="submit"
+              isLoading={isSubmitting}
+              disabled={isSubmitting}
+            >
               Submit Report
             </Button>
           </FormCardFooter>

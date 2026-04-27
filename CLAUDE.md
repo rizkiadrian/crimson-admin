@@ -64,6 +64,9 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 1. **React 19 Compliance:** No synchronous `setState` inside `useEffect` bodies. `useDetailData` uses `useReducer` + `queueMicrotask`. `FilterPopup` animation uses two separate effects (mount + visibility). Edit forms use a "Page + Inner Form" split to pass fetched data directly as initial state.
 2. **URL-Synced State:** Pagination (`?page=N`) and Search (`?search=keyword`) are synchronized with URL Query Params via `useTableData`. Infinite scroll pages use `useInfiniteScroll` which syncs `?search=` to URL. Edit pages capture `?returnPage=N` to navigate back to the exact table page.
 3. **API Service Layer:** No direct `axios.get` or `fetch` calls inside React components. All components call typed wrapper functions inside `src/services/`. The `api.ts` client supports `get`, `post`, `put`, `delete`, `patch`.
+   - **Activity Logs service** (`services/sales/activity-logs/`): `getActivityLogs` (list) and `createActivityLog` (create with `ICreateActivityLogPayload`). The create function auto-detects file attachments and sends as `multipart/form-data` when present, JSON otherwise. API response includes `attachment_url`, `thumbnail_url`, and `attachment_type` fields (appended via backend model accessors). Image attachments have auto-generated thumbnails (max 200×200px) via backend `ThumbnailService`.
+   - **Form submission pattern:** Create forms use `handleFormError(err, setFormErrors)` from `@lib/utils` for 422 field-level errors, and `showNotification(err.message, "error")` for general errors. Success flow: toast + `router.push(PATHS.xxx)`.
+   - **Type note:** `IUserAuth.sales_id` is typed as `string | null` (backend returns format "SLS-XXXX"), not `number | null`.
 4. **UI Component System:**
    - Forms: `FormCard` (Header, Body, Footer, Loading, Error)
    - Lists: `TableCard` + `TableCardContent` (with built-in skeleton, error, and empty states)
@@ -73,7 +76,7 @@ This document serves as the master reference for the Lingkar Fullstack project. 
    - Inputs: `FormInput` (text, password, phone format, date format with calendar)
    - Search: `SearchInput` (debounced, with clear button)
    - Modals: `FilterPopup`, `ConfirmDialog`
-   - Timeline: `ActivityCard`, `ActivityCardSkeleton` (from `@app/components/ui/ActivityCard`), `ActivityTimeline` (for sales activities timeline view)
+   - Timeline: `ActivityCard` (with attachment thumbnail preview and file icon badge), `ActivityCardSkeleton` (from `@app/components/ui/ActivityCard`), `ActivityTimeline` (for sales activities timeline view)
    - **FORBIDDEN native elements:** Do NOT use `<button>`, `<input>`, `<select>`, `<a>`, or `<img>` directly. Always use:
      - `<button>` → `Button` from `@app/components/ui/Button`
      - `<input>` → `FormInput` from `@app/components/ui/FormInput`

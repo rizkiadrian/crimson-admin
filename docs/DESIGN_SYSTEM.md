@@ -59,18 +59,36 @@ import { FormInput } from "@app/components/ui/FormInput";
 <FormInput label="Name" id="name" error="Required field" />
 ```
 
-| Prop                | Type                                 | Default          | Description                                                                              |
-| ------------------- | ------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------- |
-| `label`             | `string`                             | —                | Input label (required)                                                                   |
-| `id`                | `string`                             | —                | HTML id (required)                                                                       |
-| `leftIcon`          | `ReactNode`                          | —                | Icon inside input (left). Overridden by calendar icon when `format="date"`               |
-| `rightIcon`         | `ReactNode`                          | —                | Icon inside input (right)                                                                |
-| `format`            | `"phone"` \| `"date"` \| `"default"` | `"default"`      | `phone`: auto-formats as `+62 XXX-XXXX-XXXX`. `date`: calendar popover, emits ISO string |
-| `error`             | `string`                             | —                | Error message, triggers error styling                                                    |
-| `dateDisplayFormat` | `string`                             | `"MMM dd, yyyy"` | Display format for date values (date-fns tokens)                                         |
-| `hideLabel`         | `boolean`                            | `false`          | Hide the label. Useful inside compact layouts                                            |
-| `hideLabel`         | `boolean`                            | `false`          | Hide the label. Useful inside compact layouts                                            |
-| `inputSize`         | `"default"` \| `"sm"`                | `"default"`      | Size variant. `"sm"` reduces padding for compact contexts                                |
+| Prop                | Type                                 | Default          | Description                                                                                                |
+| ------------------- | ------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `label`             | `string`                             | —                | Input label (required)                                                                                     |
+| `id`                | `string`                             | —                | HTML id (required)                                                                                         |
+| `leftIcon`          | `ReactNode`                          | —                | Icon inside input (left). Overridden by calendar icon when `format="date"`                                 |
+| `rightIcon`         | `ReactNode`                          | —                | Icon inside input (right)                                                                                  |
+| `format`            | `"phone"` \| `"date"` \| `"default"` | `"default"`      | `phone`: auto-formats as `+62 XXX-XXXX-XXXX`. `date`: calendar popover, emits ISO string                   |
+| `error`             | `string`                             | —                | Error message, triggers error styling                                                                      |
+| `dateDisplayFormat` | `string`                             | `"MMM dd, yyyy"` | Display format for date values (date-fns tokens)                                                           |
+| `hideLabel`         | `boolean`                            | `false`          | Hide the label. Useful inside compact layouts                                                              |
+| `hideLabel`         | `boolean`                            | `false`          | Hide the label. Useful inside compact layouts                                                              |
+| `inputSize`         | `"default"` \| `"sm"`                | `"default"`      | Size variant. `"sm"` reduces padding for compact contexts                                                  |
+| `readOnly`          | `boolean`                            | `false`          | Makes the input read-only. Pair with `className="bg-neutral-100 cursor-not-allowed"` for visual indication |
+
+**Read-only pattern:**
+
+Use `readOnly` with muted styling for auto-populated fields that the user should not edit (e.g., system-generated IDs):
+
+```tsx
+<FormInput
+  id="sales_id"
+  name="sales_id"
+  label="Sales Member ID"
+  value={profile?.sales_id ?? ""}
+  placeholder={!profile?.sales_id ? "Sales ID tidak tersedia" : undefined}
+  onChange={handleChange}
+  readOnly
+  className="bg-neutral-100 cursor-not-allowed"
+/>
+```
 
 ### FormSelect
 
@@ -627,7 +645,15 @@ import { ActivityCard } from "@app/components/ui/ActivityCard";
 | ---------- | -------------- | ------------------------ |
 | `activity` | `IActivityLog` | Activity log data object |
 
-**Visual structure:** Type icon (circle) → Title → Status Badge + Lead Name → Description (truncated) → Relative time
+**Visual structure:** Type icon (circle) → Title → Status Badge + Lead Name → Description (truncated) → Attachment preview (thumbnail or file icon badge) → Relative time
+
+**Attachment preview variants:**
+
+| Condition                                               | Rendering                                                                                                                                                     |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `attachment_type === 'image'` + `thumbnail_url` present | Clickable `<Image>` thumbnail (max 120px width, rounded-lg), opens full-size in new tab. Skeleton placeholder while loading, falls back to file icon on error |
+| `attachment_type === 'file'` + `attachment_url` present | File icon badge with extension label (PDF/DOC/XLS/FILE), clickable link to download                                                                           |
+| No attachment (`attachment_type === null`)              | Nothing rendered                                                                                                                                              |
 
 **Type Icon mapping:**
 
@@ -684,6 +710,24 @@ import {
   getStatusBadgeConfig,
 } from "@app/components/ui/ActivityCard";
 ```
+
+### File Icon Mapping (`components/ui/ActivityCard/activity-card-file-icons.ts`)
+
+Utility function that maps file extensions to icon configs for the attachment file icon badge.
+
+```tsx
+import { getFileIconConfig } from "@app/components/ui/ActivityCard/activity-card-file-icons";
+
+const config = getFileIconConfig("https://example.com/report.pdf");
+// → { icon: FileText, label: "PDF", bgColor: "bg-red-50", iconColor: "text-red-600" }
+```
+
+| Extension        | Icon              | Label | Colors               |
+| ---------------- | ----------------- | ----- | -------------------- |
+| `.pdf`           | `FileText`        | PDF   | red-50 / red-600     |
+| `.doc` / `.docx` | `FileText`        | DOC   | blue-50 / blue-600   |
+| `.xls` / `.xlsx` | `FileSpreadsheet` | XLS   | green-50 / green-600 |
+| other / missing  | `File`            | FILE  | gray-50 / gray-600   |
 
 ---
 

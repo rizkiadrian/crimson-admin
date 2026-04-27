@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { IActivityLog } from "@services/sales/activity-logs";
 import { Badge } from "@app/components/ui/Table";
 import {
@@ -7,6 +8,7 @@ import {
   getActivityTypeConfig,
   getStatusBadgeConfig,
 } from "./utils";
+import { getFileIconConfig } from "./activity-card-file-icons";
 
 // ─── ActivityCard ───────────────────────────────────────────────────────────────
 
@@ -18,7 +20,7 @@ interface ActivityCardProps {
  * Single activity item card for timeline views.
  *
  * Displays a type icon, title, status badge, optional lead name,
- * truncated description, and relative timestamp.
+ * truncated description, attachment preview, and relative timestamp.
  */
 export function ActivityCard({ activity }: ActivityCardProps) {
   const typeConfig = getActivityTypeConfig(activity.type);
@@ -62,11 +64,93 @@ export function ActivityCard({ activity }: ActivityCardProps) {
           </p>
         )}
 
+        {/* Attachment Preview */}
+        <AttachmentPreview activity={activity} />
+
         {/* Relative Time */}
         <p className="text-xs text-text-muted/70 mt-1.5">
           {formatRelativeTime(activity.created_at)}
         </p>
       </div>
+    </div>
+  );
+}
+
+// ─── Attachment Preview ─────────────────────────────────────────────────────────
+
+function AttachmentPreview({ activity }: { activity: IActivityLog }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // No attachment — render nothing
+  if (!activity.attachment_type) return null;
+
+  // Image attachment with thumbnail
+  if (
+    activity.attachment_type === "image" &&
+    activity.thumbnail_url &&
+    !hasError
+  ) {
+    return (
+      <div className="mt-2">
+        <a
+          href={activity.attachment_url ?? "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {/* Skeleton placeholder while image loads */}
+          {isLoading && (
+            <div className="w-[120px] h-[80px] rounded-lg bg-gray-200 animate-pulse" />
+          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={activity.thumbnail_url}
+            alt={activity.title}
+            className={`max-w-[120px] h-auto rounded-lg object-cover ${
+              isLoading ? "hidden" : "block"
+            }`}
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false);
+              setHasError(true);
+            }}
+          />
+        </a>
+      </div>
+    );
+  }
+
+  // File attachment (non-image, or image with error/no thumbnail)
+  if (activity.attachment_url) {
+    return <FileIconBadge attachmentUrl={activity.attachment_url} />;
+  }
+
+  return null;
+}
+
+// ─── File Icon Badge ────────────────────────────────────────────────────────────
+
+function FileIconBadge({ attachmentUrl }: { attachmentUrl: string }) {
+  const config = getFileIconConfig(attachmentUrl);
+  const FileIcon = config.icon;
+
+  return (
+    <div className="mt-2">
+      <a
+        href={attachmentUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border-subtle hover:bg-gray-50 transition-colors"
+      >
+        <div
+          className={`w-7 h-7 rounded flex items-center justify-center ${config.bgColor}`}
+        >
+          <FileIcon size={14} className={config.iconColor} />
+        </div>
+        <span className="text-xs font-medium text-text-muted">
+          {config.label}
+        </span>
+      </a>
     </div>
   );
 }

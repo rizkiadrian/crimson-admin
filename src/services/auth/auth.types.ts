@@ -20,6 +20,6 @@ export interface IUserAuth {
   phone: string | null;
   is_verified: boolean;
   deleted_at: string | null;
-  sales_id: number | null;
+  sales_id: string | null;
   role_name: string;
 }

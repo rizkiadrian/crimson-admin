@@ -93,11 +93,14 @@ export const FormSelect = React.forwardRef<HTMLDivElement, FormSelectProps>(
 
     // Wrap setOpen so closing always resets the search state
     const setOpen = useCallback(
-      (next: boolean | ((prev: boolean) => boolean)) => {
+      (
+        next: boolean | ((prev: boolean) => boolean),
+        skipSearchReset = false
+      ) => {
         setOpenRaw((prev) => {
           const nextVal = typeof next === "function" ? next(prev) : next;
-          if (!nextVal && prev) {
-            // Closing — reset search (deferred to avoid setState-during-render)
+          if (!nextVal && prev && !skipSearchReset) {
+            // Closing without selection — reset search (deferred to avoid setState-during-render)
             queueMicrotask(() => {
               setSearchQuery("");
               if (onSearch) onSearch("");
@@ -141,7 +144,10 @@ export const FormSelect = React.forwardRef<HTMLDivElement, FormSelectProps>(
     // ─── Emit synthetic ChangeEvent<HTMLSelectElement> ────────────────────────
     const handleSelect = useCallback(
       (optionValue: string) => {
-        setOpen(false);
+        // Skip search reset when closing after selection — the selected option
+        // needs to remain in the options array for its label to display correctly
+        setOpen(false, true);
+        setSearchQuery("");
         if (optionValue === value) return;
         const syntheticEvent = {
           target: { id, name: id, value: optionValue },

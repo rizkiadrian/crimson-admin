@@ -346,21 +346,22 @@ new → contacted → qualified → proposal → negotiation → won
 **API Base:** `/api/v1/sales/activity-logs`
 **Priority:** P1 — Core
 
-| ID       | Feature                | Status  | Description                                                                    |
-| -------- | ---------------------- | ------- | ------------------------------------------------------------------------------ |
-| FM-08-01 | Timeline list page     | ✅ Done | Timeline/list view (not table) with ActivityCard items, chronological order    |
-| FM-08-02 | Infinite scroll        | ✅ Done | IntersectionObserver-based auto-loading, append pagination, scroll sentinel    |
-| FM-08-03 | Search with URL sync   | ✅ Done | Debounced search via SearchInput, syncs `?search=` to URL, resets on change    |
-| FM-08-04 | Loading states         | ✅ Done | Skeleton placeholders (ActivityCardSkeleton) on initial load, spinner on more  |
-| FM-08-05 | Empty states           | ✅ Done | "Belum ada aktivitas" (no data) and "Tidak ada hasil" (no search results)      |
-| FM-08-06 | Error handling         | ✅ Done | Initial error with retry, load-more error with inline retry, data preservation |
-| FM-08-07 | Create activity report | ✅ Done | FormCard at `/sales-activities/create` for new activity log submission         |
+| ID       | Feature                | Status  | Description                                                                                                                                                        |
+| -------- | ---------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FM-08-01 | Timeline list page     | ✅ Done | Timeline/list view (not table) with ActivityCard items, chronological order                                                                                        |
+| FM-08-02 | Infinite scroll        | ✅ Done | IntersectionObserver-based auto-loading, append pagination, scroll sentinel                                                                                        |
+| FM-08-03 | Search with URL sync   | ✅ Done | Debounced search via SearchInput, syncs `?search=` to URL, resets on change                                                                                        |
+| FM-08-04 | Loading states         | ✅ Done | Skeleton placeholders (ActivityCardSkeleton) on initial load, spinner on more                                                                                      |
+| FM-08-05 | Empty states           | ✅ Done | "Belum ada aktivitas" (no data) and "Tidak ada hasil" (no search results)                                                                                          |
+| FM-08-06 | Error handling         | ✅ Done | Initial error with retry, load-more error with inline retry, data preservation                                                                                     |
+| FM-08-07 | Create activity report | ✅ Done | FormCard at `/sales-activities/create` with conditional fields, multipart file upload, client-side validation, error handling, and toast notifications             |
+| FM-08-08 | Attachment thumbnail   | ✅ Done | Image attachments show clickable thumbnail preview (max 120px, skeleton loading, error fallback); non-image attachments show file icon badge (PDF/DOC/XLS/generic) |
 
 **Key Differences from Table Pages:**
 
 - Uses **timeline/list view** instead of `TableCard` — data is chronological with visual type icons and relative timestamps
 - Uses **`useInfiniteScroll` hook** instead of `useTableData` — append-based pagination with IntersectionObserver
-- **ActivityCard** displays: type icon (FileText/UserPlus/RefreshCw), title, status badge (pending/approved/rejected), lead name, description, relative time
+- **ActivityCard** displays: type icon (FileText/UserPlus/RefreshCw), title, status badge (pending/approved/rejected), lead name, description, attachment preview (thumbnail or file icon badge), relative time
 
 **Activity Types:**
 
@@ -380,10 +381,10 @@ new → contacted → qualified → proposal → negotiation → won
 
 **API Endpoints:**
 
-| Method | Endpoint                                 | Request Body                                           | Response                              |
-| ------ | ---------------------------------------- | ------------------------------------------------------ | ------------------------------------- |
-| GET    | `/sales/activity-logs?page=N&per_page=N` | —                                                      | Paginated list with `meta.pagination` |
-| POST   | `/sales/activity-logs`                   | `{ type, title, description?, lead_id?, attachment? }` | Created activity log                  |
+| Method | Endpoint                                 | Request Body                                                                                                                                                | Response                              |
+| ------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| GET    | `/sales/activity-logs?page=N&per_page=N` | —                                                                                                                                                           | Paginated list with `meta.pagination` |
+| POST   | `/sales/activity-logs`                   | `{ type, title, description?, lead_id?, attachment?, metadata?: { requested_status?, requested_sales_id? } }` — multipart/form-data when attachment present | Created activity log                  |
 
 **Acceptance Criteria:**
 
@@ -395,6 +396,17 @@ new → contacted → qualified → proposal → negotiation → won
 - Skeleton placeholders shown during initial load
 - Existing data preserved when load-more fails
 - Sidebar "Sales Activity Report" links to `/sales-activities`
+- Create form validates title is not empty (whitespace-only rejected)
+- "Requested Sales Member ID" field appears only when type is `request_lead_assign`, auto-populated from user profile (`sales_id`), and is read-only
+- Successful submit shows success toast and redirects to sales activities list
+- Validation errors (422) display per-field error messages; general errors show error toast
+- Submit button disabled with loading indicator during submission
+- File attachment sent as `multipart/form-data`; JSON otherwise
+- Backend dispatches `NotifyBackofficeUsers` job on create, notifying all admin/backoffice users
+- API response includes `attachment_url`, `thumbnail_url`, and `attachment_type` fields (appended via model accessors)
+- Image attachments display a clickable thumbnail (max 120px width, rounded corners) that opens full-size in a new tab
+- Non-image attachments display a file icon badge with extension label (PDF, DOC, XLS, or generic FILE)
+- Thumbnail shows skeleton placeholder while loading; falls back to file icon on error
 
 ---
 

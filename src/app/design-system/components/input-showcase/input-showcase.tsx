@@ -99,6 +99,37 @@ export function FormInputShowcase() {
           />
         </div>
       </div>
+
+      {/* --- KARTU 4: READ-ONLY --- */}
+      {/* Auto-populated field yang tidak bisa diedit user */}
+      <div className="relative flex flex-col p-8 pt-16 rounded-2xl bg-neutral-50 shadow-sm border border-neutral-200 overflow-hidden lg:col-span-2">
+        <div className="absolute top-6 left-6">
+          <Text
+            variant="label"
+            className="text-secondary-600 uppercase tracking-wider"
+          >
+            Read-Only (Auto-Populated)
+          </Text>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl">
+          <FormInput
+            id="readonly-sales-id"
+            label="SALES MEMBER ID"
+            value="SLS-0002"
+            readOnly
+            className="bg-neutral-100 cursor-not-allowed"
+          />
+          <FormInput
+            id="readonly-empty"
+            label="SALES MEMBER ID (EMPTY)"
+            value=""
+            placeholder="Sales ID tidak tersedia"
+            readOnly
+            className="bg-neutral-100 cursor-not-allowed"
+          />
+        </div>
+      </div>
     </div>
   );
 }
