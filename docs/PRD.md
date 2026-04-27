@@ -153,11 +153,12 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 
 **Priority:** P1 — UX
 
-| ID       | Feature                | Status  | Description                                                 |
-| -------- | ---------------------- | ------- | ----------------------------------------------------------- |
-| FM-03-01 | Sidebar accordion      | ✅ Done | Collapsible groups with chevron toggle and smooth animation |
-| FM-03-02 | Active state detection | ✅ Done | Uses `pathname.startsWith()` for sub-page highlighting      |
-| FM-03-03 | Auto-expand on active  | ✅ Done | Groups auto-open when any child route is active             |
+| ID       | Feature                | Status  | Description                                                                                                        |
+| -------- | ---------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
+| FM-03-01 | Sidebar accordion      | ✅ Done | Collapsible groups with chevron toggle and smooth animation                                                        |
+| FM-03-02 | Active state detection | ✅ Done | Uses `pathname.startsWith()` for sub-page highlighting                                                             |
+| FM-03-03 | Auto-expand on active  | ✅ Done | Groups auto-open when any child route is active                                                                    |
+| FM-03-04 | User info & logout     | ✅ Done | Bottom section shows user name, role, avatar initial, and logout button (LogOut icon, red on hover, loading state) |
 
 **Navigation Structure:**
 
@@ -184,13 +185,14 @@ Notifikasi
 
 **Priority:** P0 — Core
 
-| ID       | Feature                  | Status  | Description                                                  |
-| -------- | ------------------------ | ------- | ------------------------------------------------------------ |
-| FM-04-01 | Toast notifications      | ✅ Done | Success/error/info toasts via `useNotificationStore`         |
-| FM-04-02 | Confirm dialog           | ✅ Done | Async confirm with loading spinner via `useConfirmStore`     |
-| FM-04-03 | Filter popup             | ✅ Done | Composable: chips, range slider, date range                  |
-| FM-04-04 | URL-synced pagination    | ✅ Done | `?page=N` in URL, browser back/forward support               |
-| FM-04-05 | Return-page preservation | ✅ Done | Edit links carry `?returnPage=N`, redirect back after submit |
+| ID       | Feature                  | Status  | Description                                                                                                                         |
+| -------- | ------------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| FM-04-01 | Toast notifications      | ✅ Done | Success/error/info toasts via `useNotificationStore`                                                                                |
+| FM-04-02 | Confirm dialog           | ✅ Done | Async confirm with loading spinner via `useConfirmStore`                                                                            |
+| FM-04-03 | Filter popup             | ✅ Done | Composable: chips, range slider, date range                                                                                         |
+| FM-04-04 | URL-synced pagination    | ✅ Done | `?page=N` in URL, browser back/forward support                                                                                      |
+| FM-04-05 | Return-page preservation | ✅ Done | Edit links carry `?returnPage=N`, redirect back after submit                                                                        |
+| FM-04-06 | Logout                   | ✅ Done | Sidebar logout button → server action revokes tokens (best-effort) → clears cookies → clears Zustand profile → redirect to `/login` |
 
 ---
 

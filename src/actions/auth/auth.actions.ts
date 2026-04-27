@@ -1,9 +1,10 @@
 "use server";
 
 import { handleResponseError } from "@lib/utils";
-import { setAuth, setRoleCookie } from "@lib/secure-cookie";
+import { setAuth, setRoleCookie, removeAuth } from "@lib/secure-cookie";
 import { ILoginPayload, ILoginResponse } from "@services/auth";
 import { IApiError, IApiResponse } from "@services/general";
+import { COOKIE_KEYS } from "@config/env";
 
 type TLoginResult =
   | IApiResponse<ILoginResponse>
@@ -57,4 +58,37 @@ export async function setCredentials(
  */
 export async function syncRoleCookie(roleName: string): Promise<void> {
   await setRoleCookie(roleName);
+}
+
+/**
+ * Logout — hapus semua cookies dan revoke token di backend
+ */
+export async function logout(): Promise<{ success: boolean }> {
+  try {
+    const { getAuthToken } = await import("@lib/secure-cookie");
+    const token = await getAuthToken(COOKIE_KEYS.accessToken);
+
+    // Call backend logout to revoke tokens (best-effort)
+    if (token) {
+      try {
+        await fetch(`${process.env.API_URL}/auth/logout`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch {
+        // Backend logout failed — still clear cookies locally
+      }
+    }
+
+    // Clear all cookies
+    await removeAuth();
+    return { success: true };
+  } catch {
+    // Even if something fails, try to clear cookies
+    await removeAuth();
+    return { success: true };
+  }
 }

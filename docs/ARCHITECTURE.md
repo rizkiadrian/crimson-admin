@@ -228,6 +228,26 @@ All cookie keys are centralized in `COOKIE_KEYS` (`src/config/env.ts`). Helpers:
     └── Layout (server component) reads role_name cookie → passes roleName prop to Sidebar, Navbar, BackofficeStatus
 ```
 
+### Logout Flow
+
+```
+[Sidebar — User Info Section]
+    │
+    ├── Displays: user name (Zustand profile), role (from prop), avatar initial
+    ├── LogOut icon button (red on hover, disabled while loading)
+    │
+    └── Click Logout
+            │
+            ├── Server Action: logout()
+            │       ├── Read access_token from cookies
+            │       ├── POST /auth/logout (Bearer token) — best-effort, revoke tokens
+            │       │       └── If backend call fails → continue (graceful degradation)
+            │       └── removeAuth() — delete cookies: access_token, refresh_token, role_name
+            │
+            ├── Client: clearProfile() — reset Zustand user profile store
+            └── router.push(/login) — redirect to login page
+```
+
 ### Role Cookie Sync
 
 When `useUserProfile` store fetches the profile (e.g., on page load), it calls `syncRoleCookie(role_name)` server action fire-and-forget. This ensures the cookie stays in sync with the latest API data, covering cases where the role was changed server-side or the cookie was missing.

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
@@ -20,11 +20,14 @@ import {
   Users2,
   UserSquare2,
   Bell,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
 import { useSidebarStore } from "@store/useSidebarStore";
+import { useUserProfile } from "@store/useUserProfile";
 import { BUSINESSFLOW } from "@config/env";
+import { logout } from "@actions/auth/auth.actions";
 
 interface NavItem {
   label: string;
@@ -181,7 +184,10 @@ interface SidebarProps {
 
 export function Sidebar({ roleName }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { isOpen, close } = useSidebarStore();
+  const { profile, clearProfile } = useUserProfile();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const navs = useMemo(() => {
     if (roleName && BUSINESSFLOW.backofficeRoles.includes(roleName)) {
@@ -297,18 +303,35 @@ export function Sidebar({ roleName }: SidebarProps) {
         </nav>
 
         <div className="p-6 border-t border-neutral-100">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer group">
-            <div className="w-11 h-11 rounded-xl bg-neutral-900 overflow-hidden ring-2 ring-neutral-100 group-hover:ring-primary-100 transition-all">
-              {/* Avatar placeholder */}
+          <div className="flex items-center gap-3 p-2 rounded-xl">
+            <div className="w-11 h-11 rounded-xl bg-neutral-900 overflow-hidden ring-2 ring-neutral-100 flex items-center justify-center text-white text-sm font-bold shrink-0">
+              {profile?.name?.charAt(0)?.toUpperCase() ?? "?"}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-bold text-neutral-900 truncate">
-                Premium Command Center
+                {profile?.name ?? "Loading..."}
               </p>
               <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-tight">
-                Executive Access
+                {roleName ?? "—"}
               </p>
             </div>
+            <button
+              onClick={async () => {
+                setIsLoggingOut(true);
+                try {
+                  await logout();
+                  clearProfile();
+                  router.push(PATHS.login);
+                } finally {
+                  setIsLoggingOut(false);
+                }
+              }}
+              disabled={isLoggingOut}
+              className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0 disabled:opacity-50"
+              title="Logout"
+            >
+              <LogOut size={18} />
+            </button>
           </div>
         </div>
       </aside>
