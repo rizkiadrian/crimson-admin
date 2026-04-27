@@ -138,7 +138,7 @@ export default function SalesActivitiesPage() {
           )}
 
           {/* ── Timeline Data ──────────────────────────────────────────── */}
-          {data.length > 0 && <ActivityTimeline items={data} />}
+          {data.length > 0 && <ActivityTimeline items={data} linkToDetail />}
 
           {/* ── Loading More Indicator ──────────────────────────────────── */}
           {isFetchingMore && (

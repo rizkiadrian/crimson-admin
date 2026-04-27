@@ -17,7 +17,10 @@
         "list_network_requests",
         "fill",
         "new_page",
-        "list_console_messages"
+        "list_console_messages",
+        "close_page",
+        "press_key",
+        "type_text"
       ]
     }
   }

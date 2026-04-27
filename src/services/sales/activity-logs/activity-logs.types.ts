@@ -14,6 +14,8 @@ export interface IActivityLogLead {
   id: number;
   name: string;
   lead_id: string;
+  type?: string;
+  status?: string;
 }
 
 /** Single activity log item from GET /sales/activity-logs */
@@ -31,6 +33,10 @@ export interface IActivityLog {
   status: ActivityLogStatus;
   metadata: Record<string, unknown> | null;
   lead: IActivityLogLead | null;
+  status_changed_by: number | null;
+  status_change_reason: string | null;
+  status_changed_at: string | null;
+  status_changed_by_user: { id: number; name: string } | null;
   created_at: string;
   updated_at: string;
 }

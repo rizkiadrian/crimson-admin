@@ -15,6 +15,13 @@ function minutesAgo(minutes: number): string {
   return new Date(now.getTime() - minutes * 60 * 1000).toISOString();
 }
 
+const reviewerFields = {
+  status_changed_by: null as number | null,
+  status_change_reason: null as string | null,
+  status_changed_at: null as string | null,
+  status_changed_by_user: null as { id: number; name: string } | null,
+};
+
 const MOCK_ACTIVITIES: IActivityLog[] = [
   {
     id: 1,
@@ -31,6 +38,11 @@ const MOCK_ACTIVITIES: IActivityLog[] = [
     status: "approved",
     metadata: null,
     lead: { id: 12, name: "PT Maju Jaya", lead_id: "LD-00012" },
+    ...reviewerFields,
+    status_changed_by: 1,
+    status_change_reason: "Approved — good follow up.",
+    status_changed_at: minutesAgo(10),
+    status_changed_by_user: { id: 1, name: "Admin User" },
     created_at: minutesAgo(15),
     updated_at: minutesAgo(15),
   },
@@ -49,6 +61,7 @@ const MOCK_ACTIVITIES: IActivityLog[] = [
     status: "pending",
     metadata: null,
     lead: { id: 8, name: "CV Teknologi Nusantara", lead_id: "LD-00008" },
+    ...reviewerFields,
     created_at: minutesAgo(120),
     updated_at: minutesAgo(120),
   },
@@ -66,6 +79,11 @@ const MOCK_ACTIVITIES: IActivityLog[] = [
     status: "rejected",
     metadata: null,
     lead: { id: 3, name: "PT Sentosa Abadi", lead_id: "LD-00003" },
+    ...reviewerFields,
+    status_changed_by: 1,
+    status_change_reason: "Lead belum memenuhi kriteria qualified.",
+    status_changed_at: minutesAgo(1400),
+    status_changed_by_user: { id: 1, name: "Admin User" },
     created_at: minutesAgo(1440),
     updated_at: minutesAgo(1440),
   },
@@ -85,6 +103,11 @@ const MOCK_ACTIVITIES: IActivityLog[] = [
     status: "approved",
     metadata: null,
     lead: null,
+    ...reviewerFields,
+    status_changed_by: 1,
+    status_change_reason: "Report diterima.",
+    status_changed_at: minutesAgo(4300),
+    status_changed_by_user: { id: 1, name: "Admin User" },
     created_at: minutesAgo(4320),
     updated_at: minutesAgo(4320),
   },
@@ -104,6 +127,11 @@ const MOCK_ACTIVITIES: IActivityLog[] = [
     status: "approved",
     metadata: null,
     lead: { id: 12, name: "PT Maju Jaya", lead_id: "LD-00012" },
+    ...reviewerFields,
+    status_changed_by: 1,
+    status_change_reason: "Foto diterima.",
+    status_changed_at: minutesAgo(5700),
+    status_changed_by_user: { id: 1, name: "Admin User" },
     created_at: minutesAgo(5760),
     updated_at: minutesAgo(5760),
   },

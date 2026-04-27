@@ -37,9 +37,10 @@ src/
 │   │   │   ├── ConfirmDialog/   # Global confirm modal (Zustand-driven)
 │   │   │   ├── GlobalNotification/  # Toast notifications (Zustand-driven)
 │   │   │   └── ActivityCard/   # Activity item card, skeleton, and helpers (formatRelativeTime, getActivityTypeConfig, getStatusBadgeConfig, getFileIconConfig)
+│   │   │   └── CommentThread/ # Reusable comment thread component (list + create, access controlled)
 │   │   ├── layout/
 │   │   │   ├── Sidebar/         # Accordion navigation with grouped items
-│   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown, profile
+│   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown (supports backoffice + sales roles, resolveLink fallback), profile
 │   │   └── core/
 │   │       ├── BackofficeStatus/
 │   │       └── SetupClient/
@@ -70,11 +71,15 @@ src/
 │   │       │   └── _partials/sales-table/      # Table component
 │   │       ├── notifications/
 │   │       │   └── page.tsx                    # Full notifications list page
+│   │       ├── activity-logs/
+│   │       │   ├── page.tsx                    # Backoffice activity log list (table with search, status/type filters, "Requested" column)
+│   │       │   └── [id]/page.tsx               # Backoffice activity log detail + "Detail Permintaan" section + status update + comments
 │   │       └── page.tsx                        # Dashboard home
 │   ├── (dashboard)/
 │   │   └── sales-activities/
 │   │       ├── page.tsx                        # Timeline list page (infinite scroll)
 │   │       ├── create/page.tsx                 # Create activity report form
+│   │       ├── [id]/page.tsx                   # Sales activity log detail (reviewer info + "Detail Permintaan" section + comments)
 │   │       └── _partials/
 │   │           └── activity-timeline/          # Timeline container component
 │   ├── design-system/          # Live component preview (/design-system)
@@ -94,16 +99,21 @@ src/
 │   │   ├── leads/              # Types + service (list, create, detail, update, delete, updateStatus, convert)
 │   │   ├── sales-members/      # Types + service (list, create, detail, update, delete, list-dropdown)
 │   │   ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)
+│   │   ├── activity-logs/      # Types + service (list, detail, updateStatus) — backoffice activity log review
 │   │   └── dashboard/          # Types + service (summary incl. leads stats)
-│   └── sales/
-│       └── activity-logs/      # Types (IActivityLog, ICreateActivityLogPayload, ActivityLogType) + service (list, create with multipart/form-data support)
+│   ├── sales/
+│   │   ├── activity-logs/      # Types (IActivityLog, ICreateActivityLogPayload, ActivityLogType) + service (list, create, detail with multipart/form-data support)
+│   │   └── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead) — sales notifications
+│   └── shared/
+│       └── comments/           # Types + service (list, create) — activity log comments (access controlled)
 ├── store/
 │   ├── useNotificationStore.ts          # Global toast (success/error/info)
 │   ├── useConfirmStore.ts               # Global confirm dialog
-│   └── useBackofficeNotificationStore.ts # Notification bell state (unread count, dropdown, polling)
+│   ├── useBackofficeNotificationStore.ts # Notification bell state (unread count, dropdown, polling)
+│   └── useSalesNotificationStore.ts     # Sales notification bell state (mirrors backoffice pattern, uses salesNotificationsService)
 ├── config/
 │   ├── env.ts
-│   └── routing.ts              # Centralized PATHS object
+│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail)
 └── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 
@@ -146,6 +156,7 @@ src/
 - `useNotificationStore` — toast notifications (success/error/info with auto-dismiss)
 - `useConfirmStore` — confirm dialog (title, description, async onConfirm)
 - `useBackofficeNotificationStore` — notification bell (unread count polling, recent list, dropdown state, mark-as-read)
+- `useSalesNotificationStore` — sales notification bell (mirrors backoffice pattern, uses `salesNotificationsService`)
 - Page-level state (form data, filters, loading) stays in component `useState`
 
 ### ADR-04: URL as Source of Truth for Pagination
@@ -365,4 +376,70 @@ When `useUserProfile` store fetches the profile (e.g., on page load), it calls `
             │       → File icon badge via getFileIconConfig(url)
             │       → Clickable: opens attachment_url in new tab
             └── No attachment → nothing rendered
+```
+
+### Activity Log Review Flow (Backoffice → Sales)
+
+```
+[Backoffice: Activity Log List]
+    │
+    ├── useTableData reads ?page=N from URL
+    ├── Fetches /api/v1/backoffice/activity-logs?page=N&per_page=10&search=&status=&type=
+    ├── Renders table with status/type badges, sales user name, lead info
+    ├── "Requested" column shows requested status (→ Won) or sales ID (SLS-0002)
+    │
+    └── Click row → /dashboard/activity-logs/{id}
+
+[Backoffice: Activity Log Detail]
+    │
+    ├── useDetailData fetches /backoffice/activity-logs/{id}
+    ├── Renders DetailCard with activity info
+    ├── "Detail Permintaan" section:
+    │       ├── request_update_lead_status → Tipe Lead badge, Status Lead Saat Ini badge, Status Yang Diminta badge
+    │       └── request_lead_assign → Lead name, Tipe Lead badge, Sales ID Yang Diminta badge
+    │
+    ├── Status = "pending"
+    │       → Show status update form (FormSelect + FormTextarea + optional comment)
+    │       → Submit → PATCH /backoffice/activity-logs/{id}/status
+    │       → Backend: update status fields + applyApprovedAction() (auto-update lead status/assignment) + dispatch NotifySalesUser
+    │       → Success → refetch detail → show read-only review info
+    │
+    ├── Status ≠ "pending"
+    │       → Show read-only review info (reviewer name, reason, timestamp)
+    │       → Show CommentThread component
+    │
+    └── CommentThread
+            ├── Fetches GET /activity-logs/{id}/comments
+            ├── Displays comments chronologically (oldest first)
+            ├── Each comment: avatar initial, name, role badge, body, relative time
+            ├── Submit new comment → POST /activity-logs/{id}/comments
+            └── Backend: create comment + dispatch notification to other party
+
+[Sales: Activity Log Detail]
+    │
+    ├── useDetailData fetches /sales/activity-logs/{id} (includes reviewer info)
+    ├── Renders DetailCard with activity info
+    ├── "Detail Permintaan" section (same as backoffice detail)
+    │
+    ├── Status ≠ "pending"
+    │       → Show review info section (reviewer name, reason, timestamp)
+    │       → Show CommentThread component
+    │
+    └── Status = "pending"
+            → No review info, no comment thread
+
+[Notification Deep Link Flow]
+    │
+    ├── NotificationBell supports both backoffice and sales roles
+    │       ├── Detects role via BUSINESSFLOW.salesRoles / backofficeRoles
+    │       └── Uses appropriate store (useBackofficeNotificationStore or useSalesNotificationStore)
+    ├── NotificationBell dropdown shows notification with link field
+    ├── Click notification → markAsRead + router.push(notification.link)
+    │       ├── If link is present → use directly
+    │       ├── If link is null → resolveLink(reference_type, reference_id) constructs URL
+    │       ├── Backoffice notification link: /dashboard/activity-logs/{id}
+    │       └── Sales notification link: /sales-activities/{id}
+    ├── Notification detail page (/dashboard/notifications) uses resolveNotificationLink() fallback + router.push() on click
+    ├── Type labels: status_change → "Status Update", new_comment → "Komentar Baru"
+    └── Navigates to the correct detail page
 ```

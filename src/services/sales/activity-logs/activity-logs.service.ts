@@ -18,6 +18,13 @@ export const activityLogsService = {
     return await api.get("/sales/activity-logs", { params });
   },
 
+  /** GET /sales/activity-logs/:id — single activity log detail */
+  getActivityLogDetail: async (
+    id: number
+  ): Promise<IApiResponse<IActivityLog>> => {
+    return await api.get(`/sales/activity-logs/${id}`);
+  },
+
   /** POST /sales/activity-logs — create a new activity log */
   createActivityLog: async (
     payload: ICreateActivityLogPayload

@@ -40,6 +40,12 @@ const NOTIFICATIONS_SERVICES = {
 const SALES_ACTIVITIES_SERVICES = {
   salesActivities: "/sales-activities",
   salesActivitiesCreate: "/sales-activities/create",
+  salesActivityDetail: (id: number) => `/sales-activities/${id}`,
+};
+
+const ACTIVITY_LOGS_SERVICES = {
+  activityLogs: "/dashboard/activity-logs",
+  activityLogDetail: (id: number) => `/dashboard/activity-logs/${id}`,
 };
 
 const SALES_DASHBOARD_SERVICES = {
@@ -57,4 +63,5 @@ export const PATHS = {
   ...SALESMEMBERS_SERVICES,
   ...NOTIFICATIONS_SERVICES,
   ...SALES_ACTIVITIES_SERVICES,
+  ...ACTIVITY_LOGS_SERVICES,
 };

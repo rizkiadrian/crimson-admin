@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Bell, CheckCheck, Loader2 } from "lucide-react";
 import { useBackofficeNotificationStore } from "@store/useBackofficeNotificationStore";
+import { useSalesNotificationStore } from "@store/useSalesNotificationStore";
 import { BUSINESSFLOW } from "@config/env";
 import { cn } from "@lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -18,6 +20,10 @@ function typeLabel(type: string): string {
       return "Lead Assign";
     case "lead_status_request":
       return "Lead Status";
+    case "status_change":
+      return "Status Update";
+    case "new_comment":
+      return "Komentar Baru";
     default:
       return "Notifikasi";
   }
@@ -32,6 +38,10 @@ function typeBadgeClass(type: string): string {
       return "bg-warning-100 text-warning-700";
     case "lead_status_request":
       return "bg-success-100 text-success-700";
+    case "status_change":
+      return "bg-tertiary-100 text-tertiary-700";
+    case "new_comment":
+      return "bg-primary-100 text-primary-700";
     default:
       return "bg-neutral-100 text-neutral-600";
   }
@@ -41,7 +51,58 @@ interface NotificationBellProps {
   roleName: string | null;
 }
 
+/** Resolve the navigation link for a notification.
+ *  Uses the explicit `link` field when available, otherwise constructs
+ *  a link from `reference_type` + `reference_id` based on role context.
+ */
+function resolveLink(
+  notif: {
+    link: string | null;
+    reference_type: string | null;
+    reference_id: number | null;
+  },
+  isSales: boolean
+): string | null {
+  if (notif.link) return notif.link;
+
+  if (notif.reference_type && notif.reference_id) {
+    switch (notif.reference_type) {
+      case "activity_log":
+        return isSales
+          ? `/sales-activities/${notif.reference_id}`
+          : `/dashboard/activity-logs/${notif.reference_id}`;
+      case "lead":
+        return `/dashboard/leads/${notif.reference_id}`;
+      default:
+        return null;
+    }
+  }
+
+  return null;
+}
+
 export function NotificationBell({ roleName }: NotificationBellProps) {
+  const router = useRouter();
+
+  const isBackoffice = Boolean(
+    roleName && BUSINESSFLOW.backofficeRoles.includes(roleName)
+  );
+  const isSales = Boolean(
+    roleName && BUSINESSFLOW.salesRoles.includes(roleName)
+  );
+
+  // Backoffice store
+  const boStore = useBackofficeNotificationStore();
+  // Sales store
+  const salesStore = useSalesNotificationStore();
+
+  // Pick the right store based on role
+  const store = useMemo(() => {
+    if (isBackoffice) return boStore;
+    if (isSales) return salesStore;
+    return boStore; // fallback
+  }, [isBackoffice, isSales, boStore, salesStore]);
+
   const {
     unreadCount,
     recentNotifications,
@@ -52,19 +113,19 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
     closeDropdown,
     markAsRead,
     markAllAsRead,
-  } = useBackofficeNotificationStore();
+  } = store;
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Poll unread count every 30 seconds
   useEffect(() => {
-    if (roleName && BUSINESSFLOW.backofficeRoles.includes(roleName)) {
+    if (isBackoffice || isSales) {
       fetchUnreadCount();
       const interval = setInterval(fetchUnreadCount, 30_000);
       return () => clearInterval(interval);
     }
-  }, [fetchUnreadCount, roleName]);
+  }, [fetchUnreadCount, isBackoffice, isSales]);
 
   // Close dropdown on outside click
   const handleMouseUp = useCallback(
@@ -87,6 +148,11 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
       return () => document.removeEventListener("mouseup", handleMouseUp);
     }
   }, [isDropdownOpen, handleMouseUp]);
+
+  // "View all" link depends on role
+  const viewAllHref = isSales
+    ? "/sales-activities"
+    : "/dashboard/notifications";
 
   return (
     <div className="relative">
@@ -154,6 +220,11 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
                   variant="ghost"
                   onClick={() => {
                     if (!notif.read_at) markAsRead(notif.id);
+                    const link = resolveLink(notif, isSales);
+                    if (link) {
+                      closeDropdown();
+                      router.push(link);
+                    }
                   }}
                   className={cn(
                     "w-full h-auto justify-start items-start text-left px-5 py-3.5 rounded-none border-none hover:border-none border-b border-b-neutral-50 hover:bg-neutral-50",
@@ -213,7 +284,7 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
           <div className="border-t border-neutral-100 px-5 py-3">
             <Button
               variant="ghost"
-              href="/dashboard/notifications"
+              href={viewAllHref}
               onClick={closeDropdown}
               className="w-full justify-center h-auto py-1 text-sm text-tertiary-600 hover:text-tertiary-700 border-none hover:border-none hover:bg-transparent"
             >

@@ -114,8 +114,11 @@ export default function CreateSalesActivityReportPage() {
     leadSearchTimer.current = setTimeout(async () => {
       try {
         const res = await activeLeadsService.getActiveLeads({ search: query });
+        const typeLabel = (t: string) => (t === "client" ? "Client" : "Mitra");
+        const statusLabel = (s: string) =>
+          s.charAt(0).toUpperCase() + s.slice(1);
         const opts: FormSelectOption[] = (res.data ?? []).map((lead) => ({
-          label: `${lead.lead_id} — ${lead.name}`,
+          label: `${lead.lead_id} — ${lead.name} [${typeLabel(lead.type)} · ${statusLabel(lead.status)}]`,
           value: String(lead.id),
         }));
         setLeadOptions(opts);

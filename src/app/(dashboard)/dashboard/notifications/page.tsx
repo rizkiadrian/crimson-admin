@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Bell, CheckCheck } from "lucide-react";
 import { cn } from "@lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -29,6 +30,10 @@ function typeLabel(type: string): string {
       return "Lead Assign";
     case "lead_status_request":
       return "Lead Status";
+    case "status_change":
+      return "Status Update";
+    case "new_comment":
+      return "Komentar Baru";
     default:
       return "Notifikasi";
   }
@@ -43,12 +48,39 @@ function typeBadgeClass(type: string): string {
       return "bg-warning-100 text-warning-700";
     case "lead_status_request":
       return "bg-success-100 text-success-700";
+    case "status_change":
+      return "bg-tertiary-100 text-tertiary-700";
+    case "new_comment":
+      return "bg-primary-100 text-primary-700";
     default:
       return "bg-neutral-100 text-neutral-600";
   }
 }
 
+/** Resolve the navigation link for a notification.
+ *  Uses the explicit `link` field when available, otherwise constructs
+ *  a link from `reference_type` + `reference_id`.
+ */
+function resolveNotificationLink(notif: INotification): string | null {
+  if (notif.link) return notif.link;
+
+  // Fallback: construct link from reference data
+  if (notif.reference_type && notif.reference_id) {
+    switch (notif.reference_type) {
+      case "activity_log":
+        return `/dashboard/activity-logs/${notif.reference_id}`;
+      case "lead":
+        return `/dashboard/leads/${notif.reference_id}`;
+      default:
+        return null;
+    }
+  }
+
+  return null;
+}
+
 export default function NotificationsPage() {
+  const router = useRouter();
   const { showNotification } = useNotificationStore();
   const { fetchUnreadCount } = useBackofficeNotificationStore();
 
@@ -151,6 +183,10 @@ export default function NotificationsPage() {
               variant="ghost"
               onClick={() => {
                 if (!notif.read_at) handleMarkAsRead(notif.id);
+                const link = resolveNotificationLink(notif);
+                if (link) {
+                  router.push(link);
+                }
               }}
               className={cn(
                 "w-full h-auto justify-start items-start text-left px-6 py-4 rounded-none border-none hover:border-none hover:bg-neutral-50",

@@ -36,31 +36,32 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Feature Status
 
-| Module             | List | Create | Show | Edit | Delete | Filter | Dashboard |
-| ------------------ | ---- | ------ | ---- | ---- | ------ | ------ | --------- |
-| Dashboard          | —    | —      | —    | —    | —      | —      | ✅        |
-| Backoffice Members | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| Client Members     | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
-| Leads Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅        |
-| Sales Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| Sales Activities   | ✅   | ✅     | —    | —    | —      | —      | —         |
-| Notifications      | ✅   | —      | —    | —    | —      | —      | ✅        |
-| Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
-| Service Categories | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
+| Module              | List | Create | Show | Edit | Delete | Filter | Dashboard |
+| ------------------- | ---- | ------ | ---- | ---- | ------ | ------ | --------- |
+| Dashboard           | —    | —      | —    | —    | —      | —      | ✅        |
+| Backoffice Members  | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| Client Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| Mitra Management    | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
+| Leads Management    | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅        |
+| Sales Members       | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| Sales Activities    | ✅   | ✅     | ✅   | —    | —      | —      | —         |
+| Activity Log Review | ✅   | —      | ✅   | —    | —      | ✅     | —         |
+| Notifications       | ✅   | —      | —    | —    | —      | —      | ✅        |
+| Deposit Management  | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
+| Service Categories  | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart, ActivityCard (with attachment thumbnail preview)
-│   ├── components/layout/   # Sidebar (accordion), Navbar (with NotificationBell dropdown)
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, sales-activities)
+│   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart, ActivityCard (with attachment thumbnail preview), CommentThread
+│   ├── components/layout/   # Sidebar (accordion), Navbar (with NotificationBell dropdown — supports backoffice + sales roles, resolveLink deep link fallback)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, sales-activities)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useInfiniteScroll (infinite scroll + URL sync), useDetailData (single resource)
-├── services/                # API service layer per domain (backoffice/*, sales/activity-logs)
-├── store/                   # Zustand stores (notifications, confirm dialog, backoffice notifications)
+├── services/                # API service layer per domain (backoffice/*, sales/activity-logs, sales/notifications, shared/comments)
+├── store/                   # Zustand stores (notifications, confirm dialog, backoffice notifications, sales notifications)
 └── config/                  # Routing paths, environment, cookie keys (incl. role_name)
 ```
 

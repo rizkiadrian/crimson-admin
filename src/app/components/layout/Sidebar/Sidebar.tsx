@@ -83,6 +83,11 @@ const SALES_MANAGEMENT_NAV: NavEntry = {
       href: PATHS.salesMembers,
       icon: UserSquare2,
     },
+    {
+      label: "Activity Logs",
+      href: PATHS.activityLogs,
+      icon: FileText,
+    },
   ],
 };
 

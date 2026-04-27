@@ -170,7 +170,8 @@ Dashboard
   └── Mitra Members
 ▼ Sales Management (accordion)
   ├── Leads
-  └── Sales Members
+  ├── Sales Members
+  └── Activity Logs
 Analytics
 Reports
 Notifikasi
@@ -412,6 +413,67 @@ new → contacted → qualified → proposal → negotiation → won
 
 ---
 
+### FM-09: Activity Log Review
+
+**Route:** `/dashboard/activity-logs` (backoffice), `/sales-activities/{id}` (sales detail)
+**API Base:** `/api/v1/backoffice/activity-logs`, `/api/v1/activity-logs/{id}/comments`, `/api/v1/sales/notifications`
+**Priority:** P1 — Core
+
+| ID       | Feature                        | Status  | Description                                                                                                                                                                                                                                                                                                                                               |
+| -------- | ------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FM-09-01 | Backoffice activity log list   | ✅ Done | Table with search, status/type filters, paginated. Shows sales name, title, type badge, status badge, lead. "Requested" column shows requested status (→ Won) or sales ID (SLS-0002)                                                                                                                                                                      |
+| FM-09-02 | Backoffice activity log detail | ✅ Done | DetailCard with activity info, "Detail Permintaan" section, status update form (if pending), read-only review info (if reviewed). Detail Permintaan shows: for `request_update_lead_status` — Tipe Lead badge, Status Lead Saat Ini badge, Status Yang Diminta badge; for `request_lead_assign` — Lead name, Tipe Lead badge, Sales ID Yang Diminta badge |
+| FM-09-03 | Status update (approve/reject) | ✅ Done | FormSelect + FormTextarea for reason + optional initial comment. Dispatches NotifySalesUser. On approve: `applyApprovedAction()` auto-updates lead status for `request_update_lead_status` (auto-sets `contacted_at` when moving from "new", `converted_at` when status becomes "won") and assigns lead for `request_lead_assign`                         |
+| FM-09-04 | Comment thread                 | ✅ Done | Reusable CommentThread component. Chronological comments with user name, role badge, relative timestamp                                                                                                                                                                                                                                                   |
+| FM-09-05 | Sales activity log detail      | ✅ Done | DetailCard with activity info, "Detail Permintaan" section, reviewer info (when reviewed), comment thread                                                                                                                                                                                                                                                 |
+| FM-09-06 | Sales notifications            | ✅ Done | Sales notification service (list, unread count, mark read, mark all read). Mirrors backoffice notifications. `useSalesNotificationStore` Zustand store. NotificationBell supports both backoffice and sales roles via role detection                                                                                                                      |
+| FM-09-07 | Notification deep link         | ✅ Done | NotificationBell click navigates to notification's `link` URL (e.g., `/dashboard/activity-logs/{id}`)                                                                                                                                                                                                                                                     |
+| FM-09-08 | Activity card detail link      | ✅ Done | ActivityCard in timeline links to `/sales-activities/{id}` detail page                                                                                                                                                                                                                                                                                    |
+
+**Architecture:**
+
+- `CommentThread` is a reusable component used in both backoffice detail and sales detail pages
+- Comment access control is enforced at the service layer: only the activity log owner (sales) or reviewer (backoffice) can view/create comments
+- Comments are only shown when the activity log status ≠ pending (i.e., after review)
+- `NotifySalesUser` job targets a single sales user (unlike `NotifyBackofficeUsers` which broadcasts)
+- Comment notifications target only the other party: sales comment → backoffice reviewer, reviewer comment → sales owner
+
+**API Endpoints:**
+
+| Method | Endpoint                                      | Request Body                   | Response                              |
+| ------ | --------------------------------------------- | ------------------------------ | ------------------------------------- |
+| GET    | `/backoffice/activity-logs?page=N&per_page=N` | —                              | Paginated list with `meta.pagination` |
+| GET    | `/backoffice/activity-logs/{id}`              | —                              | Activity log detail with relations    |
+| PATCH  | `/backoffice/activity-logs/{id}/status`       | `{ status, reason, comment? }` | Updated activity log                  |
+| GET    | `/activity-logs/{id}/comments`                | —                              | Comment list (chronological)          |
+| POST   | `/activity-logs/{id}/comments`                | `{ body }`                     | Created comment                       |
+| GET    | `/sales/notifications?page=N&per_page=N`      | —                              | Paginated list with `meta.pagination` |
+| GET    | `/sales/notifications/unread-count`           | —                              | `{ unread_count: number }`            |
+| PATCH  | `/sales/notifications/{id}/read`              | —                              | Updated notification                  |
+| PATCH  | `/sales/notifications/read-all`               | —                              | `{ marked_count: number }`            |
+
+**Acceptance Criteria:**
+
+- Backoffice list shows all activity logs from all sales users, ordered by created_at desc
+- Search filters by title or description (case-insensitive)
+- Status filter: pending, approved, rejected. Type filter: general_note, request_lead_assign, request_update_lead_status
+- Status update form only shown when activity log is pending; read-only review info shown when reviewed
+- Status change requires reason (max 1000 chars); optional initial comment (max 2000 chars)
+- Non-pending activity logs reject status changes with 422
+- Comment thread shows comments in chronological order (oldest first)
+- Comment access restricted to activity log owner and reviewer (403 for others)
+- Comments only allowed on reviewed activity logs (422 for pending)
+- Sales detail page shows reviewer name, reason, and timestamp when reviewed
+- Notification deep link navigates to the correct detail page on click
+- ActivityCard in sales timeline links to `/sales-activities/{id}`
+- "Detail Permintaan" section visible on both backoffice and sales detail pages
+- "Requested" column in backoffice list table shows formatted requested value
+- Lead dropdown in create form shows `[Type · Status]` format: `LD-0032 — PT Agung Sedayu [Client · New]`
+- NotificationBell supports both backoffice and sales roles with `resolveLink()` fallback for deep linking when `link` is null
+- Notification type labels: `status_change` → "Status Update", `new_comment` → "Komentar Baru"
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -421,8 +483,9 @@ new → contacted → qualified → proposal → negotiation → won
 | FM-06    | Sales Members Management    | P1       | ✅ Done    |
 | FM-07    | Backoffice Notifications    | P1       | ✅ Done    |
 | FM-08    | Sales Activities            | P1       | ✅ Done    |
-| FM-09    | Deposit Management          | P2       | 🔲 Planned |
-| FM-10    | Service Category Management | P2       | 🔲 Planned |
-| FM-11    | Dashboard Analytics         | P2       | ✅ Done    |
-| FM-12    | Audit Log                   | P3       | 🔲 Planned |
-| FM-13    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-09    | Activity Log Review         | P1       | ✅ Done    |
+| FM-10    | Deposit Management          | P2       | 🔲 Planned |
+| FM-11    | Service Category Management | P2       | 🔲 Planned |
+| FM-12    | Dashboard Analytics         | P2       | ✅ Done    |
+| FM-13    | Audit Log                   | P3       | 🔲 Planned |
+| FM-14    | Role-based UI visibility    | P3       | 🔲 Planned |
