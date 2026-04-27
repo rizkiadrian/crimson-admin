@@ -96,7 +96,7 @@ const SALES_NAVS: NavEntry[] = [
     href: PATHS.salesDashboard,
     icon: LayoutDashboard,
   },
-  { label: "Sales Activity Report", href: PATHS.leads, icon: Users2 },
+  { label: "Sales Activity Report", href: PATHS.salesActivities, icon: Users2 },
 ];
 
 const NAV_ENTRIES: NavEntry[] = [

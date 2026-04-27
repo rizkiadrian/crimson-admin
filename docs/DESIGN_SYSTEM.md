@@ -564,6 +564,127 @@ Single resource fetching for edit/detail pages.
 | `error`     | `string \| null` | Error message    |
 | `refetch`   | `() => void`     | Re-trigger fetch |
 
+### useInfiniteScroll
+
+Infinite scroll data fetching with append-based pagination, IntersectionObserver, and URL search sync. Uses `useReducer` + `queueMicrotask` for React 19 compliance.
+
+```tsx
+import { useInfiniteScroll } from "@lib/hooks/use-infinite-scroll";
+
+const {
+  data,
+  isInitialLoad,
+  isFetchingMore,
+  hasMore,
+  sentinelRef,
+  handleSearch,
+  searchQuery,
+} = useInfiniteScroll<IActivityLog, IActivityLogParams>({
+  fetcher: activityLogsService.getActivityLogs,
+  perPage: 10,
+});
+```
+
+| Option          | Type                                    | Default | Description                         |
+| --------------- | --------------------------------------- | ------- | ----------------------------------- |
+| `fetcher`       | `(params) => Promise<IApiListResponse>` | —       | Service function                    |
+| `initialParams` | `Partial<TParams>`                      | —       | Extra params beyond page/per_page   |
+| `perPage`       | `number`                                | `10`    | Items per page                      |
+| `syncUrl`       | `boolean`                               | `true`  | Sync search param to URL `?search=` |
+
+| Return           | Type                                | Description                                        |
+| ---------------- | ----------------------------------- | -------------------------------------------------- |
+| `data`           | `TData[]`                           | Accumulated data from all loaded pages             |
+| `isInitialLoad`  | `boolean`                           | First load (skeleton)                              |
+| `isFetchingMore` | `boolean`                           | Loading next page (bottom spinner)                 |
+| `error`          | `string \| null`                    | Initial fetch error                                |
+| `loadMoreError`  | `string \| null`                    | Load-more error                                    |
+| `hasMore`        | `boolean`                           | More pages available                               |
+| `loadMore`       | `() => void`                        | Trigger next page (called by IntersectionObserver) |
+| `retryLoadMore`  | `() => void`                        | Retry after load-more error                        |
+| `handleSearch`   | `(query: string) => void`           | Set search, reset data + page, sync URL            |
+| `searchQuery`    | `string`                            | Current search query                               |
+| `sentinelRef`    | `RefObject<HTMLDivElement \| null>` | Attach to scroll sentinel element                  |
+| `isMounted`      | `boolean`                           | Hydration-safe flag                                |
+
+---
+
+## Domain Components
+
+### ActivityCard
+
+Single activity item card for the sales activities timeline. Displays a type icon, title, status badge, optional lead name, truncated description, and relative timestamp.
+
+> **Moved to UI layer.** ActivityCard, ActivityCardSkeleton, and helper functions (`formatRelativeTime`, `getActivityTypeConfig`, `getStatusBadgeConfig`) now live in `components/ui/ActivityCard/` as reusable UI components.
+
+```tsx
+import { ActivityCard } from "@app/components/ui/ActivityCard";
+
+<ActivityCard activity={activityLog} />;
+```
+
+| Prop       | Type           | Description              |
+| ---------- | -------------- | ------------------------ |
+| `activity` | `IActivityLog` | Activity log data object |
+
+**Visual structure:** Type icon (circle) → Title → Status Badge + Lead Name → Description (truncated) → Relative time
+
+**Type Icon mapping:**
+
+| Activity Type                | Icon        | Background       | Icon Color          |
+| ---------------------------- | ----------- | ---------------- | ------------------- |
+| `general_note`               | `FileText`  | `bg-tertiary-50` | `text-tertiary-600` |
+| `request_lead_assign`        | `UserPlus`  | `bg-primary-50`  | `text-primary-600`  |
+| `request_update_lead_status` | `RefreshCw` | `bg-warning-50`  | `text-warning-600`  |
+
+**Status Badge mapping:**
+
+| Status     | Badge Variant | Label    |
+| ---------- | ------------- | -------- |
+| `pending`  | `warning`     | Pending  |
+| `approved` | `success`     | Approved |
+| `rejected` | `error`       | Rejected |
+
+### ActivityCardSkeleton
+
+Skeleton placeholder that mimics the shape of ActivityCard. Uses Tailwind `animate-pulse` with `bg-neutral-200` backgrounds.
+
+```tsx
+import { ActivityCardSkeleton } from "@app/components/ui/ActivityCard";
+
+<ActivityCardSkeleton />;
+```
+
+### ActivityTimeline
+
+Container component that renders a vertical list of ActivityCard items.
+
+```tsx
+import { ActivityTimeline } from "@app/(dashboard)/sales-activities/_partials/activity-timeline";
+
+<ActivityTimeline items={activityLogs} />;
+```
+
+| Prop    | Type             | Description                   |
+| ------- | ---------------- | ----------------------------- |
+| `items` | `IActivityLog[]` | Array of activity log objects |
+
+### Helper Functions (`components/ui/ActivityCard/utils.ts`)
+
+| Function                | Signature                                          | Description                                               |
+| ----------------------- | -------------------------------------------------- | --------------------------------------------------------- |
+| `formatRelativeTime`    | `(isoString: string) => string`                    | Converts ISO timestamp to Indonesian relative time string |
+| `getActivityTypeConfig` | `(type: ActivityLogType) => ActivityTypeConfig`    | Returns icon, label, bgColor, iconColor for activity type |
+| `getStatusBadgeConfig`  | `(status: ActivityLogStatus) => StatusBadgeConfig` | Returns label and Badge variant for activity status       |
+
+```tsx
+import {
+  formatRelativeTime,
+  getActivityTypeConfig,
+  getStatusBadgeConfig,
+} from "@app/components/ui/ActivityCard";
+```
+
 ---
 
 ## Code Templates

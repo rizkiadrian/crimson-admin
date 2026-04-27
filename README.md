@@ -44,6 +44,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Mitra Management   | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
 | Leads Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅        |
 | Sales Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| Sales Activities   | ✅   | ✅     | —    | —    | —      | —      | —         |
 | Notifications      | ✅   | —      | —    | —    | —      | —      | ✅        |
 | Deposit Management | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 | Service Categories | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
@@ -55,10 +56,10 @@ src/
 ├── app/
 │   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart
 │   ├── components/layout/   # Sidebar (accordion), Navbar (with NotificationBell dropdown)
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, sales-activities)
 │   └── design-system/       # Live component preview
-├── lib/hooks/               # useTableData (list + URL sync), useDetailData (single resource)
-├── services/                # API service layer per domain
+├── lib/hooks/               # useTableData (list + URL sync), useInfiniteScroll (infinite scroll + URL sync), useDetailData (single resource)
+├── services/                # API service layer per domain (backoffice/*, sales/activity-logs)
 ├── store/                   # Zustand stores (notifications, confirm dialog, backoffice notifications)
 └── config/                  # Routing paths, environment
 ```

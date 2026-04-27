@@ -15,6 +15,7 @@ import { StatCardShowcase } from "./components/stat-card-showcase";
 import { ChartShowcase } from "./components/chart-showcase";
 import { ChartCardShowcase } from "./components/chart-card-showcase";
 import { NotificationShowcase } from "./components/notification-showcase";
+import { ActivityCardShowcase } from "./components/activity-card-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -161,6 +162,14 @@ export default function DesignSystemPage() {
             16. Notification System
           </h2>
           <NotificationShowcase />
+        </section>
+
+        {/* Section 17: Activity Card & Timeline */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            17. Activity Card & Timeline
+          </h2>
+          <ActivityCardShowcase />
         </section>
       </main>
     </div>

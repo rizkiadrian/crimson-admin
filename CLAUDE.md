@@ -50,7 +50,7 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 - **Framework:** Next.js 16 (App Router only).
 - **Styling:** Tailwind CSS 4 with custom design tokens in `globals.css`.
 - **State Management:** Zustand (Global Notifications, Confirm Dialogs) + Local React state.
-- **Data Fetching:** Axios + Custom Hooks (`useTableData`, `useDetailData`).
+- **Data Fetching:** Axios + Custom Hooks (`useTableData`, `useInfiniteScroll`, `useDetailData`).
 - **Charts:** Recharts with design-system-mapped colors (`CHART_COLORS`, `CHART_SETS`).
 - **Calendar:** react-day-picker 9 + date-fns 4.
 
@@ -62,7 +62,7 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 ### Core Architectural Patterns
 
 1. **React 19 Compliance:** No synchronous `setState` inside `useEffect` bodies. `useDetailData` uses `useReducer` + `queueMicrotask`. `FilterPopup` animation uses two separate effects (mount + visibility). Edit forms use a "Page + Inner Form" split to pass fetched data directly as initial state.
-2. **URL-Synced State:** Pagination (`?page=N`) and Search (`?search=keyword`) are synchronized with URL Query Params via `useTableData`. Edit pages capture `?returnPage=N` to navigate back to the exact table page.
+2. **URL-Synced State:** Pagination (`?page=N`) and Search (`?search=keyword`) are synchronized with URL Query Params via `useTableData`. Infinite scroll pages use `useInfiniteScroll` which syncs `?search=` to URL. Edit pages capture `?returnPage=N` to navigate back to the exact table page.
 3. **API Service Layer:** No direct `axios.get` or `fetch` calls inside React components. All components call typed wrapper functions inside `src/services/`. The `api.ts` client supports `get`, `post`, `put`, `delete`, `patch`.
 4. **UI Component System:**
    - Forms: `FormCard` (Header, Body, Footer, Loading, Error)
@@ -73,6 +73,7 @@ This document serves as the master reference for the Lingkar Fullstack project. 
    - Inputs: `FormInput` (text, password, phone format, date format with calendar)
    - Search: `SearchInput` (debounced, with clear button)
    - Modals: `FilterPopup`, `ConfirmDialog`
+   - Timeline: `ActivityCard`, `ActivityCardSkeleton` (from `@app/components/ui/ActivityCard`), `ActivityTimeline` (for sales activities timeline view)
    - **FORBIDDEN native elements:** Do NOT use `<button>`, `<input>`, `<select>`, `<a>`, or `<img>` directly. Always use:
      - `<button>` → `Button` from `@app/components/ui/Button`
      - `<input>` → `FormInput` from `@app/components/ui/FormInput`
@@ -83,7 +84,7 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 5. **Global Modals/Toasts:** Use `useNotificationStore().showNotification` for toasts and `useConfirmStore().showConfirm` for confirmation modals. Do not mount custom `<Modal>` components.
 6. **Sidebar Navigation:** Uses accordion pattern with `NavGroup` type. Groups auto-expand when child route is active. Active detection uses `pathname.startsWith()`.
 7. **Notification Bell:** `NotificationBell` component in Navbar with `useBackofficeNotificationStore` (Zustand). Polls unread count every 30s. Dropdown shows latest 5 notifications. Full page at `/dashboard/notifications`.
-8. **Design System Page:** Live component preview at `/design-system`. Currently 16 sections. Must be updated when components change (Kiro hook `sync-design-system` reminds). Every new component or visual change MUST add a showcase to `/design-system` and update `docs/DESIGN_SYSTEM.md`.
+8. **Design System Page:** Live component preview at `/design-system`. Currently 17 sections. Must be updated when components change (Kiro hook `sync-design-system` reminds). Every new component or visual change MUST add a showcase to `/design-system` and update `docs/DESIGN_SYSTEM.md`.
 9. **Zustand Store Naming:** `useXxxStore` for global UI state (toasts, confirm dialog). `useBackofficeXxxStore` for domain-specific state (notifications). Page-level state stays in component `useState`.
 
 ---

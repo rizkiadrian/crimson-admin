@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Remind Docs Update After Task",
+  "description": "After completing a spec task, reminds the agent to check if documentation needs updating based on the documentation-update-guide skill.",
+  "version": "1",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A spec task was just completed. Check .agent/skills/documentation-update-guide.md to see if any documentation files need updating based on the changes made in this task. Key docs to check: docs/PRD.md, docs/DESIGN_SYSTEM.md, docs/ARCHITECTURE.md, README.md, CLAUDE.md, /design-system showcase page. If the task already included doc updates or the changes are purely internal, skip."
+  }
+}

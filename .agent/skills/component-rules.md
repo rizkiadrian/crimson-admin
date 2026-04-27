@@ -240,5 +240,22 @@ return <EditMemberForm initialData={data} />;
 | Zustand store for local form/page state       | `useState` in the component                               |
 | `setState(value)` directly inside `useEffect` | Use `useReducer` + `queueMicrotask` (see `useDetailData`) |
 | `<textarea>` directly                         | `<FormInput as="textarea" ...>`                           |
-| `setState(value)` directly inside `useEffect` | Use `useReducer` + `queueMicrotask` (see `useDetailData`) |
-| `<textarea>` directly                         | `<FormInput as="textarea" ...>`                           |
+| Bare content without card wrapper             | Wrap in `TableCard`, `FormCard`, or white card container  |
+
+---
+
+## Page Container Rule
+
+**ALL list/content pages MUST use a white card container** for visual consistency. Use the appropriate wrapper:
+
+- **Table pages** → `TableCard` from `@app/components/ui/Table`
+- **Form pages** → `FormCard` from `@app/components/ui/FormCard`
+- **Non-table list pages** (timeline, etc.) → Use the same card styling as TableCard:
+
+```tsx
+<div className="bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-hidden relative">
+  <div className="p-6">{/* Content here */}</div>
+</div>
+```
+
+> **Reference:** See `/sales-activities/page.tsx` for a non-table page using the card container pattern.

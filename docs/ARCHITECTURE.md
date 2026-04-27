@@ -35,7 +35,8 @@ src/
 │   │   │   ├── StatCard/        # Summary stat card for dashboards
 │   │   │   ├── SearchInput/     # Debounced search input with clear button
 │   │   │   ├── ConfirmDialog/   # Global confirm modal (Zustand-driven)
-│   │   │   └── GlobalNotification/  # Toast notifications (Zustand-driven)
+│   │   │   ├── GlobalNotification/  # Toast notifications (Zustand-driven)
+│   │   │   └── ActivityCard/   # Activity item card, skeleton, and helpers (formatRelativeTime, getActivityTypeConfig, getStatusBadgeConfig)
 │   │   ├── layout/
 │   │   │   ├── Sidebar/         # Accordion navigation with grouped items
 │   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown, profile
@@ -70,23 +71,32 @@ src/
 │   │       ├── notifications/
 │   │       │   └── page.tsx                    # Full notifications list page
 │   │       └── page.tsx                        # Dashboard home
+│   ├── (dashboard)/
+│   │   └── sales-activities/
+│   │       ├── page.tsx                        # Timeline list page (infinite scroll)
+│   │       ├── create/page.tsx                 # Create activity report form
+│   │       └── _partials/
+│   │           └── activity-timeline/          # Timeline container component
 │   ├── design-system/          # Live component preview (/design-system)
 │   └── login/
 ├── lib/
 │   ├── hooks/
 │   │   ├── use-table-data.ts   # Paginated list fetching + URL sync
+│   │   ├── use-infinite-scroll.ts # Infinite scroll fetching + append pagination + URL sync
 │   │   └── use-detail-data.ts  # Single resource fetching (useReducer + queueMicrotask)
 │   ├── api.ts                  # Axios instance with interceptors
 │   └── utils.ts                # cn(), handleFormError(), getNameInitials()
 ├── services/
-│   └── backoffice/
-│       ├── backoffice-members/ # Types + service (list, create, detail, update, delete)
-│       ├── client-members/     # Types + service (list, create, detail, update, delete)
-│       ├── mitra-members/      # Types + service (list, detail, update, delete)
-│       ├── leads/              # Types + service (list, create, detail, update, delete, updateStatus, convert)
-│       ├── sales-members/      # Types + service (list, create, detail, update, delete, list-dropdown)
-│       ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)
-│       └── dashboard/          # Types + service (summary incl. leads stats)
+│   ├── backoffice/
+│   │   ├── backoffice-members/ # Types + service (list, create, detail, update, delete)
+│   │   ├── client-members/     # Types + service (list, create, detail, update, delete)
+│   │   ├── mitra-members/      # Types + service (list, detail, update, delete)
+│   │   ├── leads/              # Types + service (list, create, detail, update, delete, updateStatus, convert)
+│   │   ├── sales-members/      # Types + service (list, create, detail, update, delete, list-dropdown)
+│   │   ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)
+│   │   └── dashboard/          # Types + service (summary incl. leads stats)
+│   └── sales/
+│       └── activity-logs/      # Types + service (list, create) for sales activity timeline
 ├── store/
 │   ├── useNotificationStore.ts          # Global toast (success/error/info)
 │   ├── useConfirmStore.ts               # Global confirm dialog

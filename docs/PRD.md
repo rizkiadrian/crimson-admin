@@ -340,6 +340,64 @@ new → contacted → qualified → proposal → negotiation → won
 
 ---
 
+### FM-08: Sales Activities
+
+**Route:** `/sales-activities`
+**API Base:** `/api/v1/sales/activity-logs`
+**Priority:** P1 — Core
+
+| ID       | Feature                | Status  | Description                                                                    |
+| -------- | ---------------------- | ------- | ------------------------------------------------------------------------------ |
+| FM-08-01 | Timeline list page     | ✅ Done | Timeline/list view (not table) with ActivityCard items, chronological order    |
+| FM-08-02 | Infinite scroll        | ✅ Done | IntersectionObserver-based auto-loading, append pagination, scroll sentinel    |
+| FM-08-03 | Search with URL sync   | ✅ Done | Debounced search via SearchInput, syncs `?search=` to URL, resets on change    |
+| FM-08-04 | Loading states         | ✅ Done | Skeleton placeholders (ActivityCardSkeleton) on initial load, spinner on more  |
+| FM-08-05 | Empty states           | ✅ Done | "Belum ada aktivitas" (no data) and "Tidak ada hasil" (no search results)      |
+| FM-08-06 | Error handling         | ✅ Done | Initial error with retry, load-more error with inline retry, data preservation |
+| FM-08-07 | Create activity report | ✅ Done | FormCard at `/sales-activities/create` for new activity log submission         |
+
+**Key Differences from Table Pages:**
+
+- Uses **timeline/list view** instead of `TableCard` — data is chronological with visual type icons and relative timestamps
+- Uses **`useInfiniteScroll` hook** instead of `useTableData` — append-based pagination with IntersectionObserver
+- **ActivityCard** displays: type icon (FileText/UserPlus/RefreshCw), title, status badge (pending/approved/rejected), lead name, description, relative time
+
+**Activity Types:**
+
+| Type                         | Icon      | Color    | Description                   |
+| ---------------------------- | --------- | -------- | ----------------------------- |
+| `general_note`               | FileText  | Tertiary | General activity note         |
+| `request_lead_assign`        | UserPlus  | Primary  | Request to assign a lead      |
+| `request_update_lead_status` | RefreshCw | Warning  | Request to update lead status |
+
+**Status Badge Colors:**
+
+| Status   | Badge Variant |
+| -------- | ------------- |
+| pending  | warning       |
+| approved | success       |
+| rejected | error         |
+
+**API Endpoints:**
+
+| Method | Endpoint                                 | Request Body                                           | Response                              |
+| ------ | ---------------------------------------- | ------------------------------------------------------ | ------------------------------------- |
+| GET    | `/sales/activity-logs?page=N&per_page=N` | —                                                      | Paginated list with `meta.pagination` |
+| POST   | `/sales/activity-logs`                   | `{ type, title, description?, lead_id?, attachment? }` | Created activity log                  |
+
+**Acceptance Criteria:**
+
+- Timeline displays activity logs in reverse chronological order
+- Each ActivityCard shows type icon, title, status badge, lead name (if any), and relative time
+- Infinite scroll loads next page when scroll sentinel enters viewport
+- Search debounces input and syncs to URL `?search=` parameter
+- Loading page with `?search=query` applies filter on mount
+- Skeleton placeholders shown during initial load
+- Existing data preserved when load-more fails
+- Sidebar "Sales Activity Report" links to `/sales-activities`
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -348,8 +406,9 @@ new → contacted → qualified → proposal → negotiation → won
 | FM-05    | Leads Management            | P1       | ✅ Done    |
 | FM-06    | Sales Members Management    | P1       | ✅ Done    |
 | FM-07    | Backoffice Notifications    | P1       | ✅ Done    |
-| FM-08    | Deposit Management          | P2       | 🔲 Planned |
-| FM-09    | Service Category Management | P2       | 🔲 Planned |
-| FM-10    | Dashboard Analytics         | P2       | ✅ Done    |
-| FM-11    | Audit Log                   | P3       | 🔲 Planned |
-| FM-12    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-08    | Sales Activities            | P1       | ✅ Done    |
+| FM-09    | Deposit Management          | P2       | 🔲 Planned |
+| FM-10    | Service Category Management | P2       | 🔲 Planned |
+| FM-11    | Dashboard Analytics         | P2       | ✅ Done    |
+| FM-12    | Audit Log                   | P3       | 🔲 Planned |
+| FM-13    | Role-based UI visibility    | P3       | 🔲 Planned |
