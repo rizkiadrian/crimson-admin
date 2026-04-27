@@ -1,9 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useUserProfile } from "@store/useUserProfile";
-import { BUSINESSFLOW } from "@config/env";
+import React from "react";
 import { Users, ShieldCheck, Wrench, Clock, TrendingUp } from "lucide-react";
 import { StatCard } from "@app/components/ui/StatCard";
 import {
@@ -12,65 +9,40 @@ import {
   BarChartComponent,
   CHART_SETS,
 } from "@app/components/ui/Chart";
-import {
-  FormCard,
-  FormCardLoading,
-  FormCardError,
-} from "@app/components/ui/FormCard";
 import { Badge } from "@app/components/ui/Table";
-import { useDetailData } from "@lib/hooks/use-detail-data";
-import {
-  dashboardService,
-  IDashboardData,
-} from "@services/backoffice/dashboard";
 import { getNameInitials } from "@lib/utils";
-import { PATHS } from "@config/routing";
 
-export default function DashboardPage() {
-  const router = useRouter();
-  const { profile, isLoading: isProfileLoading } = useUserProfile();
-
-  const fetcher = useCallback(() => dashboardService.getDashboard(), []);
-  const { data, isLoading, error } = useDetailData<IDashboardData>({
-    fetcher,
-    enabled: !!profile && !BUSINESSFLOW.salesRoles.includes(profile.role_name),
-  });
-
-  useEffect(() => {
-    if (profile && BUSINESSFLOW.salesRoles.includes(profile.role_name)) {
-      router.replace(PATHS.salesDashboard);
-    }
-  }, [profile, router]);
-
-  if (
-    isProfileLoading ||
-    !profile ||
-    BUSINESSFLOW.salesRoles.includes(profile.role_name)
-  ) {
-    return (
-      <FormCard>
-        <FormCardLoading />
-      </FormCard>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <FormCard>
-        <FormCardLoading />
-      </FormCard>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <FormCard>
-        <FormCardError message={error || "Failed to load dashboard"} />
-      </FormCard>
-    );
-  }
-
-  const { clients, mitra, leads, recent_backoffice } = data;
+export default function SalesDashboardPage() {
+  // Static dummy data for template
+  const clients = { total: 0, verified: 0, unverified: 0 };
+  const mitra = {
+    total: 0,
+    online: 0,
+    approved: 0,
+    pending: 0,
+    rejected: 0,
+    suspended: 0,
+  };
+  const leads = {
+    total: 0,
+    by_status: {
+      new: 0,
+      contacted: 0,
+      qualified: 0,
+      proposal: 0,
+      negotiation: 0,
+      won: 0,
+      lost: 0,
+    },
+    by_type: { client: 0, mitra: 0 },
+  };
+  const recent_backoffice: Array<{
+    id: string;
+    name: string;
+    email: string;
+    role_name: string;
+    updated_at: string;
+  }> = [];
 
   const clientPieData = [
     {

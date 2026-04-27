@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -24,6 +24,8 @@ import {
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
 import { useSidebarStore } from "@store/useSidebarStore";
+import { useUserProfile } from "@store/useUserProfile";
+import { BUSINESSFLOW } from "@config/env";
 
 interface NavItem {
   label: string;
@@ -43,48 +45,62 @@ function isGroup(entry: NavEntry): entry is NavGroup {
   return "items" in entry;
 }
 
-const NAV_ENTRIES: NavEntry[] = [
-  { label: "Dashboard", href: PATHS.dashboard, icon: LayoutDashboard },
-  {
-    label: "User Management",
-    icon: Users,
-    items: [
-      {
-        label: "Backoffice Members",
-        href: PATHS.backofficeMembers,
-        icon: Users,
-      },
-      {
-        label: "Client Members",
-        href: PATHS.clientMembers,
-        icon: UserCheck,
-      },
-      {
-        label: "Mitra Members",
-        href: PATHS.mitraMembers,
-        icon: Wrench,
-      },
-    ],
-  },
-  {
-    label: "Sales Management",
-    icon: TrendingUp,
-    items: [
-      {
-        label: "Leads",
-        href: PATHS.leads,
-        icon: Users2,
-      },
-      {
-        label: "Sales Members",
-        href: PATHS.salesMembers,
-        icon: UserSquare2,
-      },
-    ],
-  },
+const USER_MANAGEMENT_NAV: NavEntry = {
+  label: "User Management",
+  icon: Users,
+  items: [
+    {
+      label: "Backoffice Members",
+      href: PATHS.backofficeMembers,
+      icon: Users,
+    },
+    {
+      label: "Client Members",
+      href: PATHS.clientMembers,
+      icon: UserCheck,
+    },
+    {
+      label: "Mitra Members",
+      href: PATHS.mitraMembers,
+      icon: Wrench,
+    },
+  ],
+};
+
+const SALES_MANAGEMENT_NAV: NavEntry = {
+  label: "Sales Management",
+  icon: TrendingUp,
+  items: [
+    {
+      label: "Leads",
+      href: PATHS.leads,
+      icon: Users2,
+    },
+    {
+      label: "Sales Members",
+      href: PATHS.salesMembers,
+      icon: UserSquare2,
+    },
+  ],
+};
+
+const OTHER_NAVS: NavEntry[] = [
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Reports", href: "/reports", icon: FileText },
   { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
+];
+
+const SALES_NAVS: NavEntry[] = [
+  {
+    label: "Sales Dashboard",
+    href: PATHS.salesDashboard,
+    icon: LayoutDashboard,
+  },
+  { label: "Sales Activity Report", href: PATHS.leads, icon: Users2 },
+];
+
+const NAV_ENTRIES: NavEntry[] = [
+  { label: "Dashboard", href: PATHS.dashboard, icon: LayoutDashboard },
 ];
 
 /**
@@ -163,6 +179,24 @@ function SidebarGroup({
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, close } = useSidebarStore();
+  const { profile, isLoading } = useUserProfile();
+
+  const navs = useMemo(() => {
+    if (profile && BUSINESSFLOW.backofficeRoles.includes(profile.role_name)) {
+      return [
+        ...NAV_ENTRIES,
+        USER_MANAGEMENT_NAV,
+        SALES_MANAGEMENT_NAV,
+        ...OTHER_NAVS,
+      ];
+    }
+    if (profile && BUSINESSFLOW.salesRoles.includes(profile.role_name)) {
+      return SALES_NAVS;
+    }
+    return NAV_ENTRIES;
+  }, [profile]);
+
+  const navLoaded = profile !== null && !isLoading;
 
   return (
     <>
@@ -200,34 +234,45 @@ export function Sidebar() {
         </div>
 
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-          {NAV_ENTRIES.map((entry) => {
-            if (isGroup(entry)) {
-              return (
-                <SidebarGroup
-                  key={entry.label}
-                  group={entry}
-                  pathname={pathname}
+          {!navLoaded ? (
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className="h-[46px] w-full bg-neutral-100 rounded-xl animate-pulse"
                 />
-              );
-            }
+              ))}
+            </div>
+          ) : (
+            navs.map((entry) => {
+              if (isGroup(entry)) {
+                return (
+                  <SidebarGroup
+                    key={entry.label}
+                    group={entry}
+                    pathname={pathname}
+                  />
+                );
+              }
 
-            const isActive = pathname.startsWith(entry.href);
-            return (
-              <Link
-                key={entry.href}
-                href={entry.href}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all",
-                  isActive
-                    ? "bg-primary-50 text-primary-600"
-                    : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
-                )}
-              >
-                <entry.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-                {entry.label}
-              </Link>
-            );
-          })}
+              const isActive = pathname.startsWith(entry.href);
+              return (
+                <Link
+                  key={entry.href}
+                  href={entry.href}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all",
+                    isActive
+                      ? "bg-primary-50 text-primary-600"
+                      : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
+                  )}
+                >
+                  <entry.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                  {entry.label}
+                </Link>
+              );
+            })
+          )}
 
           <div className="pt-8 pb-2 px-4 text-[11px] font-extrabold text-neutral-900 uppercase tracking-widest opacity-80">
             System

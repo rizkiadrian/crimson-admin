@@ -240,3 +240,5 @@ return <EditMemberForm initialData={data} />;
 | Zustand store for local form/page state       | `useState` in the component                               |
 | `setState(value)` directly inside `useEffect` | Use `useReducer` + `queueMicrotask` (see `useDetailData`) |
 | `<textarea>` directly                         | `<FormInput as="textarea" ...>`                           |
+| `setState(value)` directly inside `useEffect` | Use `useReducer` + `queueMicrotask` (see `useDetailData`) |
+| `<textarea>` directly                         | `<FormInput as="textarea" ...>`                           |

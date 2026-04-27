@@ -8,8 +8,12 @@ import { format, parse, isValid } from "date-fns";
 
 export interface FormInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "format"
+  "format" | "onChange"
 > {
+  /** Render as standard input or textarea. Defaults to "input". */
+  as?: "input" | "textarea";
+  /** Emits ChangeEvent compatible with both input and textarea. */
+  onChange?: React.ChangeEventHandler<HTMLInputElement & HTMLTextAreaElement>;
   /** Label text displayed above the input. */
   label: string;
   /** HTML id attribute, also used for the label's `htmlFor`. */
@@ -55,7 +59,10 @@ export interface FormInputProps extends Omit<
  *
  * Supports `ref` forwarding for integration with form libraries (e.g. React Hook Form).
  */
-export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
+export const FormInput = React.forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  FormInputProps
+>(
   (
     {
       label,
@@ -73,6 +80,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
       hideLabel = false,
       inputSize = "default",
       placeholder,
+      as = "input",
       ...props
     },
     ref
@@ -167,33 +175,43 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         const syntheticEvent = {
           target: { id, name: id, value: isoValue },
         } as React.ChangeEvent<HTMLInputElement>;
-        onChange(syntheticEvent);
+        const handler = onChange as React.ChangeEventHandler<HTMLInputElement>;
+        handler(syntheticEvent);
       },
       [onChange, id]
     );
 
     // ─── onChange interceptor ─────────────────────────────────────────────
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
       if (inputFormat === "phone") {
         const rawValue = getRawPhoneValue(e.target.value);
         if (onChange) {
           const clonedEvent = {
             ...e,
             target: {
-              ...e.target,
+              ...(e.target as HTMLInputElement),
               id: e.target.id,
               name: e.target.name,
               value: rawValue,
             },
           } as React.ChangeEvent<HTMLInputElement>;
-          onChange(clonedEvent);
+          const handler =
+            onChange as React.ChangeEventHandler<HTMLInputElement>;
+          handler(clonedEvent);
         }
       } else if (inputFormat === "date") {
         // For date inputs, typing is disabled — selection happens via calendar
         return;
       } else {
-        onChange?.(e);
+        if (onChange) {
+          const handler = onChange as (
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+          ) => void;
+          handler(e);
+        }
       }
     };
 
@@ -249,22 +267,38 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               </div>
             )}
 
-            <input
-              id={id}
-              ref={ref}
-              type={currentType}
-              onChange={handleInputChange}
-              value={displayValue}
-              readOnly={isDate}
-              placeholder={placeholder}
-              className={cn(
-                "flex-1 bg-transparent outline-none text-secondary-900 placeholder:text-secondary-400",
-                paddingClass,
-                isDate && "cursor-pointer select-none",
-                className
-              )}
-              {...props}
-            />
+            {as === "textarea" ? (
+              <textarea
+                id={id}
+                ref={ref as React.Ref<HTMLTextAreaElement>}
+                onChange={handleInputChange}
+                value={displayValue}
+                placeholder={placeholder}
+                className={cn(
+                  "flex-1 bg-transparent outline-none text-secondary-900 placeholder:text-secondary-400 resize-y min-h-[100px]",
+                  paddingClass,
+                  className
+                )}
+                {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+              />
+            ) : (
+              <input
+                id={id}
+                ref={ref as React.Ref<HTMLInputElement>}
+                type={currentType}
+                onChange={handleInputChange}
+                value={displayValue}
+                readOnly={isDate}
+                placeholder={placeholder}
+                className={cn(
+                  "flex-1 bg-transparent outline-none text-secondary-900 placeholder:text-secondary-400",
+                  paddingClass,
+                  isDate && "cursor-pointer select-none",
+                  className
+                )}
+                {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
+              />
+            )}
 
             {isPassword ? (
               <button

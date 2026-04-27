@@ -76,6 +76,8 @@ import { FormInput } from "@app/components/ui/FormInput";
 
 Custom dropdown UI fully styled to match `FormInput` — supports click-outside, Escape key closing, smooth entry/exit animations (`.animate-dropdown`), optional left icons, and serves as a drop-in replacement by emitting synthetic `ChangeEvent<HTMLSelectElement>`.
 
+**Standard usage:**
+
 ```tsx
 import { FormSelect } from "@app/components/ui/FormSelect";
 import { Tag } from "lucide-react";
@@ -96,17 +98,38 @@ import { Tag } from "lucide-react";
 />;
 ```
 
-| Prop          | Type                  | Default     | Description                                      |
-| ------------- | --------------------- | ----------- | ------------------------------------------------ |
-| `label`       | `string`              | —           | Label text (required)                            |
-| `id`          | `string`              | —           | HTML id (required)                               |
-| `value`       | `string`              | —           | Controlled value                                 |
-| `onChange`    | `ChangeEventHandler`  | —           | Synthetic select change handler                  |
-| `options`     | `{ label, value }[]`  | —           | Options to render                                |
-| `placeholder` | `string`              | —           | Renders as default empty state                   |
-| `error`       | `string`              | —           | Error message, triggers error border & message   |
-| `leftIcon`    | `ReactNode`           | —           | Optional icon rendered inside the trigger (left) |
-| `inputSize`   | `"default"` \| `"sm"` | `"default"` | Size variant matching FormInput                  |
+**Searchable (Async API) usage:**
+
+```tsx
+import { FormSelect } from "@app/components/ui/FormSelect";
+
+<FormSelect
+  id="lead_id"
+  label="Lead"
+  value={formData.lead_id}
+  onChange={handleChange}
+  options={apiOptions}
+  placeholder="Select a lead"
+  onSearch={(query) => fetchLeads(query)}
+  isLoading={isFetchingLeads}
+  searchPlaceholder="Search by name or ID..."
+/>;
+```
+
+| Prop                | Type                      | Default       | Description                                      |
+| ------------------- | ------------------------- | ------------- | ------------------------------------------------ |
+| `label`             | `string`                  | —             | Label text (required)                            |
+| `id`                | `string`                  | —             | HTML id (required)                               |
+| `value`             | `string`                  | —             | Controlled value                                 |
+| `onChange`          | `ChangeEventHandler`      | —             | Synthetic select change handler                  |
+| `options`           | `{ label, value }[]`      | —             | Options to render                                |
+| `placeholder`       | `string`                  | —             | Renders as default empty state                   |
+| `error`             | `string`                  | —             | Error message, triggers error border & message   |
+| `leftIcon`          | `ReactNode`               | —             | Optional icon rendered inside the trigger (left) |
+| `inputSize`         | `"default"` \| `"sm"`     | `"default"`   | Size variant matching FormInput                  |
+| `onSearch`          | `(query: string) => void` | —             | Enables search input box inside dropdown         |
+| `isLoading`         | `boolean`                 | `false`       | Shows a spinner inside dropdown when searching   |
+| `searchPlaceholder` | `string`                  | `"Search..."` | Placeholder text for the search input            |
 
 ### Table System
 

@@ -10,3 +10,8 @@ export const COOKIE_KEYS = {
   accessToken: "access_token",
   refreshToken: "refresh_token",
 };
+
+export const BUSINESSFLOW = {
+  backofficeRoles: ["Admin", "Backoffice"],
+  salesRoles: ["Sales"],
+};

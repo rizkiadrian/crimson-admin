@@ -3,6 +3,8 @@
 import { useEffect, useRef, useCallback } from "react";
 import { Bell, CheckCheck, Loader2 } from "lucide-react";
 import { useBackofficeNotificationStore } from "@store/useBackofficeNotificationStore";
+import { useUserProfile } from "@store/useUserProfile";
+import { BUSINESSFLOW } from "@config/env";
 import { cn } from "@lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -37,6 +39,7 @@ function typeBadgeClass(type: string): string {
 }
 
 export function NotificationBell() {
+  const { profile } = useUserProfile();
   const {
     unreadCount,
     recentNotifications,
@@ -54,10 +57,12 @@ export function NotificationBell() {
 
   // Poll unread count every 30 seconds
   useEffect(() => {
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30_000);
-    return () => clearInterval(interval);
-  }, [fetchUnreadCount]);
+    if (profile && BUSINESSFLOW.backofficeRoles.includes(profile.role_name)) {
+      fetchUnreadCount();
+      const interval = setInterval(fetchUnreadCount, 30_000);
+      return () => clearInterval(interval);
+    }
+  }, [fetchUnreadCount, profile]);
 
   // Close dropdown on outside click
   const handleMouseUp = useCallback(

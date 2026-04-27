@@ -23,6 +23,40 @@ export function FormSelectShowcase() {
     { label: "Partner", value: "partner" },
   ];
 
+  // Searchable Dropdown State
+  const [searchValue, setSearchValue] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchOptions, setSearchOptions] = useState([
+    { label: "John Doe (LD-0001)", value: "1" },
+    { label: "Jane Smith (LD-0002)", value: "2" },
+    { label: "Acme Corp (LD-0003)", value: "3" },
+    { label: "Global Tech (LD-0004)", value: "4" },
+  ]);
+
+  const handleSearch = (query: string) => {
+    setIsSearching(true);
+    // Mock API call
+    setTimeout(() => {
+      const allOptions = [
+        { label: "John Doe (LD-0001)", value: "1" },
+        { label: "Jane Smith (LD-0002)", value: "2" },
+        { label: "Acme Corp (LD-0003)", value: "3" },
+        { label: "Global Tech (LD-0004)", value: "4" },
+        { label: "Alice Johnson (LD-0005)", value: "5" },
+        { label: "Bob Williams (LD-0006)", value: "6" },
+      ];
+
+      const filtered = query
+        ? allOptions.filter((o) =>
+            o.label.toLowerCase().includes(query.toLowerCase())
+          )
+        : allOptions;
+
+      setSearchOptions(filtered);
+      setIsSearching(false);
+    }, 600);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* --- CARD 1: STANDARD LAYOUT --- */}
@@ -76,6 +110,32 @@ export function FormSelectShowcase() {
             options={typeOptions}
             placeholder="Choose status"
             error="Status is required to proceed"
+          />
+        </div>
+      </div>
+
+      {/* --- CARD 3: ASYNC SEARCH --- */}
+      <div className="relative flex flex-col p-8 pt-16 rounded-2xl bg-neutral-50 shadow-sm border border-neutral-200 overflow-hidden lg:col-span-2">
+        <div className="absolute top-6 left-6">
+          <Text
+            variant="label"
+            className="text-secondary-600 uppercase tracking-wider"
+          >
+            Async Search (API Mock)
+          </Text>
+        </div>
+
+        <div className="w-full max-w-md">
+          <FormSelect
+            id="search-select"
+            label="ASSIGN LEAD"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            options={searchOptions}
+            placeholder="Select a lead..."
+            onSearch={handleSearch}
+            isLoading={isSearching}
+            searchPlaceholder="Search by name or ID..."
           />
         </div>
       </div>

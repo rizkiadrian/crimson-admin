@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { ChevronDown, Check } from "lucide-react";
+import { ChevronDown, Check, Search, Loader2 } from "lucide-react";
 import { cn } from "@lib/utils";
 
 export interface FormSelectOption {
@@ -37,6 +37,12 @@ export interface FormSelectProps {
   disabled?: boolean;
   /** Optional icon rendered inside the trigger (left). */
   leftIcon?: React.ReactNode;
+  /** Callback fired when the user types in the search box. If provided, enables the search input. */
+  onSearch?: (query: string) => void;
+  /** If true, shows a loading spinner inside the dropdown. */
+  isLoading?: boolean;
+  /** Placeholder text for the search input. */
+  searchPlaceholder?: string;
 }
 
 /**
@@ -75,11 +81,33 @@ export const FormSelect = React.forwardRef<HTMLDivElement, FormSelectProps>(
       containerClassName,
       disabled = false,
       leftIcon,
+      onSearch,
+      isLoading = false,
+      searchPlaceholder = "Search...",
     },
     ref
   ) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpenRaw] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const wrapperRef = useRef<HTMLDivElement>(null);
+
+    // Wrap setOpen so closing always resets the search state
+    const setOpen = useCallback(
+      (next: boolean | ((prev: boolean) => boolean)) => {
+        setOpenRaw((prev) => {
+          const nextVal = typeof next === "function" ? next(prev) : next;
+          if (!nextVal && prev) {
+            // Closing — reset search (deferred to avoid setState-during-render)
+            queueMicrotask(() => {
+              setSearchQuery("");
+              if (onSearch) onSearch("");
+            });
+          }
+          return nextVal;
+        });
+      },
+      [onSearch]
+    );
 
     const selectedOption = options.find((o) => o.value === value);
     const paddingClass =
@@ -98,7 +126,7 @@ export const FormSelect = React.forwardRef<HTMLDivElement, FormSelectProps>(
       };
       document.addEventListener("mouseup", handleClickOutside);
       return () => document.removeEventListener("mouseup", handleClickOutside);
-    }, [open]);
+    }, [open, setOpen]);
 
     // ─── Close on Escape ──────────────────────────────────────────────────────
     useEffect(() => {
@@ -108,7 +136,7 @@ export const FormSelect = React.forwardRef<HTMLDivElement, FormSelectProps>(
       };
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [open]);
+    }, [open, setOpen]);
 
     // ─── Emit synthetic ChangeEvent<HTMLSelectElement> ────────────────────────
     const handleSelect = useCallback(
@@ -121,7 +149,7 @@ export const FormSelect = React.forwardRef<HTMLDivElement, FormSelectProps>(
         } as React.ChangeEvent<HTMLSelectElement>;
         onChange(syntheticEvent);
       },
-      [onChange, id, value]
+      [onChange, setOpen, id, value]
     );
 
     return (
@@ -200,45 +228,79 @@ export const FormSelect = React.forwardRef<HTMLDivElement, FormSelectProps>(
             <div
               role="listbox"
               aria-labelledby={`${id}-label`}
-              className="absolute top-full left-0 right-0 mt-2 z-50 bg-bg-card rounded-xl shadow-2xl border border-border-subtle overflow-hidden animate-dropdown"
+              className="absolute top-full left-0 right-0 mt-2 z-50 bg-bg-card rounded-xl shadow-2xl border border-border-subtle overflow-hidden animate-dropdown flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <ul className="py-1 max-h-60 overflow-y-auto">
-                {placeholder && (
-                  <li
-                    role="option"
-                    aria-selected={value === ""}
-                    className="px-4 py-2.5 text-[13px] text-secondary-400 cursor-default select-none italic"
-                  >
-                    {placeholder}
+              {onSearch && (
+                <div className="p-2 border-b border-border-subtle shrink-0">
+                  <div className="relative flex items-center">
+                    <Search
+                      size={14}
+                      className="absolute left-3 text-secondary-400"
+                    />
+                    <input
+                      type="text"
+                      className="w-full pl-9 pr-4 py-2 text-[13px] bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors"
+                      placeholder={searchPlaceholder}
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        onSearch(e.target.value);
+                      }}
+                      autoFocus
+                    />
+                  </div>
+                </div>
+              )}
+
+              <ul className="py-1 max-h-60 overflow-y-auto min-h-[40px]">
+                {isLoading ? (
+                  <li className="flex items-center justify-center py-4 text-secondary-400">
+                    <Loader2 size={18} className="animate-spin" />
                   </li>
+                ) : options.length === 0 ? (
+                  <li className="px-4 py-3 text-[13px] text-center text-secondary-500 italic">
+                    No results found
+                  </li>
+                ) : (
+                  <>
+                    {placeholder && !onSearch && (
+                      <li
+                        role="option"
+                        aria-selected={value === ""}
+                        className="px-4 py-2.5 text-[13px] text-secondary-400 cursor-default select-none italic"
+                      >
+                        {placeholder}
+                      </li>
+                    )}
+                    {options.map((opt) => {
+                      const isSelected = opt.value === value;
+                      return (
+                        <li
+                          key={opt.value}
+                          role="option"
+                          aria-selected={isSelected}
+                          onClick={() => handleSelect(opt.value)}
+                          className={cn(
+                            "flex items-center justify-between px-4 py-2.5 text-[14px] font-medium cursor-pointer select-none transition-colors",
+                            isSelected
+                              ? "bg-primary-50 text-primary-600"
+                              : "text-secondary-700 hover:bg-neutral-50 hover:text-secondary-900"
+                          )}
+                        >
+                          <span>{opt.label}</span>
+                          {isSelected && (
+                            <Check
+                              size={14}
+                              className="shrink-0 text-primary-500"
+                              strokeWidth={2.5}
+                            />
+                          )}
+                        </li>
+                      );
+                    })}
+                  </>
                 )}
-                {options.map((opt) => {
-                  const isSelected = opt.value === value;
-                  return (
-                    <li
-                      key={opt.value}
-                      role="option"
-                      aria-selected={isSelected}
-                      onClick={() => handleSelect(opt.value)}
-                      className={cn(
-                        "flex items-center justify-between px-4 py-2.5 text-[14px] font-medium cursor-pointer select-none transition-colors",
-                        isSelected
-                          ? "bg-primary-50 text-primary-600"
-                          : "text-secondary-700 hover:bg-neutral-50 hover:text-secondary-900"
-                      )}
-                    >
-                      <span>{opt.label}</span>
-                      {isSelected && (
-                        <Check
-                          size={14}
-                          className="shrink-0 text-primary-500"
-                          strokeWidth={2.5}
-                        />
-                      )}
-                    </li>
-                  );
-                })}
               </ul>
             </div>
           )}

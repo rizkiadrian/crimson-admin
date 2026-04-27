@@ -37,9 +37,14 @@ const NOTIFICATIONS_SERVICES = {
   notifications: "/dashboard/notifications",
 };
 
+const SALES_DASHBOARD_SERVICES = {
+  salesDashboard: "/sales-dashboard",
+};
+
 export const PATHS = {
   login: "/login",
   ...DASHBOARD_SERVICES,
+  ...SALES_DASHBOARD_SERVICES,
   ...BACKOFFICEMEMBERS_SERVICES,
   ...CLIENTMEMBERS_SERVICES,
   ...MITRAMEMBERS_SERVICES,
