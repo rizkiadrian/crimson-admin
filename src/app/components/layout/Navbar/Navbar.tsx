@@ -5,7 +5,11 @@ import { Search, Mail, MessageSquare, Menu } from "lucide-react";
 import { useSidebarStore } from "@store/useSidebarStore";
 import { NotificationBell } from "./NotificationBell";
 
-export function Navbar() {
+interface NavbarProps {
+  roleName: string | null;
+}
+
+export function Navbar({ roleName }: NavbarProps) {
   const toggleSidebar = useSidebarStore((state) => state.toggle);
 
   return (
@@ -52,7 +56,7 @@ export function Navbar() {
 
       <div className="flex items-center gap-2 md:gap-4">
         <div className="flex items-center gap-1 md:gap-2 mr-1 md:mr-2">
-          <NotificationBell />
+          <NotificationBell roleName={roleName} />
           <button className="p-2 text-neutral-800 hover:bg-neutral-100 rounded-full transition-all hidden sm:block">
             <Mail
               size={20}

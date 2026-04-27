@@ -1,20 +1,25 @@
 // src/app/(dashboard)/layout.tsx
+import { cookies } from "next/headers";
+import { COOKIE_KEYS } from "@config/env";
 import { Sidebar } from "@app/components/layout/Sidebar";
 import { Navbar } from "@app/components/layout/Navbar";
 import { BackofficeStatus } from "@app/components/core/BackofficeStatus";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const roleName = cookieStore.get(COOKIE_KEYS.roleName)?.value ?? null;
+
   return (
     <div className="min-h-screen bg-white flex">
-      <BackofficeStatus />
-      <Sidebar />
+      <BackofficeStatus roleName={roleName} />
+      <Sidebar roleName={roleName} />
 
       <div className="flex-1 flex flex-col md:ml-64 min-h-screen">
-        <Navbar />
+        <Navbar roleName={roleName} />
 
         {/* AREA KONTEN: Warna dasar tetap putih agar transisi ke lengkungan mulus */}
         <div className="flex-1 bg-white relative">

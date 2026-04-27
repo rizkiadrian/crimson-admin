@@ -9,6 +9,7 @@ export const ENV = {
 export const COOKIE_KEYS = {
   accessToken: "access_token",
   refreshToken: "refresh_token",
+  roleName: "role_name",
 };
 
 export const BUSINESSFLOW = {

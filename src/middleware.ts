@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { PATHS } from "@config/routing";
 import type { NextRequest } from "next/server";
-import { COOKIE_KEYS, ENV } from "@config/env";
+import { COOKIE_KEYS, ENV, BUSINESSFLOW } from "@config/env";
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get(COOKIE_KEYS.accessToken)?.value;
@@ -28,8 +28,11 @@ export function middleware(request: NextRequest) {
   // --- 2. HANDLE AUTH REDIRECTION (Proteksi Rute) ---
   const isDashboardPage =
     pathname.startsWith(PATHS.dashboard) || pathname === "/";
+  const isSalesPage =
+    pathname.startsWith(PATHS.salesDashboard) ||
+    pathname.startsWith(PATHS.salesActivities);
 
-  if (isDashboardPage) {
+  if (isDashboardPage || isSalesPage) {
     if (!token) {
       const loginUrl = new URL(PATHS.login, request.url);
       return NextResponse.redirect(loginUrl);
@@ -38,6 +41,32 @@ export function middleware(request: NextRequest) {
 
   if (pathname === PATHS.login && token) {
     return NextResponse.redirect(new URL(PATHS.dashboard, request.url));
+  }
+
+  // --- 3. ROLE-BASED ROUTING ---
+  const roleName = request.cookies.get(COOKIE_KEYS.roleName)?.value;
+
+  if (roleName && token) {
+    const isSalesUser = BUSINESSFLOW.salesRoles.includes(roleName);
+    const isBackofficeUser = BUSINESSFLOW.backofficeRoles.includes(roleName);
+
+    // Sales mengakses /dashboard atau /dashboard/* → redirect ke /sales-dashboard
+    if (
+      isSalesUser &&
+      (pathname === PATHS.dashboard ||
+        pathname.startsWith(PATHS.dashboard + "/"))
+    ) {
+      return NextResponse.redirect(new URL(PATHS.salesDashboard, request.url));
+    }
+
+    // Backoffice mengakses /sales-dashboard atau /sales-activities → redirect ke /dashboard
+    if (
+      isBackofficeUser &&
+      (pathname.startsWith(PATHS.salesDashboard) ||
+        pathname.startsWith(PATHS.salesActivities))
+    ) {
+      return NextResponse.redirect(new URL(PATHS.dashboard, request.url));
+    }
   }
 
   return NextResponse.next();

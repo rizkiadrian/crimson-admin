@@ -61,5 +61,9 @@ src/
 ├── lib/hooks/               # useTableData (list + URL sync), useInfiniteScroll (infinite scroll + URL sync), useDetailData (single resource)
 ├── services/                # API service layer per domain (backoffice/*, sales/activity-logs)
 ├── store/                   # Zustand stores (notifications, confirm dialog, backoffice notifications)
-└── config/                  # Routing paths, environment
+└── config/                  # Routing paths, environment, cookie keys (incl. role_name)
 ```
+
+## Authentication
+
+Login is handled via server action (`setCredentials`) which calls the backend API, stores `access_token`, `refresh_token`, and `role_name` as httpOnly secure cookies. The `role_name` cookie enables server-side role-based routing in Next.js middleware — Sales users are redirected to `/sales-dashboard`, Backoffice users to `/dashboard`, all before the page renders (no client-side flash). See [Architecture](./docs/ARCHITECTURE.md) for the full login flow and cookie schema.

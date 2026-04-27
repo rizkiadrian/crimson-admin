@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { authService } from "@services/auth";
 import type { IUserAuth } from "@services/auth";
+import { syncRoleCookie } from "@actions/auth/auth.actions";
 
 interface UserProfileState {
   /** The currently authenticated user's profile data */
@@ -27,6 +28,8 @@ export const useUserProfile = create<UserProfileState>((set) => ({
     try {
       const res = await authService.me();
       set({ profile: res.data, isLoading: false });
+      // Sync role cookie (fire-and-forget)
+      syncRoleCookie(res.data.role_name);
     } catch {
       // Silently fail or handle error appropriately, setting profile to null
       set({ profile: null, isLoading: false });

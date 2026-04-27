@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useCallback } from "react";
 import { useUserProfile } from "@store/useUserProfile";
-import { BUSINESSFLOW } from "@config/env";
 import { Users, ShieldCheck, Wrench, Clock, TrendingUp } from "lucide-react";
 import { StatCard } from "@app/components/ui/StatCard";
 import {
@@ -24,29 +22,17 @@ import {
   IDashboardData,
 } from "@services/backoffice/dashboard";
 import { getNameInitials } from "@lib/utils";
-import { PATHS } from "@config/routing";
 
 export default function DashboardPage() {
-  const router = useRouter();
   const { profile, isLoading: isProfileLoading } = useUserProfile();
 
   const fetcher = useCallback(() => dashboardService.getDashboard(), []);
   const { data, isLoading, error } = useDetailData<IDashboardData>({
     fetcher,
-    enabled: !!profile && !BUSINESSFLOW.salesRoles.includes(profile.role_name),
+    enabled: !!profile,
   });
 
-  useEffect(() => {
-    if (profile && BUSINESSFLOW.salesRoles.includes(profile.role_name)) {
-      router.replace(PATHS.salesDashboard);
-    }
-  }, [profile, router]);
-
-  if (
-    isProfileLoading ||
-    !profile ||
-    BUSINESSFLOW.salesRoles.includes(profile.role_name)
-  ) {
+  if (isProfileLoading || !profile) {
     return (
       <FormCard>
         <FormCardLoading />

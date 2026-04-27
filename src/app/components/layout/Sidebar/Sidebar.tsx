@@ -24,7 +24,6 @@ import {
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
 import { useSidebarStore } from "@store/useSidebarStore";
-import { useUserProfile } from "@store/useUserProfile";
 import { BUSINESSFLOW } from "@config/env";
 
 interface NavItem {
@@ -176,13 +175,16 @@ function SidebarGroup({
   );
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  roleName: string | null;
+}
+
+export function Sidebar({ roleName }: SidebarProps) {
   const pathname = usePathname();
   const { isOpen, close } = useSidebarStore();
-  const { profile, isLoading } = useUserProfile();
 
   const navs = useMemo(() => {
-    if (profile && BUSINESSFLOW.backofficeRoles.includes(profile.role_name)) {
+    if (roleName && BUSINESSFLOW.backofficeRoles.includes(roleName)) {
       return [
         ...NAV_ENTRIES,
         USER_MANAGEMENT_NAV,
@@ -190,13 +192,13 @@ export function Sidebar() {
         ...OTHER_NAVS,
       ];
     }
-    if (profile && BUSINESSFLOW.salesRoles.includes(profile.role_name)) {
+    if (roleName && BUSINESSFLOW.salesRoles.includes(roleName)) {
       return SALES_NAVS;
     }
     return NAV_ENTRIES;
-  }, [profile]);
+  }, [roleName]);
 
-  const navLoaded = profile !== null && !isLoading;
+  const navLoaded = roleName !== null;
 
   return (
     <>

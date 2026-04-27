@@ -104,7 +104,7 @@ src/
 ├── config/
 │   ├── env.ts
 │   └── routing.ts              # Centralized PATHS object
-└── middleware.ts                # Auth redirect middleware
+└── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 
 ---
@@ -161,7 +161,33 @@ src/
 - `setParams` (filter change) resets to page 1 and removes `?page` from URL
 - Edit links carry `?returnPage=N` so users return to the correct page after submit
 
-### ADR-05: Design System as Living Documentation
+### ADR-05: Role-Based Routing via Cookie in Middleware
+
+**Decision:** Store `role_name` in an httpOnly cookie and use Next.js middleware for server-side role-based routing instead of client-side redirect.
+
+**Context:** Previously, Sales users experienced a flash/loading state because the dashboard page rendered first, fetched the profile via Zustand, checked the role, then did `router.replace(/sales-dashboard)`. This caused a visible flicker on every page load.
+
+**Implementation:**
+
+- `setCredentials` server action fetches `GET /auth/me` after login to obtain `role_name`, then stores it in a `role_name` httpOnly cookie alongside `access_token` and `refresh_token`
+- Middleware reads `role_name` from `request.cookies` and performs 307 redirects before the page renders:
+  - Sales → `/dashboard` or `/dashboard/*` → redirect to `/sales-dashboard`
+  - Backoffice → `/sales-dashboard` or `/sales-activities` → redirect to `/dashboard`
+- If `role_name` cookie is missing (e.g., user logged in before this feature), middleware falls back to no role redirect; `useUserProfile` store calls `syncRoleCookie` after profile fetch to populate the cookie for subsequent requests
+- Layout (`layout.tsx`) is an async server component that reads the cookie and passes `roleName` as a prop to `Sidebar`, `Navbar`, and `BackofficeStatus` — eliminating Zustand dependency for role-based UI decisions
+- `removeAuth` deletes the `role_name` cookie alongside auth tokens on logout
+
+### Cookie Schema
+
+| Cookie Name     | Value                           | httpOnly | Secure     | SameSite | Path | MaxAge |
+| --------------- | ------------------------------- | -------- | ---------- | -------- | ---- | ------ |
+| `access_token`  | JWT string                      | ✅       | production | lax      | /    | 1 day  |
+| `refresh_token` | JWT string                      | ✅       | production | lax      | /    | 1 day  |
+| `role_name`     | String ("Admin", "Sales", etc.) | ✅       | production | lax      | /    | 1 day  |
+
+All cookie keys are centralized in `COOKIE_KEYS` (`src/config/env.ts`). Helpers: `setRoleCookie`, `getRoleCookie` in `src/lib/secure-cookie.ts`.
+
+### ADR-06: Design System as Living Documentation
 
 **Decision:** `/design-system` route renders every UI component with interactive examples.
 
@@ -171,6 +197,40 @@ src/
 
 - Each component has a showcase in `design-system/components/`
 - Kiro hooks auto-remind to update the design system page and README when component files change
+
+---
+
+## Authentication & Middleware
+
+### Login Flow (with Role Cookie)
+
+```
+[Login Form]
+    │
+    ├── Submit credentials
+    ├── Server Action: setCredentials(credentials)
+    │       ├── POST /auth/login → { access_token, refresh_token }
+    │       ├── GET /auth/me (Bearer token) → { role_name, name, email, ... }
+    │       ├── Set cookies: access_token, refresh_token, role_name
+    │       └── If /auth/me fails → login still succeeds (graceful degradation, no role cookie)
+    │
+    └── Client receives success → navigate to /dashboard
+
+[Subsequent Request to /dashboard]
+    │
+    ├── Middleware reads cookies: access_token, role_name
+    │       ├── No access_token → redirect to /login
+    │       ├── Sales + /dashboard or /dashboard/* → 307 redirect to /sales-dashboard
+    │       ├── Backoffice + /sales-dashboard or /sales-activities → 307 redirect to /dashboard
+    │       ├── No role_name cookie → continue without role redirect (fallback)
+    │       └── Unknown role → continue without role redirect
+    │
+    └── Layout (server component) reads role_name cookie → passes roleName prop to Sidebar, Navbar, BackofficeStatus
+```
+
+### Role Cookie Sync
+
+When `useUserProfile` store fetches the profile (e.g., on page load), it calls `syncRoleCookie(role_name)` server action fire-and-forget. This ensures the cookie stays in sync with the latest API data, covering cases where the role was changed server-side or the cookie was missing.
 
 ---
 

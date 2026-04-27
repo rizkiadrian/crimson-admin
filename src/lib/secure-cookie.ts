@@ -53,13 +53,35 @@ export async function getAuthToken(tokenName: string) {
   return cookieStore.get(tokenName)?.value;
 }
 
-export async function setAuth(authData: ILoginResponse) {
+/**
+ * Set role_name cookie (dipanggil dari server action)
+ */
+export async function setRoleCookie(
+  roleName: string,
+  response?: NextResponse
+): Promise<void> {
+  await setSecureCookie(COOKIE_KEYS.roleName, roleName, response);
+}
+
+/**
+ * Baca role_name dari cookie (dipanggil dari server component)
+ */
+export async function getRoleCookie(): Promise<string | null> {
+  const cookieStore = await cookies();
+  return cookieStore.get(COOKIE_KEYS.roleName)?.value ?? null;
+}
+
+export async function setAuth(authData: ILoginResponse, roleName?: string) {
   await setSecureCookie(COOKIE_KEYS.accessToken, authData.access_token);
   await setSecureCookie(COOKIE_KEYS.refreshToken, authData.refresh_token);
+  if (roleName) {
+    await setRoleCookie(roleName);
+  }
   return true;
 }
 
-export function removeAuth(response?: NextResponse) {
-  removeSecureCookie(COOKIE_KEYS.accessToken, response);
-  removeSecureCookie(COOKIE_KEYS.refreshToken, response);
+export async function removeAuth(response?: NextResponse) {
+  await removeSecureCookie(COOKIE_KEYS.accessToken, response);
+  await removeSecureCookie(COOKIE_KEYS.refreshToken, response);
+  await removeSecureCookie(COOKIE_KEYS.roleName, response);
 }
