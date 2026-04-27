@@ -1,5 +1,6 @@
 ---
-inclusion: auto
+inclusion: fileMatch
+fileMatchPattern: "src/app/**/*.tsx,src/app/**/*.ts"
 ---
 
 # Error Handling Patterns

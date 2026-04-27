@@ -1,5 +1,6 @@
 ---
-inclusion: auto
+inclusion: fileMatch
+fileMatchPattern: "src/app/**/*.tsx,src/lib/hooks/*.ts,src/store/*.ts"
 ---
 
 # State Management Patterns

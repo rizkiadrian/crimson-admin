@@ -1,5 +1,6 @@
 ---
-inclusion: auto
+inclusion: fileMatch
+fileMatchPattern: "README.md,CLAUDE.md,docs/*.md"
 ---
 
 # Documentation Update Guide

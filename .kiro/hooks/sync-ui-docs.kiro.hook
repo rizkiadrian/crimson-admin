@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Sync Docs on UI Change",
+  "description": "When a UI component or hook file is edited, reminds the agent to check if /design-system showcase and README.md Design System section need updating.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/app/components/ui/**/*.tsx",
+      "src/lib/hooks/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A UI component or hook file was just modified. Check if (1) the /design-system page (src/app/design-system/) needs a new or updated showcase section, and (2) the Design System section in README.md needs updating (new props, renamed components, new exports). If the change is purely internal with no visual or public API impact, skip both updates."
+  }
+}
