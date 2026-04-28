@@ -84,6 +84,13 @@ export default function CreateSalesActivityReportPage() {
 
     setForm((prev) => ({ ...prev, [name]: value }));
 
+    // Clear lead selection when activity type changes (different types show different leads)
+    if (name === "type") {
+      setForm((prev) => ({ ...prev, lead_id: "" }));
+      selectedLeadRef.current = null;
+      setLeadOptions([]);
+    }
+
     // Track selected lead option for preserving label when dropdown closes
     if (name === "lead_id") {
       const selectedOpt = leadOptions.find((o) => o.value === value);
@@ -100,35 +107,54 @@ export default function CreateSalesActivityReportPage() {
   // ─── Debounced lead search ───────────────────────────────────────────────
   const selectedLeadRef = useRef<FormSelectOption | null>(null);
 
-  const handleLeadSearch = useCallback((query: string) => {
-    if (leadSearchTimer.current) clearTimeout(leadSearchTimer.current);
+  const handleLeadSearch = useCallback(
+    (query: string) => {
+      if (leadSearchTimer.current) clearTimeout(leadSearchTimer.current);
 
-    if (!query.trim()) {
-      // Keep the currently selected option visible when clearing search
-      setLeadOptions(selectedLeadRef.current ? [selectedLeadRef.current] : []);
-      setIsLeadLoading(false);
-      return;
-    }
-
-    setIsLeadLoading(true);
-    leadSearchTimer.current = setTimeout(async () => {
-      try {
-        const res = await activeLeadsService.getActiveLeads({ search: query });
-        const typeLabel = (t: string) => (t === "client" ? "Client" : "Mitra");
-        const statusLabel = (s: string) =>
-          s.charAt(0).toUpperCase() + s.slice(1);
-        const opts: FormSelectOption[] = (res.data ?? []).map((lead) => ({
-          label: `${lead.lead_id} — ${lead.name} [${typeLabel(lead.type)} · ${statusLabel(lead.status)}]`,
-          value: String(lead.id),
-        }));
-        setLeadOptions(opts);
-      } catch {
-        setLeadOptions([]);
-      } finally {
+      if (!query.trim()) {
+        // Keep the currently selected option visible when clearing search
+        setLeadOptions(
+          selectedLeadRef.current ? [selectedLeadRef.current] : []
+        );
         setIsLeadLoading(false);
+        return;
       }
-    }, 350);
-  }, []);
+
+      setIsLeadLoading(true);
+      leadSearchTimer.current = setTimeout(async () => {
+        try {
+          const params: {
+            search: string;
+            unassigned_only?: boolean;
+            assigned_to_me?: boolean;
+          } = { search: query };
+          // For request_lead_assign, only show leads not yet assigned to any sales
+          if (form.type === "request_lead_assign") {
+            params.unassigned_only = true;
+          }
+          // For request_update_lead_status, only show leads assigned to current sales
+          if (form.type === "request_update_lead_status") {
+            params.assigned_to_me = true;
+          }
+          const res = await activeLeadsService.getActiveLeads(params);
+          const typeLabel = (t: string) =>
+            t === "client" ? "Client" : "Mitra";
+          const statusLabel = (s: string) =>
+            s.charAt(0).toUpperCase() + s.slice(1);
+          const opts: FormSelectOption[] = (res.data ?? []).map((lead) => ({
+            label: `${lead.lead_id} — ${lead.name} [${typeLabel(lead.type)} · ${statusLabel(lead.status)}]`,
+            value: String(lead.id),
+          }));
+          setLeadOptions(opts);
+        } catch {
+          setLeadOptions([]);
+        } finally {
+          setIsLeadLoading(false);
+        }
+      }, 350);
+    },
+    [form.type]
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,6 +163,18 @@ export default function CreateSalesActivityReportPage() {
     // Client-side validation: title must not be empty
     if (!form.title.trim()) {
       setFormErrors({ title: "Title wajib diisi" });
+      return;
+    }
+
+    // Lead ID required for request types
+    const requiresLead =
+      form.type === "request_lead_assign" ||
+      form.type === "request_update_lead_status";
+    if (requiresLead && !form.lead_id) {
+      setFormErrors({
+        lead_id:
+          "Lead ID wajib diisi untuk tipe request lead assign atau request update lead status",
+      });
       return;
     }
 
@@ -217,7 +255,12 @@ export default function CreateSalesActivityReportPage() {
 
               <FormSelect
                 id="lead_id"
-                label="Lead ID (Optional)"
+                label={
+                  form.type === "request_lead_assign" ||
+                  form.type === "request_update_lead_status"
+                    ? "Lead ID"
+                    : "Lead ID (Optional)"
+                }
                 value={form.lead_id}
                 onChange={handleChange}
                 options={leadOptions}
@@ -228,6 +271,28 @@ export default function CreateSalesActivityReportPage() {
                 searchPlaceholder="Type to search leads..."
               />
             </div>
+
+            {form.type === "request_lead_assign" && (
+              <div className="rounded-xl bg-primary-50 border border-primary-200 px-4 py-3 text-[13px] text-primary-700">
+                Hanya lead yang belum di-assign ke sales manapun yang dapat
+                dipilih. Lead yang sudah memiliki sales tidak akan muncul di
+                daftar.
+              </div>
+            )}
+
+            {form.type === "request_update_lead_status" && (
+              <div className="rounded-xl bg-primary-50 border border-primary-200 px-4 py-3 text-[13px] text-primary-700 space-y-1">
+                <p>
+                  Hanya lead yang sudah di-assign ke Anda yang dapat di-request
+                  update statusnya. Jika lead belum di-assign, ajukan request
+                  lead assign terlebih dahulu.
+                </p>
+                <p>
+                  Anda tidak dapat mengajukan request update status jika masih
+                  ada request yang menunggu approval untuk lead yang sama.
+                </p>
+              </div>
+            )}
 
             <FormInput
               id="title"

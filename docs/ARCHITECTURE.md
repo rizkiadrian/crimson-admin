@@ -74,7 +74,10 @@ src/
 │   │       ├── activity-logs/
 │   │       │   ├── page.tsx                    # Backoffice activity log list (table with search, status/type filters, "Requested" column)
 │   │       │   └── [id]/page.tsx               # Backoffice activity log detail + "Detail Permintaan" section + status update + comments
-│   │       └── page.tsx                        # Dashboard home
+│   │       └── page.tsx                        # Dashboard home (backoffice)
+│   ├── (dashboard)/
+│   │   └── sales-dashboard/
+│   │       └── page.tsx                        # Sales dashboard (leads stats, activity stats, charts, recent items)
 │   ├── (dashboard)/
 │   │   └── sales-activities/
 │   │       ├── page.tsx                        # Timeline list page (infinite scroll)
@@ -102,7 +105,9 @@ src/
 │   │   ├── activity-logs/      # Types + service (list, detail, updateStatus) — backoffice activity log review
 │   │   └── dashboard/          # Types + service (summary incl. leads stats)
 │   ├── sales/
+│   │   ├── active-leads/       # Types + service (getActiveLeads with ?search, ?unassigned_only, ?assigned_to_me)
 │   │   ├── activity-logs/      # Types (IActivityLog, ICreateActivityLogPayload, ActivityLogType) + service (list, create, detail with multipart/form-data support)
+│   │   ├── dashboard/          # Types + service (salesDashboardService.getDashboard — leads, activities, recent items)
 │   │   └── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead) — sales notifications
 │   └── shared/
 │       └── comments/           # Types + service (list, create) — activity log comments (access controlled)

@@ -405,6 +405,11 @@ new → contacted → qualified → proposal → negotiation → won
 - Validation errors (422) display per-field error messages; general errors show error toast
 - Submit button disabled with loading indicator during submission
 - File attachment sent as `multipart/form-data`; JSON otherwise
+- `lead_id` is required when type is `request_lead_assign` or `request_update_lead_status`; label changes dynamically
+- `request_update_lead_status`: lead dropdown only shows leads assigned to current sales user (`?assigned_to_me=1`); backend validates lead assignment + no pending request for same lead
+- `request_lead_assign`: lead dropdown only shows unassigned leads (`?unassigned_only=1`); backend validates lead not already assigned to another sales
+- Info banners explain constraints for each request type
+- Lead selection clears when activity type changes (different types show different lead sets)
 - Backend dispatches `NotifyBackofficeUsers` job on create, notifying all admin/backoffice users
 - API response includes `attachment_url`, `thumbnail_url`, and `attachment_type` fields (appended via model accessors)
 - Image attachments display a clickable thumbnail (max 120px width, rounded corners) that opens full-size in a new tab
@@ -487,5 +492,6 @@ new → contacted → qualified → proposal → negotiation → won
 | FM-10    | Deposit Management          | P2       | 🔲 Planned |
 | FM-11    | Service Category Management | P2       | 🔲 Planned |
 | FM-12    | Dashboard Analytics         | P2       | ✅ Done    |
+| FM-12b   | Sales Dashboard             | P2       | ✅ Done    |
 | FM-13    | Audit Log                   | P3       | 🔲 Planned |
 | FM-14    | Role-based UI visibility    | P3       | 🔲 Planned |

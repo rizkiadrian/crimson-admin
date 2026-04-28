@@ -71,7 +71,8 @@ This document serves as the master reference for the Lingkar Fullstack project. 
    - **Form submission pattern:** Create forms use `handleFormError(err, setFormErrors)` from `@lib/utils` for 422 field-level errors, and `showNotification(err.message, "error")` for general errors. Success flow: toast + `router.push(PATHS.xxx)`.
    - **Type note:** `IUserAuth.sales_id` is typed as `string | null` (backend returns format "SLS-XXXX"), not `number | null`.
    - **Type note:** `IActivityLogLead` includes optional `type?: string` and `status?: string` fields. `IActiveLead` includes `type: string` and `status: string` fields. Lead dropdown in create form shows `[Type · Status]` format: `LD-0032 — PT Agung Sedayu [Client · New]`.
-   - **Active leads list:** `LeadService.getActiveLeadsList` returns `id`, `name`, `lead_id`, `type`, and `status` fields.
+   - **Active leads list:** `LeadService.getActiveLeadsList` returns `id`, `name`, `lead_id`, `type`, and `status` fields. Supports `?unassigned_only=1` (leads without assigned sales) and `?assigned_to_me=1` (leads assigned to current sales user). Frontend create form dynamically filters: `request_lead_assign` → `unassigned_only`, `request_update_lead_status` → `assigned_to_me`, `general_note` → no filter.
+   - **Sales Dashboard service** (`services/sales/dashboard/`): `salesDashboardService.getDashboard()` fetches sales-specific summary. Returns: leads (total, active, won, lost, by_status, by_type, by_priority), activities (total, this_month, by_status), recent_activities (5 latest), recent_leads (5 latest assigned). Used by `/sales-dashboard` page.
 4. **UI Component System:**
    - Forms: `FormCard` (Header, Body, Footer, Loading, Error)
    - Lists: `TableCard` + `TableCardContent` (with built-in skeleton, error, and empty states)

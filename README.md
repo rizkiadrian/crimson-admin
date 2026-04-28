@@ -39,6 +39,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Module              | List | Create | Show | Edit | Delete | Filter | Dashboard |
 | ------------------- | ---- | ------ | ---- | ---- | ------ | ------ | --------- |
 | Dashboard           | —    | —      | —    | —    | —      | —      | ✅        |
+| Sales Dashboard     | —    | —      | —    | —    | —      | —      | ✅        |
 | Backoffice Members  | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
 | Client Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
 | Mitra Management    | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
@@ -60,7 +61,7 @@ src/
 │   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, sales-activities)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useInfiniteScroll (infinite scroll + URL sync), useDetailData (single resource)
-├── services/                # API service layer per domain (backoffice/*, sales/activity-logs, sales/notifications, shared/comments)
+├── services/                # API service layer per domain (backoffice/*, sales/activity-logs, sales/dashboard, sales/notifications, shared/comments)
 ├── store/                   # Zustand stores (notifications, confirm dialog, backoffice notifications, sales notifications)
 └── config/                  # Routing paths, environment, cookie keys (incl. role_name)
 ```

@@ -1,7 +1,15 @@
 "use client";
 
-import React from "react";
-import { Users, ShieldCheck, Wrench, Clock, TrendingUp } from "lucide-react";
+import React, { useCallback } from "react";
+import { useUserProfile } from "@store/useUserProfile";
+import {
+  Target,
+  TrendingUp,
+  Trophy,
+  FileText,
+  Clock,
+  Users,
+} from "lucide-react";
 import { StatCard } from "@app/components/ui/StatCard";
 import {
   ChartCard,
@@ -9,73 +17,89 @@ import {
   BarChartComponent,
   CHART_SETS,
 } from "@app/components/ui/Chart";
+import {
+  FormCard,
+  FormCardLoading,
+  FormCardError,
+} from "@app/components/ui/FormCard";
 import { Badge } from "@app/components/ui/Table";
-import { getNameInitials } from "@lib/utils";
+import { useDetailData } from "@lib/hooks/use-detail-data";
+import {
+  salesDashboardService,
+  ISalesDashboardData,
+} from "@services/sales/dashboard";
+
+const TYPE_LABELS: Record<string, string> = {
+  general_note: "Catatan",
+  request_lead_assign: "Assign Lead",
+  request_update_lead_status: "Update Status",
+};
+
+const STATUS_VARIANT: Record<string, "warning" | "success" | "error"> = {
+  pending: "warning",
+  approved: "success",
+  rejected: "error",
+};
+
+const LEAD_STATUS_VARIANT: Record<
+  string,
+  "neutral" | "primary" | "success" | "error" | "warning" | "tertiary"
+> = {
+  new: "neutral",
+  contacted: "primary",
+  qualified: "tertiary",
+  proposal: "warning",
+  negotiation: "warning",
+  won: "success",
+  lost: "error",
+};
+
+const PRIORITY_VARIANT: Record<
+  string,
+  "neutral" | "primary" | "warning" | "error"
+> = {
+  low: "neutral",
+  medium: "primary",
+  high: "warning",
+  urgent: "error",
+};
 
 export default function SalesDashboardPage() {
-  // Static dummy data for template
-  const clients = { total: 0, verified: 0, unverified: 0 };
-  const mitra = {
-    total: 0,
-    online: 0,
-    approved: 0,
-    pending: 0,
-    rejected: 0,
-    suspended: 0,
-  };
-  const leads = {
-    total: 0,
-    by_status: {
-      new: 0,
-      contacted: 0,
-      qualified: 0,
-      proposal: 0,
-      negotiation: 0,
-      won: 0,
-      lost: 0,
-    },
-    by_type: { client: 0, mitra: 0 },
-  };
-  const recent_backoffice: Array<{
-    id: string;
-    name: string;
-    email: string;
-    role_name: string;
-    updated_at: string;
-  }> = [];
+  const { profile, isLoading: isProfileLoading } = useUserProfile();
 
-  const clientPieData = [
-    {
-      name: "Verified",
-      value: clients.verified,
-      color: CHART_SETS.verification[0],
-    },
-    {
-      name: "Unverified",
-      value: clients.unverified,
-      color: CHART_SETS.verification[1],
-    },
-  ];
+  const fetcher = useCallback(() => salesDashboardService.getDashboard(), []);
+  const { data, isLoading, error } = useDetailData<ISalesDashboardData>({
+    fetcher,
+    enabled: !!profile,
+  });
 
-  const mitraBarData = [
-    {
-      name: "Approved",
-      value: mitra.approved,
-      color: CHART_SETS.mitraStatus[0],
-    },
-    { name: "Pending", value: mitra.pending, color: CHART_SETS.mitraStatus[1] },
-    {
-      name: "Rejected",
-      value: mitra.rejected,
-      color: CHART_SETS.mitraStatus[2],
-    },
-    {
-      name: "Suspended",
-      value: mitra.suspended,
-      color: CHART_SETS.mitraStatus[3],
-    },
-  ];
+  if (isProfileLoading || !profile) {
+    return (
+      <FormCard>
+        <FormCardLoading />
+      </FormCard>
+    );
+  }
 
+  if (isLoading) {
+    return (
+      <FormCard>
+        <FormCardLoading />
+      </FormCard>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <FormCard>
+        <FormCardError message={error || "Gagal memuat dashboard"} />
+      </FormCard>
+    );
+  }
+
+  const { leads, activities, recent_activities, recent_leads } = data;
+
+  // --- Chart data ---
   const leadsBarData = [
     {
       name: "New",
@@ -114,137 +138,234 @@ export default function SalesDashboardPage() {
     },
   ];
 
+  const leadsTypePieData = [
+    {
+      name: "Client",
+      value: leads.by_type.client,
+      color: CHART_SETS.verification[0],
+    },
+    {
+      name: "Mitra",
+      value: leads.by_type.mitra,
+      color: CHART_SETS.mitraStatus[3],
+    },
+  ];
+
+  const activityStatusPieData = [
+    {
+      name: "Pending",
+      value: activities.by_status.pending,
+      color: CHART_SETS.mitraStatus[1],
+    },
+    {
+      name: "Approved",
+      value: activities.by_status.approved,
+      color: CHART_SETS.mitraStatus[0],
+    },
+    {
+      name: "Rejected",
+      value: activities.by_status.rejected,
+      color: CHART_SETS.mitraStatus[2],
+    },
+  ];
+
+  const priorityBarData = [
+    {
+      name: "Low",
+      value: leads.by_priority.low,
+      color: CHART_SETS.mitraStatus[1],
+    },
+    {
+      name: "Medium",
+      value: leads.by_priority.medium,
+      color: CHART_SETS.verification[0],
+    },
+    {
+      name: "High",
+      value: leads.by_priority.high,
+      color: CHART_SETS.mitraStatus[3],
+    },
+    {
+      name: "Urgent",
+      value: leads.by_priority.urgent,
+      color: CHART_SETS.mitraStatus[2],
+    },
+  ];
+
   return (
     <div className="space-y-8">
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title="Total Clients"
-          value={clients.total}
-          description={`${clients.verified} verified`}
+          title="Total Leads Saya"
+          value={leads.total}
+          description={`${leads.by_type.client} client · ${leads.by_type.mitra} mitra`}
           icon={Users}
           iconVariant="primary"
         />
         <StatCard
-          title="Verified Clients"
-          value={clients.verified}
-          description={`${clients.unverified} pending verification`}
-          icon={ShieldCheck}
+          title="Leads Aktif"
+          value={leads.active}
+          description="Dalam pipeline"
+          icon={Target}
+          iconVariant="warning"
+        />
+        <StatCard
+          title="Leads Won"
+          value={leads.won}
+          description={`${leads.lost} lost`}
+          icon={Trophy}
           iconVariant="success"
         />
         <StatCard
-          title="Total Mitra"
-          value={mitra.total}
-          description={`${mitra.online} currently online`}
-          icon={Wrench}
+          title="Activity Bulan Ini"
+          value={activities.this_month}
+          description={`${activities.total} total · ${activities.by_status.pending} pending`}
+          icon={FileText}
           iconVariant="tertiary"
-        />
-        <StatCard
-          title="Total Leads"
-          value={leads.total}
-          description={`${leads.by_status.won} won · ${leads.by_type.client} client · ${leads.by_type.mitra} mitra`}
-          icon={TrendingUp}
-          iconVariant="primary"
         />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard
-          title="Client Verification"
-          description="Distribution of verified vs unverified clients"
-        >
-          <DonutChart data={clientPieData} />
-        </ChartCard>
-
-        <ChartCard
-          title="Mitra Verification Status"
-          description="Breakdown by verification status"
-        >
-          <BarChartComponent data={mitraBarData} />
-        </ChartCard>
-
-        <ChartCard
           title="Leads Pipeline"
-          description="Leads distribution across pipeline stages"
+          description="Distribusi lead per tahap pipeline"
         >
           <BarChartComponent data={leadsBarData} />
         </ChartCard>
 
         <ChartCard
-          title="Mitra Online Status"
-          description="Currently online vs total approved mitra"
+          title="Leads by Type"
+          description="Proporsi lead client vs mitra"
         >
-          <DonutChart
-            data={[
-              {
-                name: "Online",
-                value: mitra.online,
-                color: CHART_SETS.mitraStatus[0],
-              },
-              {
-                name: "Offline",
-                value: mitra.approved - mitra.online,
-                color: CHART_SETS.mitraStatus[1],
-              },
-            ]}
-          />
+          <DonutChart data={leadsTypePieData} />
+        </ChartCard>
+
+        <ChartCard
+          title="Status Activity Report"
+          description="Distribusi status laporan aktivitas"
+        >
+          <DonutChart data={activityStatusPieData} />
+        </ChartCard>
+
+        <ChartCard
+          title="Leads by Priority"
+          description="Distribusi lead berdasarkan prioritas"
+        >
+          <BarChartComponent data={priorityBarData} />
         </ChartCard>
       </div>
 
-      {/* Recent Backoffice Members */}
-      <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden">
-        <div className="px-6 py-5 border-b border-border-subtle flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-text-main">
-              Recent Backoffice Activity
-            </h3>
-            <p className="text-[12px] text-text-muted mt-0.5">
-              Last 5 active backoffice members
-            </p>
+      {/* Recent sections — side by side on large screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Activity Logs */}
+        <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden">
+          <div className="px-6 py-5 border-b border-border-subtle flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-text-main">
+                Activity Terbaru
+              </h3>
+              <p className="text-[12px] text-text-muted mt-0.5">
+                5 laporan aktivitas terakhir
+              </p>
+            </div>
+            <Clock size={18} className="text-neutral-400" />
           </div>
-          <Clock size={18} className="text-neutral-400" />
-        </div>
-        <div className="divide-y divide-border-subtle">
-          {recent_backoffice.map((member) => (
-            <div
-              key={member.id}
-              className="px-6 py-4 flex items-center justify-between hover:bg-neutral-50 transition-colors"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-sm font-bold text-neutral-600">
-                  {getNameInitials(member.name)}
-                </div>
-                <div>
-                  <p className="text-[14px] font-semibold text-text-main">
-                    {member.name}
+          <div className="divide-y divide-border-subtle">
+            {recent_activities.map((activity) => (
+              <div
+                key={activity.id}
+                className="px-6 py-4 flex items-center justify-between hover:bg-neutral-50 transition-colors"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-[14px] font-semibold text-text-main truncate">
+                    {activity.title}
                   </p>
-                  <p className="text-[12px] text-text-muted">{member.email}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[12px] text-text-muted">
+                      {TYPE_LABELS[activity.type] ?? activity.type}
+                    </span>
+                    {activity.lead && (
+                      <span className="text-[12px] text-text-muted">
+                        · {activity.lead.lead_id}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0 ml-4">
+                  <Badge
+                    variant={STATUS_VARIANT[activity.status] ?? "neutral"}
+                    showDot={false}
+                  >
+                    {activity.status}
+                  </Badge>
+                  <span className="text-[11px] text-neutral-400">
+                    {new Date(activity.created_at).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Badge
-                  variant={
-                    member.role_name === "Admin" ? "primary" : "tertiary"
-                  }
-                  showDot={false}
-                >
-                  {member.role_name}
-                </Badge>
-                <span className="text-[11px] text-neutral-400">
-                  {new Date(member.updated_at).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "short",
-                  })}
-                </span>
+            ))}
+            {recent_activities.length === 0 && (
+              <div className="px-6 py-8 text-center text-sm text-text-muted">
+                Belum ada activity
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Leads */}
+        <div className="bg-bg-card rounded-2xl border border-border-subtle overflow-hidden">
+          <div className="px-6 py-5 border-b border-border-subtle flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-text-main">
+                Leads Terbaru
+              </h3>
+              <p className="text-[12px] text-text-muted mt-0.5">
+                5 lead terakhir yang di-assign
+              </p>
             </div>
-          ))}
-          {recent_backoffice.length === 0 && (
-            <div className="px-6 py-8 text-center text-sm text-text-muted">
-              No recent activity
-            </div>
-          )}
+            <TrendingUp size={18} className="text-neutral-400" />
+          </div>
+          <div className="divide-y divide-border-subtle">
+            {recent_leads.map((lead) => (
+              <div
+                key={lead.id}
+                className="px-6 py-4 flex items-center justify-between hover:bg-neutral-50 transition-colors"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-[14px] font-semibold text-text-main truncate">
+                    {lead.name}
+                  </p>
+                  <span className="text-[12px] text-text-muted">
+                    {lead.lead_id} · {lead.type}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 ml-4">
+                  <Badge
+                    variant={LEAD_STATUS_VARIANT[lead.status] ?? "neutral"}
+                    showDot={false}
+                  >
+                    {lead.status}
+                  </Badge>
+                  <Badge
+                    variant={PRIORITY_VARIANT[lead.priority] ?? "neutral"}
+                    showDot={false}
+                  >
+                    {lead.priority}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+            {recent_leads.length === 0 && (
+              <div className="px-6 py-8 text-center text-sm text-text-muted">
+                Belum ada lead yang di-assign
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

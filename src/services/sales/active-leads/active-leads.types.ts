@@ -9,4 +9,6 @@ export interface IActiveLead {
 
 export interface IActiveLeadParams {
   search?: string;
+  unassigned_only?: boolean;
+  assigned_to_me?: boolean;
 }
