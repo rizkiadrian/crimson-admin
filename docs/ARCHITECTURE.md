@@ -39,7 +39,7 @@ src/
 │   │   │   └── ActivityCard/   # Activity item card, skeleton, and helpers (formatRelativeTime, getActivityTypeConfig, getStatusBadgeConfig, getFileIconConfig)
 │   │   │   └── CommentThread/ # Reusable comment thread component (list + create, access controlled)
 │   │   ├── layout/
-│   │   │   ├── Sidebar/         # Accordion navigation with grouped items
+│   │   │   ├── Sidebar/         # Accordion navigation with grouped items (User Management, Sales Management, Finance)
 │   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown (supports backoffice + sales roles, resolveLink fallback), profile
 │   │   └── core/
 │   │       ├── BackofficeStatus/
@@ -74,7 +74,10 @@ src/
 │   │       ├── activity-logs/
 │   │       │   ├── page.tsx                    # Backoffice activity log list (table with search, status/type filters, "Requested" column)
 │   │       │   └── [id]/page.tsx               # Backoffice activity log detail + "Detail Permintaan" section + status update + comments
-│   │       └── page.tsx                        # Dashboard home (backoffice)
+│   │       ├── deposit-requests/
+│   │       │   ├── page.tsx                    # Deposit request list (table with search, status/payment_method filters)
+│   │       │   └── [id]/page.tsx               # Deposit request detail + attachment preview + approve/reject form
+│   │       └── page.tsx                        # Dashboard home (backoffice, incl. deposits StatCard)
 │   ├── (dashboard)/
 │   │   └── sales-dashboard/
 │   │       └── page.tsx                        # Sales dashboard (leads stats, activity stats, charts, recent items)
@@ -103,7 +106,8 @@ src/
 │   │   ├── sales-members/      # Types + service (list, create, detail, update, delete, list-dropdown)
 │   │   ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)
 │   │   ├── activity-logs/      # Types + service (list, detail, updateStatus) — backoffice activity log review
-│   │   └── dashboard/          # Types + service (summary incl. leads stats)
+│   │   ├── deposit-requests/  # Types + service (list, detail, updateStatus) — deposit request management
+│   │   └── dashboard/          # Types + service (summary incl. leads stats, deposits summary)
 │   ├── sales/
 │   │   ├── active-leads/       # Types + service (getActiveLeads with ?search, ?unassigned_only, ?assigned_to_me)
 │   │   ├── activity-logs/      # Types (IActivityLog, ICreateActivityLogPayload, ActivityLogType) + service (list, create, detail with multipart/form-data support)
@@ -118,7 +122,7 @@ src/
 │   └── useSalesNotificationStore.ts     # Sales notification bell state (mirrors backoffice pattern, uses salesNotificationsService)
 ├── config/
 │   ├── env.ts
-│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail)
+│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail)
 └── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 

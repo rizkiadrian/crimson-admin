@@ -48,6 +48,11 @@ const ACTIVITY_LOGS_SERVICES = {
   activityLogDetail: (id: number) => `/dashboard/activity-logs/${id}`,
 };
 
+const DEPOSIT_REQUESTS_SERVICES = {
+  depositRequests: "/dashboard/deposit-requests",
+  depositRequestDetail: (id: string) => `/dashboard/deposit-requests/${id}`,
+};
+
 const SALES_DASHBOARD_SERVICES = {
   salesDashboard: "/sales-dashboard",
 };
@@ -64,4 +69,5 @@ export const PATHS = {
   ...NOTIFICATIONS_SERVICES,
   ...SALES_ACTIVITIES_SERVICES,
   ...ACTIVITY_LOGS_SERVICES,
+  ...DEPOSIT_REQUESTS_SERVICES,
 };

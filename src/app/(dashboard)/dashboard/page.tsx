@@ -2,7 +2,14 @@
 
 import React, { useCallback } from "react";
 import { useUserProfile } from "@store/useUserProfile";
-import { Users, ShieldCheck, Wrench, Clock, TrendingUp } from "lucide-react";
+import {
+  Users,
+  ShieldCheck,
+  Wrench,
+  Clock,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 import { StatCard } from "@app/components/ui/StatCard";
 import {
   ChartCard,
@@ -56,7 +63,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { clients, mitra, leads, recent_backoffice } = data;
+  const { clients, mitra, leads, deposits, recent_backoffice } = data;
 
   const clientPieData = [
     {
@@ -159,6 +166,13 @@ export default function DashboardPage() {
           description={`${leads.by_status.won} won · ${leads.by_type.client} client · ${leads.by_type.mitra} mitra`}
           icon={TrendingUp}
           iconVariant="primary"
+        />
+        <StatCard
+          title="Deposit Requests"
+          value={deposits.total}
+          description={`${deposits.pending} pending review`}
+          icon={Wallet}
+          iconVariant="warning"
         />
       </div>
 

@@ -479,6 +479,62 @@ new → contacted → qualified → proposal → negotiation → won
 
 ---
 
+### FM-10: Deposit Request Management
+
+**Route:** `/dashboard/deposit-requests` (list), `/dashboard/deposit-requests/[id]` (detail)
+**API Base:** `/api/v1/backoffice/deposit-requests`
+**Priority:** P2 — Finance
+
+| ID       | Feature              | Status  | Description                                                                                                                                                                                                                                                            |
+| -------- | -------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FM-10-01 | List with pagination | ✅ Done | Paginated table with columns: Client Name, Reference Code, Amount (Rp format), Payment Method, Status badge, Created Date. SearchInput for reference code / client name. FilterPopup with status chips (pending, approved, rejected, expired) and payment method chips |
+| FM-10-02 | Detail page          | ✅ Done | DetailCard with deposit info (client name, email, reference code, amount, payment method, status, created date), attachment preview (clickable image or download link), approve/reject form (pending only), read-only review info (processed)                          |
+| FM-10-03 | Approve deposit      | ✅ Done | Status update to "approved" → wallet balance credited atomically + WalletTransaction record created + NotifyClientUser job dispatched. Optional reason field                                                                                                           |
+| FM-10-04 | Reject deposit       | ✅ Done | Status update to "rejected" with required reason (max 1000 chars) → NotifyClientUser job dispatched with rejection reason                                                                                                                                              |
+| FM-10-05 | Dashboard widget     | ✅ Done | StatCard on backoffice dashboard showing total deposit requests and pending count ("N pending review")                                                                                                                                                                 |
+| FM-10-06 | Sidebar navigation   | ✅ Done | "Finance" accordion group with "Deposit Requests" item (Wallet/CreditCard icons)                                                                                                                                                                                       |
+
+**Deposit Status Flow:**
+
+```
+pending → approved (wallet credited, transaction logged)
+        → rejected (reason recorded)
+```
+
+**Status Badge Colors:**
+
+| Status   | Badge Variant |
+| -------- | ------------- |
+| pending  | warning       |
+| approved | success       |
+| rejected | error         |
+| expired  | neutral       |
+
+**API Endpoints:**
+
+| Method | Endpoint                              | Request Body          | Response                              |
+| ------ | ------------------------------------- | --------------------- | ------------------------------------- |
+| GET    | `/deposit-requests?page=N&per_page=N` | —                     | Paginated list with `meta.pagination` |
+| GET    | `/deposit-requests/{id}`              | —                     | Deposit detail with user + reviewer   |
+| PATCH  | `/deposit-requests/{id}/status`       | `{ status, reason? }` | Updated deposit request               |
+
+**Acceptance Criteria:**
+
+- Table displays deposit requests ordered by created_at descending
+- Search filters by reference_code or client name (case-insensitive)
+- Status and payment method filters work independently
+- Row click navigates to detail page
+- Detail page shows attachment as clickable image preview (if image) or download link (if file)
+- Approve/reject form only shown when status is "pending"; read-only review info shown when processed
+- Rejection requires a non-empty reason (max 1000 chars); approval reason is optional
+- Approval atomically: updates status + credits wallet + creates WalletTransaction
+- Non-pending deposits reject status changes with 422
+- Inactive wallet (locked/banned) rejects approval with 422
+- Dashboard StatCard shows total and pending deposit counts
+- Sidebar "Finance" group with "Deposit Requests" item between Sales Management and Other navs
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -489,7 +545,7 @@ new → contacted → qualified → proposal → negotiation → won
 | FM-07    | Backoffice Notifications    | P1       | ✅ Done    |
 | FM-08    | Sales Activities            | P1       | ✅ Done    |
 | FM-09    | Activity Log Review         | P1       | ✅ Done    |
-| FM-10    | Deposit Management          | P2       | 🔲 Planned |
+| FM-10    | Deposit Management          | P2       | ✅ Done    |
 | FM-11    | Service Category Management | P2       | 🔲 Planned |
 | FM-12    | Dashboard Analytics         | P2       | ✅ Done    |
 | FM-12b   | Sales Dashboard             | P2       | ✅ Done    |

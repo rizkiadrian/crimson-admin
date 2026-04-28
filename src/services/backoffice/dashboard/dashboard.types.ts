@@ -40,9 +40,15 @@ export interface ILeadsSummary {
   by_status: ILeadsByStatus;
 }
 
+export interface IDepositsSummary {
+  total: number;
+  pending: number;
+}
+
 export interface IDashboardData {
   clients: IClientSummary;
   mitra: IMitraSummary;
   leads: ILeadsSummary;
+  deposits: IDepositsSummary;
   recent_backoffice: IRecentBackoffice[];
 }

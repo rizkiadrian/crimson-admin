@@ -21,6 +21,8 @@ import {
   UserSquare2,
   Bell,
   LogOut,
+  Wallet,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -87,6 +89,18 @@ const SALES_MANAGEMENT_NAV: NavEntry = {
       label: "Activity Logs",
       href: PATHS.activityLogs,
       icon: FileText,
+    },
+  ],
+};
+
+const FINANCE_NAV: NavEntry = {
+  label: "Finance",
+  icon: Wallet,
+  items: [
+    {
+      label: "Deposit Requests",
+      href: PATHS.depositRequests,
+      icon: CreditCard,
     },
   ],
 };
@@ -200,6 +214,7 @@ export function Sidebar({ roleName }: SidebarProps) {
         ...NAV_ENTRIES,
         USER_MANAGEMENT_NAV,
         SALES_MANAGEMENT_NAV,
+        FINANCE_NAV,
         ...OTHER_NAVS,
       ];
     }
