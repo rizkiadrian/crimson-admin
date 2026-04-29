@@ -14,6 +14,7 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 
 - **Backend API:** `/Users/rizkiadrian/works/personal/lingkar-id-backend`
 - **Frontend CRM:** `/Users/rizkiadrian/works/personal/lingkar-crm`
+- **Mobile App:** `/Users/rizkiadrian/works/personal/LingkarIdApp` (React Native 0.85, client-facing app)
 
 ---
 
@@ -44,6 +45,8 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 ---
 
 ## 3. Frontend (Next.js 16 CRM)
+
+> For the React Native mobile app, see `LingkarIdApp/README.md`.
 
 ### Tech Stack
 
