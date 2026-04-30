@@ -16,6 +16,8 @@ import { ChartShowcase } from "./components/chart-showcase";
 import { ChartCardShowcase } from "./components/chart-card-showcase";
 import { NotificationShowcase } from "./components/notification-showcase";
 import { ActivityCardShowcase } from "./components/activity-card-showcase";
+import { CommentThreadShowcase } from "./components/comment-thread-showcase";
+import { BannerEditorShowcase } from "./components/banner-editor-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -170,6 +172,22 @@ export default function DesignSystemPage() {
             17. Activity Card & Timeline
           </h2>
           <ActivityCardShowcase />
+        </section>
+
+        {/* Section 18: Comment Thread */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            18. Comment Thread
+          </h2>
+          <CommentThreadShowcase />
+        </section>
+
+        {/* Section 19: Banner Editor */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            19. Banner Editor
+          </h2>
+          <BannerEditorShowcase />
         </section>
       </main>
     </div>

@@ -27,13 +27,15 @@ import type {
   IBackgroundConfig,
   ICtaConfig,
 } from "@services/backoffice/banners/banners.types";
-import BackgroundSelector from "../../_partials/BackgroundSelector";
-import CanvasEditor from "../../_partials/CanvasEditor";
-import type { CanvasEditorHandle } from "../../_partials/CanvasEditor";
-import TextPropertiesPanel from "../../_partials/TextPropertiesPanel";
-import TemplateSelector from "../../_partials/TemplateSelector";
-import BannerPreviewModal from "../../_partials/BannerPreviewModal";
-import CtaPropertiesPanel from "../../_partials/CtaPropertiesPanel";
+import {
+  BackgroundSelector,
+  CanvasEditor,
+  TextPropertiesPanel,
+  TemplateSelector,
+  BannerPreviewModal,
+  CtaPropertiesPanel,
+} from "@app/components/ui/BannerEditor";
+import type { CanvasEditorHandle } from "@app/components/ui/BannerEditor";
 
 /** Expected image dimensions with tolerance */
 const EXPECTED_WIDTH = 1080;
@@ -316,10 +318,19 @@ function BannerEditForm({ initialData }: { initialData: IBanner }) {
           new File([imageBlob], "banner.png", { type: "image/png" })
         );
         formData.append("background_config", JSON.stringify(backgroundConfig));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         formData.append(
           "text_elements",
-          JSON.stringify(textElements.map(({ id: _, ...rest }) => rest))
+          // Strip client-side `id` before sending to API
+          JSON.stringify(
+            textElements.map((el) => ({
+              content: el.content,
+              position_x: el.position_x,
+              position_y: el.position_y,
+              font_size: el.font_size,
+              font_color: el.font_color,
+              font_weight: el.font_weight,
+            }))
+          )
         );
         if (ctaConfig) {
           formData.append("cta_config", JSON.stringify(ctaConfig));

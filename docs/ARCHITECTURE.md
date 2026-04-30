@@ -36,8 +36,9 @@ src/
 │   │   │   ├── SearchInput/     # Debounced search input with clear button
 │   │   │   ├── ConfirmDialog/   # Global confirm modal (Zustand-driven)
 │   │   │   ├── GlobalNotification/  # Toast notifications (Zustand-driven)
-│   │   │   └── ActivityCard/   # Activity item card, skeleton, and helpers (formatRelativeTime, getActivityTypeConfig, getStatusBadgeConfig, getFileIconConfig)
-│   │   │   └── CommentThread/ # Reusable comment thread component (list + create, access controlled)
+│   │   │   ├── ActivityCard/   # Activity item card, skeleton, and helpers (formatRelativeTime, getActivityTypeConfig, getStatusBadgeConfig, getFileIconConfig)
+│   │   │   ├── CommentThread/ # Reusable comment thread component (list + create, access controlled)
+│   │   │   └── BannerEditor/  # Banner canvas editor system (CanvasEditor, TextPropertiesPanel, CtaPropertiesPanel, BackgroundSelector, TemplateSelector, BannerPreviewModal)
 │   │   ├── layout/
 │   │   │   ├── Sidebar/         # Accordion navigation with grouped items (User Management, Sales Management, Finance)
 │   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown (supports backoffice + sales roles, resolveLink fallback), profile
@@ -80,14 +81,7 @@ src/
 │   │       ├── banners/
 │   │       │   ├── page.tsx                    # Banner list (table with search, type/status filters, status toggle, delete)
 │   │       │   ├── create/page.tsx             # Banner create (image upload or text placement editor with CTA + target URL)
-│   │       │   ├── [id]/edit/page.tsx          # Banner edit (pre-populated form)
-│   │       │   └── _partials/
-│   │       │       ├── CanvasEditor.tsx         # DOM-based editor (Canva-style, 2:1 ratio, drag-and-drop text + CTA, double-click inline edit, captureImage() → 1080×540 PNG via forwardRef)
-│   │       │       ├── TextPropertiesPanel.tsx  # Properties panel for selected text element
-│   │       │       ├── CtaPropertiesPanel.tsx   # CTA button editor (toggle, text, colors, border radius, font size, padding)
-│   │       │       ├── BackgroundSelector.tsx   # Background preset selector (8 solid + 8 gradient, custom color)
-│   │       │       ├── TemplateSelector.tsx     # Template selector (4 mobile-matching templates with CTA + background configs)
-│   │       │       └── BannerPreviewModal.tsx   # Preview modal (~375px mobile viewport, renders CTA button)
+│   │       │   └── [id]/edit/page.tsx          # Banner edit (pre-populated form)
 │   │       └── page.tsx                        # Dashboard home (backoffice, incl. deposits StatCard)
 │   ├── (dashboard)/
 │   │   └── sales-dashboard/

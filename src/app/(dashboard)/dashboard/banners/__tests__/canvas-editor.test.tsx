@@ -137,7 +137,9 @@ describe("CanvasEditor", () => {
       selectedElementId: string | null;
     }> = {}
   ) {
-    const CanvasEditor = (await import("../_partials/CanvasEditor")).default;
+    const CanvasEditor = (
+      await import("../../../../components/ui/BannerEditor/CanvasEditor")
+    ).default;
     return render(
       <CanvasEditor
         textElements={overrides.textElements ?? MOCK_TEXT_ELEMENTS}
@@ -214,7 +216,7 @@ describe("TextPropertiesPanel", () => {
 
   async function renderPanel(selectedElement: ITextElement | null) {
     const TextPropertiesPanel = (
-      await import("../_partials/TextPropertiesPanel")
+      await import("../../../../components/ui/BannerEditor/TextPropertiesPanel")
     ).default;
     return render(
       <TextPropertiesPanel
@@ -293,8 +295,9 @@ describe("BackgroundSelector", () => {
   async function renderSelector(
     backgroundConfig: IBackgroundConfig = MOCK_SOLID_BG
   ) {
-    const BackgroundSelector = (await import("../_partials/BackgroundSelector"))
-      .default;
+    const BackgroundSelector = (
+      await import("../../../../components/ui/BannerEditor/BackgroundSelector")
+    ).default;
     return render(
       <BackgroundSelector
         backgroundConfig={backgroundConfig}
@@ -426,8 +429,9 @@ describe("TemplateSelector", () => {
   });
 
   async function renderTemplateSelector() {
-    const TemplateSelector = (await import("../_partials/TemplateSelector"))
-      .default;
+    const TemplateSelector = (
+      await import("../../../../components/ui/BannerEditor/TemplateSelector")
+    ).default;
     return render(<TemplateSelector onApply={onApply} />);
   }
 
@@ -740,8 +744,9 @@ describe("Property 9: Template application preserves background configuration", 
      */
     const onApply = vi.fn();
 
-    const TemplateSelector = (await import("../_partials/TemplateSelector"))
-      .default;
+    const TemplateSelector = (
+      await import("../../../../components/ui/BannerEditor/TemplateSelector")
+    ).default;
 
     const user = userEvent.setup();
     render(<TemplateSelector onApply={onApply} />);

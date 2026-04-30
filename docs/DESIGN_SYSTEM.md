@@ -276,136 +276,6 @@ showConfirm({
 | `cancelLabel`  | `string`                      | `"Batal"` | Cancel button label                 |
 | `onConfirm`    | `() => void \| Promise<void>` | —         | Async callback with loading spinner |
 
-### SearchInput
-
-Debounced search input with clear button. Designed for table header integration.
-
-```tsx
-import { SearchInput } from "@app/components/ui/SearchInput";
-
-<SearchInput
-  value={searchQuery}
-  onSearch={handleSearch}
-  placeholder="Search members..."
-/>;
-```
-
-| Prop          | Type                      | Default       | Description                               |
-| ------------- | ------------------------- | ------------- | ----------------------------------------- |
-| `value`       | `string`                  | —             | Current search value (controlled)         |
-| `onSearch`    | `(value: string) => void` | —             | Called after debounce or Enter key        |
-| `placeholder` | `string`                  | `"Search..."` | Placeholder text                          |
-| `debounceMs`  | `number`                  | `400`         | Debounce delay in ms. Set to 0 to disable |
-
-Features: 400ms debounce, instant on Enter, clear button (X), search icon, URL sync via `useTableData.handleSearch`.
-
-### StatCard
-
-Summary stat card for dashboards. Displays a title, large value, optional description, and an icon.
-
-```tsx
-import { StatCard } from "@app/components/ui/StatCard";
-
-<StatCard
-  title="Total Clients"
-  value={128}
-  description="12 verified"
-  icon={Users}
-  iconVariant="primary"
-/>;
-```
-
-| Prop          | Type                                                                                  | Default     | Description                 |
-| ------------- | ------------------------------------------------------------------------------------- | ----------- | --------------------------- |
-| `title`       | `string`                                                                              | —           | Card title label            |
-| `value`       | `number \| string`                                                                    | —           | Main numeric value          |
-| `description` | `string`                                                                              | —           | Description below the value |
-| `icon`        | `LucideIcon`                                                                          | —           | Icon component              |
-| `iconVariant` | `"primary"` \| `"success"` \| `"warning"` \| `"error"` \| `"tertiary"` \| `"neutral"` | `"primary"` | Icon background color       |
-
-### Chart System
-
-Reusable chart components built on Recharts with design-system-mapped colors.
-
-```tsx
-import {
-  ChartCard,
-  DonutChart,
-  BarChartComponent,
-  CHART_COLORS,
-  CHART_SETS,
-} from "@app/components/ui/Chart";
-```
-
-| Component           | Description                                                                           |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| `ChartCard`         | Card wrapper with title, description, and padding for charts                          |
-| `DonutChart`        | Donut/pie chart with configurable inner/outer radius                                  |
-| `BarChartComponent` | Vertical bar chart with per-bar colors and rounded tops                               |
-| `CHART_COLORS`      | Color constants mapped to design system CSS variables                                 |
-| `CHART_SETS`        | Semantic color arrays for common chart types (verification, mitraStatus, categorical) |
-
-**CHART_COLORS** (mapped to globals.css):
-
-| Key        | Hex       | CSS Variable           |
-| ---------- | --------- | ---------------------- |
-| `primary`  | `#d32f2f` | `--color-primary-500`  |
-| `tertiary` | `#00799c` | `--color-tertiary-600` |
-| `success`  | `#10b981` | `--color-success-500`  |
-| `warning`  | `#f59e0b` | `--color-warning-500`  |
-| `error`    | `#d32f2f` | `--color-primary-500`  |
-| `neutral`  | `#adb5bd` | `--color-neutral-500`  |
-
-### DetailCard System
-
-A composable card system for detail/show pages with clear visual separation between sections.
-
-```tsx
-import {
-  DetailCard,
-  DetailCardHeader,
-  DetailCardBody,
-  DetailSection,
-  DetailField,
-  DetailFieldGrid,
-  DetailImageGrid,
-} from "@app/components/ui/DetailCard";
-```
-
-| Component          | Description                                               |
-| ------------------ | --------------------------------------------------------- |
-| `DetailCard`       | Card wrapper matching FormCard/TableCard visual treatment |
-| `DetailCardHeader` | Title + description + colored badge + action slot         |
-| `DetailCardBody`   | Body with `divide-y` borders between child sections       |
-| `DetailSection`    | Labeled section with horizontal line separator            |
-| `DetailFieldGrid`  | Grid container for DetailField items (2/3/4 columns)      |
-| `DetailField`      | Label-value pair with subtle background card and border   |
-| `DetailImageGrid`  | Grid of labeled images with click-to-open and placeholder |
-
-**DetailCardHeader props:**
-
-| Prop           | Type                                                   | Default     | Description                     |
-| -------------- | ------------------------------------------------------ | ----------- | ------------------------------- |
-| `title`        | `string`                                               | —           | Main heading                    |
-| `description`  | `string`                                               | —           | Subtitle below the title        |
-| `badge`        | `string`                                               | —           | Colored badge next to the title |
-| `badgeVariant` | `"neutral"` \| `"success"` \| `"warning"` \| `"error"` | `"neutral"` | Badge color                     |
-| `actions`      | `ReactNode`                                            | —           | Action buttons on the right     |
-
-**DetailField props:**
-
-| Prop    | Type        | Default | Description                       |
-| ------- | ----------- | ------- | --------------------------------- |
-| `label` | `string`    | —       | Uppercase label text              |
-| `value` | `ReactNode` | —       | Value content (text, badge, etc.) |
-
-**DetailImageGrid props:**
-
-| Prop      | Type                | Default | Description               |
-| --------- | ------------------- | ------- | ------------------------- |
-| `images`  | `DetailImageItem[]` | —       | Array of `{ label, src }` |
-| `columns` | `2 \| 3 \| 4`       | `2`     | Grid columns              |
-
 ### StatCard
 
 Summary stat card for dashboards. Displays a title, large numeric value, optional description, and an icon.
@@ -482,6 +352,100 @@ import {
 | -------- | ---------------- | ------- | ------------------------------ |
 | `data`   | `BarChartItem[]` | —       | `{ name, value, color }` items |
 | `height` | `number`         | `260`   | Chart height in px             |
+
+### CommentThread
+
+Self-contained comment thread component for activity log detail pages. Handles fetching, displaying, and creating comments with access control, role badges, and auto-scroll.
+
+```tsx
+import { CommentThread } from "@app/components/ui/CommentThread";
+
+<CommentThread activityLogId={42} currentUserId={1} hasAccess={true} />;
+```
+
+| Prop            | Type      | Default | Description                                     |
+| --------------- | --------- | ------- | ----------------------------------------------- |
+| `activityLogId` | `number`  | —       | Activity log ID to fetch/create comments for    |
+| `currentUserId` | `number`  | —       | Current user ID (highlights own comments)       |
+| `hasAccess`     | `boolean` | —       | If false, renders nothing (access control gate) |
+
+**Features:**
+
+- Uses `useReducer` + `queueMicrotask` for React 19 compliance
+- Auto-scrolls to bottom when new comments arrive
+- Skeleton loading state (2 placeholder items)
+- Empty state: "Belum ada komentar."
+- Each comment shows: avatar initial, user name, role badge (admin=primary, backoffice=tertiary, other=neutral), body, relative timestamp (Indonesian locale via date-fns)
+- Textarea input with Send button (disabled when empty or submitting)
+- Error display for fetch and submit failures
+
+### BannerEditor System
+
+A composable banner editor system for creating text-placement banners with a Canva-style drag-and-drop interface. Moved from page-level `_partials` to `components/ui/BannerEditor/` for reusability.
+
+```tsx
+import {
+  CanvasEditor,
+  TextPropertiesPanel,
+  CtaPropertiesPanel,
+  BackgroundSelector,
+  TemplateSelector,
+  BannerPreviewModal,
+} from "@app/components/ui/BannerEditor";
+import type { CanvasEditorHandle } from "@app/components/ui/BannerEditor";
+```
+
+| Component             | Description                                                                                                                   |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `CanvasEditor`        | DOM-based editor with 2:1 aspect ratio, drag-and-drop text + CTA, double-click inline edit, `captureImage()` via `forwardRef` |
+| `TextPropertiesPanel` | Properties panel for selected text element (content, font size, font color, font weight, delete)                              |
+| `CtaPropertiesPanel`  | CTA button editor (toggle enable/disable, text, colors, border radius, font size, padding)                                    |
+| `BackgroundSelector`  | Background preset selector (8 solid + 8 gradient presets, custom color input, gradient direction)                             |
+| `TemplateSelector`    | Template selector (4 mobile-matching templates with thumbnail previews, applies text + CTA + background)                      |
+| `BannerPreviewModal`  | Preview modal (~375px mobile viewport, renders both image and text_placement banners with CTA)                                |
+
+**CanvasEditor props:**
+
+| Prop                   | Type                                 | Default | Description                                    |
+| ---------------------- | ------------------------------------ | ------- | ---------------------------------------------- |
+| `textElements`         | `ITextElement[]`                     | —       | Array of positioned text elements              |
+| `backgroundConfig`     | `IBackgroundConfig`                  | —       | Background (solid or gradient)                 |
+| `onTextElementsChange` | `(elements: ITextElement[]) => void` | —       | Callback when text elements change (drag/edit) |
+| `selectedElementId`    | `string \| null`                     | —       | Currently selected text element ID             |
+| `onSelectElement`      | `(id: string \| null) => void`       | —       | Callback when selection changes                |
+| `ctaConfig`            | `ICtaConfig \| null`                 | —       | Optional CTA button config                     |
+| `onCtaConfigChange`    | `(config: ICtaConfig) => void`       | —       | Callback when CTA is dragged                   |
+
+**CanvasEditorHandle (via ref):**
+
+| Method         | Return                | Description                                                     |
+| -------------- | --------------------- | --------------------------------------------------------------- |
+| `captureImage` | `Promise<Blob\|null>` | Renders the editor to a 1080×540 PNG Blob via hidden `<canvas>` |
+
+**Key design decisions:**
+
+- Uses DOM elements (not `<canvas>`) for the editor — enables native text editing, pointer events, and no clipping issues
+- `ResizeObserver` tracks container width; all font sizes scale proportionally from a 1080px reference width
+- `captureImage()` renders to a hidden `<canvas>` at export resolution (1080×540) for reliable server upload
+- Pointer capture for drag ensures smooth movement even when cursor leaves the element
+- Double-click enters inline edit mode with `contentEditable`; Enter commits, Escape cancels
+
+**Data types (from `banners.types.ts`):**
+
+| Type                | Key Fields                                                                                    |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| `ITextElement`      | `id`, `content`, `position_x/y` (0-100%), `font_size` (12-72), `font_color`, `font_weight`    |
+| `IBackgroundConfig` | `type` (solid/gradient), `colors[]`, `direction?` (to-right/to-bottom/to-bottom-right)        |
+| `ICtaConfig`        | `text`, `position_x/y`, `bg_color`, `text_color`, `border_radius`, `font_size`, `padding_x/y` |
+
+**Template presets (4 built-in):**
+
+| Template        | Background               | Description                        |
+| --------------- | ------------------------ | ---------------------------------- |
+| Cashback 20%    | Primary gradient (red)   | Matches mobile Cashback promo card |
+| Gratis Transfer | Tertiary gradient (blue) | Matches mobile Transfer promo card |
+| Referral Bonus  | Dark gradient (charcoal) | Matches mobile Referral promo card |
+| Promo Spesial   | Purple gradient          | Generic centered promo layout      |
 
 ---
 
