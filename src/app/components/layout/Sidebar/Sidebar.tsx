@@ -23,6 +23,7 @@ import {
   LogOut,
   Wallet,
   CreditCard,
+  Image,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -106,6 +107,7 @@ const FINANCE_NAV: NavEntry = {
 };
 
 const OTHER_NAVS: NavEntry[] = [
+  { label: "Banners", href: PATHS.banners, icon: Image },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Reports", href: "/reports", icon: FileText },
   { label: "Notifikasi", href: PATHS.notifications, icon: Bell },

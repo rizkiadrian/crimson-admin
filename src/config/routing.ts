@@ -53,6 +53,12 @@ const DEPOSIT_REQUESTS_SERVICES = {
   depositRequestDetail: (id: string) => `/dashboard/deposit-requests/${id}`,
 };
 
+const BANNER_SERVICES = {
+  banners: "/dashboard/banners",
+  bannerCreate: "/dashboard/banners/create",
+  bannerEdit: (id: string) => `/dashboard/banners/${id}/edit`,
+};
+
 const SALES_DASHBOARD_SERVICES = {
   salesDashboard: "/sales-dashboard",
 };
@@ -70,4 +76,5 @@ export const PATHS = {
   ...SALES_ACTIVITIES_SERVICES,
   ...ACTIVITY_LOGS_SERVICES,
   ...DEPOSIT_REQUESTS_SERVICES,
+  ...BANNER_SERVICES,
 };

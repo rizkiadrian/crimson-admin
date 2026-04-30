@@ -172,6 +172,8 @@ Dashboard
   ├── Leads
   ├── Sales Members
   └── Activity Logs
+▼ Content (accordion)
+  └── Banners
 Analytics
 Reports
 Notifikasi
@@ -535,6 +537,81 @@ pending → approved (wallet credited, transaction logged)
 
 ---
 
+### FM-11: Banner Management
+
+**Route:** `/dashboard/banners` (list), `/dashboard/banners/create` (create), `/dashboard/banners/[id]/edit` (edit)
+**API Base:** `/api/v1/backoffice/banners`
+**Priority:** P2 — Content
+
+| ID       | Feature              | Status  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| -------- | -------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FM-11-01 | List with pagination | ✅ Done | Paginated table with columns: thumbnail preview, title, type badge (image/text_placement), status badge (active/inactive), display order, created date, actions. SearchInput for title. FilterPopup with type chips (image, text_placement) and status chips (active, inactive). Actions: edit link, toggle status, delete with ConfirmDialog                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| FM-11-02 | Create banner        | ✅ Done | FormCard with title, type selector, target URL field (both types). Conditional rendering: Image type → file upload with preview + client-side aspect ratio validation (1080x608 ±10px). Text Placement type → BackgroundSelector + CanvasEditor (DOM-based, Canva-style) + TextPropertiesPanel + CtaPropertiesPanel + TemplateSelector. Canvas capture on submit renders text_placement to PNG image for upload. "Add Text" button, "Preview" button, submit                                                                                                                                                                                                                                                                                                                            |
+| FM-11-03 | Edit banner          | ✅ Done | Pre-populated form via `useDetailData`. Image type: shows current image, optional new upload. Text Placement type: loads existing background_config, text_elements, and cta_config into editor. Uses "Page + Inner Form" split for React 19 compliance                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| FM-11-04 | Canvas editor        | ✅ Done | DOM-based editor (Canva-style) for text placement banners. 2:1 aspect ratio (matching mobile app's 280×140 banner card), drag-and-drop for text elements AND CTA button, double-click to inline edit text, real-time background rendering (solid/gradient), percentage-based positioning (0-100). `captureImage()` renders to hidden canvas for PNG export at 1080×540. Uses `forwardRef` + `useImperativeHandle`. Includes TextPropertiesPanel, BackgroundSelector (8 solid + 8 gradient presets, custom color), CtaPropertiesPanel (toggle enable/disable, text, colors, border radius, font size, padding), TemplateSelector (4 templates matching mobile app's PromoBanner: Cashback 20%, Gratis Transfer, Referral Bonus, Promo Spesial — with CTA configs and background configs) |
+| FM-11-05 | Banner preview       | ✅ Done | BannerPreviewModal simulating mobile viewport (~375px width). Image type: renders uploaded image. Text Placement type: renders background + text elements + CTA button at correct positions. Close/Back to Edit button                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| FM-11-06 | Status toggle        | ✅ Done | Inline status toggle per row via `bannersService.updateStatus`. PATCH endpoint toggles between active/inactive                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| FM-11-07 | Reorder              | ✅ Done | Reorder display_order via `bannersService.reorder`. PATCH endpoint accepts array of `{id, display_order}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| FM-11-08 | Sidebar navigation   | ✅ Done | "Banners" item with Image icon in sidebar, links to `/dashboard/banners`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+**Banner Types:**
+
+| Type             | Description                                                                                                                            |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `image`          | Upload gambar langsung (JPEG/PNG/WebP, max 2MB, 1080x608 ±10px). Supports optional `target_url` (web URL or deeplink)                  |
+| `text_placement` | DOM-based editor (Canva-style) for menempatkan elemen teks + CTA button di atas background warna. Rendered to PNG on submit for upload |
+
+**Status Badge Colors:**
+
+| Status   | Badge Variant |
+| -------- | ------------- |
+| active   | success       |
+| inactive | neutral       |
+
+**Canvas Editor Components:**
+
+| Component             | Description                                                                                                                                                                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CanvasEditor`        | DOM-based editor (Canva-style, 2:1 aspect ratio matching mobile 280×140), renders background + text elements + CTA button, drag-and-drop reposition, double-click inline edit, `captureImage()` exports to 1080×540 PNG via hidden canvas, uses `forwardRef` + `useImperativeHandle` |
+| `TextPropertiesPanel` | Properties panel for selected text element (content, font_size, font_color, font_weight)                                                                                                                                                                                             |
+| `CtaPropertiesPanel`  | CTA button editor (toggle enable/disable, text, bg_color, text_color, border_radius, font_size, padding_x, padding_y). Default CTA: "Selengkapnya"                                                                                                                                   |
+| `BackgroundSelector`  | Background preset grid (8 solid + 8 gradient), custom color input, gradient direction select                                                                                                                                                                                         |
+| `TemplateSelector`    | 4 pre-configured templates matching mobile app's PromoBanner (Cashback 20%, Gratis Transfer, Referral Bonus, Promo Spesial) with CTA configs + background configs. Applies text elements, CTA, and background together                                                               |
+| `BannerPreviewModal`  | Preview modal simulating mobile viewport (~375px width), renders CTA button in preview                                                                                                                                                                                               |
+
+**API Endpoints:**
+
+| Method | Endpoint                     | Request Body                                                                                                                                                                                 | Response                              |
+| ------ | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| GET    | `/banners?page=N&per_page=N` | —                                                                                                                                                                                            | Paginated list with `meta.pagination` |
+| GET    | `/banners/{id}`              | —                                                                                                                                                                                            | Banner detail                         |
+| POST   | `/banners`                   | FormData for both types (image file + target_url for image; image file + background_config JSON string + text_elements JSON string + cta_config JSON string + target_url for text_placement) | Created banner                        |
+| PUT    | `/banners/{id}`              | FormData for both types (same fields as create, all optional)                                                                                                                                | Updated banner                        |
+| DELETE | `/banners/{id}`              | —                                                                                                                                                                                            | `null` (soft delete)                  |
+| PATCH  | `/banners/{id}/status`       | `{ status }`                                                                                                                                                                                 | Updated banner                        |
+| PATCH  | `/banners/reorder`           | `{ banners: [{ id, display_order }] }`                                                                                                                                                       | Success response                      |
+
+**Acceptance Criteria:**
+
+- Table displays banners ordered by display_order asc, created_at desc
+- Search filters by title (case-insensitive)
+- Type and status filters work independently
+- Image upload validates format (JPEG/PNG/WebP), size (max 2MB), and dimensions (1080x608 ±10px) client-side
+- Target URL field available for both banner types (web URLs and deeplinks, max 500 chars)
+- DOM-based canvas editor maintains 2:1 aspect ratio (matching mobile app's 280×140 banner card), text elements and CTA button are draggable within bounds
+- Double-click text elements for inline editing
+- Text element positions stored as percentage (0-100) for responsiveness
+- CTA button configurable: text, colors (supports 8-char alpha hex like #FFFFFF33), border radius, font size, padding
+- Template application applies background + text elements + CTA config together (4 templates matching mobile app's PromoBanner)
+- Canvas capture on submit: text_placement banners are rendered to PNG (1080×540) via hidden canvas and uploaded as image file
+- Preview modal simulates mobile viewport (~375px width) and renders CTA button
+- New banners default to status "inactive" with next available display_order
+- Soft delete — deleted banners excluded from list
+- Mobile endpoint (`GET /client/banners`) returns only active banners ordered by display_order
+- `api.ts` `post()` method auto-detects FormData and removes Content-Type header so axios sets multipart/form-data with boundary automatically
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -546,8 +623,9 @@ pending → approved (wallet credited, transaction logged)
 | FM-08    | Sales Activities            | P1       | ✅ Done    |
 | FM-09    | Activity Log Review         | P1       | ✅ Done    |
 | FM-10    | Deposit Management          | P2       | ✅ Done    |
-| FM-11    | Service Category Management | P2       | 🔲 Planned |
-| FM-12    | Dashboard Analytics         | P2       | ✅ Done    |
-| FM-12b   | Sales Dashboard             | P2       | ✅ Done    |
-| FM-13    | Audit Log                   | P3       | 🔲 Planned |
-| FM-14    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-11    | Banner Management           | P2       | ✅ Done    |
+| FM-12    | Service Category Management | P2       | 🔲 Planned |
+| FM-13    | Dashboard Analytics         | P2       | ✅ Done    |
+| FM-13b   | Sales Dashboard             | P2       | ✅ Done    |
+| FM-14    | Audit Log                   | P3       | 🔲 Planned |
+| FM-15    | Role-based UI visibility    | P3       | 🔲 Planned |

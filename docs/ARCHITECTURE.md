@@ -77,6 +77,17 @@ src/
 │   │       ├── deposit-requests/
 │   │       │   ├── page.tsx                    # Deposit request list (table with search, status/payment_method filters)
 │   │       │   └── [id]/page.tsx               # Deposit request detail + attachment preview + approve/reject form
+│   │       ├── banners/
+│   │       │   ├── page.tsx                    # Banner list (table with search, type/status filters, status toggle, delete)
+│   │       │   ├── create/page.tsx             # Banner create (image upload or text placement editor with CTA + target URL)
+│   │       │   ├── [id]/edit/page.tsx          # Banner edit (pre-populated form)
+│   │       │   └── _partials/
+│   │       │       ├── CanvasEditor.tsx         # DOM-based editor (Canva-style, 2:1 ratio, drag-and-drop text + CTA, double-click inline edit, captureImage() → 1080×540 PNG via forwardRef)
+│   │       │       ├── TextPropertiesPanel.tsx  # Properties panel for selected text element
+│   │       │       ├── CtaPropertiesPanel.tsx   # CTA button editor (toggle, text, colors, border radius, font size, padding)
+│   │       │       ├── BackgroundSelector.tsx   # Background preset selector (8 solid + 8 gradient, custom color)
+│   │       │       ├── TemplateSelector.tsx     # Template selector (4 mobile-matching templates with CTA + background configs)
+│   │       │       └── BannerPreviewModal.tsx   # Preview modal (~375px mobile viewport, renders CTA button)
 │   │       └── page.tsx                        # Dashboard home (backoffice, incl. deposits StatCard)
 │   ├── (dashboard)/
 │   │   └── sales-dashboard/
@@ -95,7 +106,7 @@ src/
 │   │   ├── use-table-data.ts   # Paginated list fetching + URL sync
 │   │   ├── use-infinite-scroll.ts # Infinite scroll fetching + append pagination + URL sync
 │   │   └── use-detail-data.ts  # Single resource fetching (useReducer + queueMicrotask)
-│   ├── api.ts                  # Axios instance with interceptors
+│   ├── api.ts                  # Axios instance with interceptors. post() auto-detects FormData and removes Content-Type header so axios sets multipart/form-data with boundary
 │   └── utils.ts                # cn(), handleFormError(), getNameInitials()
 ├── services/
 │   ├── backoffice/
@@ -107,6 +118,7 @@ src/
 │   │   ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)
 │   │   ├── activity-logs/      # Types + service (list, detail, updateStatus) — backoffice activity log review
 │   │   ├── deposit-requests/  # Types + service (list, detail, updateStatus) — deposit request management
+│   │   ├── banners/           # Types (IBanner, ICtaConfig, ITextElement, IBackgroundConfig, IBannerParams) + service (list, detail, create, update, delete, updateStatus, reorder) — banner management. Both types use FormData (text_placement renders canvas to PNG)
 │   │   └── dashboard/          # Types + service (summary incl. leads stats, deposits summary)
 │   ├── sales/
 │   │   ├── active-leads/       # Types + service (getActiveLeads with ?search, ?unassigned_only, ?assigned_to_me)
@@ -122,7 +134,7 @@ src/
 │   └── useSalesNotificationStore.ts     # Sales notification bell state (mirrors backoffice pattern, uses salesNotificationsService)
 ├── config/
 │   ├── env.ts
-│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail)
+│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit)
 └── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 

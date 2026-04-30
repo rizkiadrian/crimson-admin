@@ -49,6 +49,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Activity Log Review | ✅   | —      | ✅   | —    | —      | ✅     | —         |
 | Notifications       | ✅   | —      | —    | —    | —      | —      | ✅        |
 | Deposit Management  | ✅   | —      | ✅   | —    | —      | ✅     | ✅        |
+| Banner Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
 | Service Categories  | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 
 ## Project Structure
@@ -58,7 +59,7 @@ src/
 ├── app/
 │   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart, ActivityCard (with attachment thumbnail preview), CommentThread
 │   ├── components/layout/   # Sidebar (accordion), Navbar (with NotificationBell dropdown — supports backoffice + sales roles, resolveLink deep link fallback)
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, deposit-requests, sales-activities)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, deposit-requests, banners, sales-activities)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useInfiniteScroll (infinite scroll + URL sync), useDetailData (single resource)
 ├── services/                # API service layer per domain (backoffice/*, sales/activity-logs, sales/dashboard, sales/notifications, shared/comments)

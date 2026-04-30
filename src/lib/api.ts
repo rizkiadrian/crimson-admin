@@ -109,7 +109,21 @@ export const api = {
     url: string,
     data?: D,
     config?: AxiosRequestConfig<D>
-  ) => apiClient.post<T, T>(url, data, config),
+  ) => {
+    // When sending FormData, remove Content-Type so axios sets multipart/form-data with boundary
+    const mergedConfig =
+      data instanceof FormData
+        ? {
+            ...config,
+            headers: { ...config?.headers, "Content-Type": undefined },
+          }
+        : config;
+    return apiClient.post<T, T>(
+      url,
+      data,
+      mergedConfig as AxiosRequestConfig<D>
+    );
+  },
 
   put: <T, D = unknown>(
     url: string,
