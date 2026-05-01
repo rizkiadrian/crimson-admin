@@ -447,6 +447,40 @@ import type { CanvasEditorHandle } from "@app/components/ui/BannerEditor";
 | Referral Bonus  | Dark gradient (charcoal) | Matches mobile Referral promo card |
 | Promo Spesial   | Purple gradient          | Generic centered promo layout      |
 
+### MetadataPopover
+
+Inline popover component for displaying truncated JSON metadata with a full-view popover on click. Used in the Event Log table to show event metadata.
+
+```tsx
+// Defined inline in the Event Log page (analytics/events/page.tsx)
+// Not a standalone component — page-level component
+
+<MetadataPopover metadata={{ platform: "android", version: "2.0.0" }} />
+```
+
+**Behavior:**
+
+- Short metadata (≤50 chars): displayed as plain monospace text, clickable to open popover
+- Long metadata (>50 chars): displayed as truncated text with primary-colored link styling and dotted underline
+- Click opens a popover with full formatted JSON
+- Popover header shows "METADATA" label with copy-to-clipboard button and close button
+- Smart positioning: opens below for top rows, above for bottom rows (based on viewport space)
+- Closes on click outside or Escape key
+- Copy button shows checkmark icon for 2 seconds after copying
+
+| Prop       | Type                              | Default | Description                     |
+| ---------- | --------------------------------- | ------- | ------------------------------- |
+| `metadata` | `Record<string, unknown> \| null` | —       | JSON metadata object to display |
+
+**Visual states:**
+
+| Condition          | Rendering                                                                 |
+| ------------------ | ------------------------------------------------------------------------- |
+| `metadata` is null | Em dash (—) in muted monospace text                                       |
+| JSON ≤ 50 chars    | Full JSON in monospace, clickable to open popover                         |
+| JSON > 50 chars    | Truncated with "…", primary-colored link with dotted underline, clickable |
+| Popover open       | Card with header (METADATA + copy + close), scrollable JSON body          |
+
 ---
 
 ## Layout Components (`components/layout/`)

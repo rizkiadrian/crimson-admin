@@ -59,6 +59,12 @@ const BANNER_SERVICES = {
   bannerEdit: (id: string) => `/dashboard/banners/${id}/edit`,
 };
 
+const ANALYTICS_SERVICES = {
+  analyticsFunnel: "/dashboard/analytics/funnel",
+  analyticsSegments: "/dashboard/analytics/segments",
+  analyticsEvents: "/dashboard/analytics/events",
+};
+
 const SALES_DASHBOARD_SERVICES = {
   salesDashboard: "/sales-dashboard",
 };
@@ -77,4 +83,5 @@ export const PATHS = {
   ...ACTIVITY_LOGS_SERVICES,
   ...DEPOSIT_REQUESTS_SERVICES,
   ...BANNER_SERVICES,
+  ...ANALYTICS_SERVICES,
 };

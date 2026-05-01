@@ -172,10 +172,14 @@ Dashboard
   ├── Leads
   ├── Sales Members
   └── Activity Logs
+▼ Finance (accordion)
+  └── Deposit Requests
 ▼ Content (accordion)
   └── Banners
-Analytics
-Reports
+▼ Analytics (accordion)
+  ├── Funnel Overview
+  ├── User Segments
+  └── Event Log
 Notifikasi
 ── System ──
   Settings
@@ -612,6 +616,74 @@ pending → approved (wallet credited, transaction logged)
 
 ---
 
+### FM-12: User Journey Funnel
+
+**Route:** `/dashboard/analytics/funnel` (funnel), `/dashboard/analytics/segments` (segments), `/dashboard/analytics/events` (event log)
+**API Base:** `/api/v1/backoffice/analytics`
+**Priority:** P2 — Analytics
+
+| ID       | Feature                 | Status  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------- | ----------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FM-12-01 | Funnel Overview page    | ✅ Done | Period filter controls (7d, 30d, 90d, custom date range) synced to URL. Funnel bar chart (Registration → Verified → Funded → Active) with conversion rate labels. Trend line chart showing stage counts over time. Average time per stage display. Uses `ChartCard`, `BarChartComponent`, Recharts `LineChart` with `CHART_COLORS`/`CHART_SETS`                                                                                                                                                                                                      |
+| FM-12-02 | User Segments page      | ✅ Done | Top section with Total Users summary card + DonutChart showing stage distribution. Redesigned stage cards with unique icons per stage (UserPlus, UserCheck, Wallet, Zap, Moon, UserX), colored progress bars, hover animations, click-to-deselect (clicking same stage hides table). `SegmentUsersTable` sub-component mounts only when stage is selected. Paginated user table via `useTableData`. Filter controls: registration date range, last active date range. CSV export button. URL-synced: stage, pagination, filters                      |
+| FM-12-03 | Event Log page          | ✅ Done | Paginated table via `useTableData`. SearchInput for user name/email. FilterPopup with event type dropdown and date range. Columns: User, Event Type (badge), Timestamp, Metadata (`MetadataPopover` component — truncated metadata >50 chars shown as clickable primary-colored link with dotted underline, popover shows full formatted JSON with "METADATA" header, copy-to-clipboard button, close button, smart positioning above/below based on viewport space, closes on click outside or Escape key). URL-synced: search, filters, pagination |
+| FM-12-04 | Dashboard widget        | ✅ Done | StatCard on backoffice dashboard showing "Active Users" count with conversion rate percentage description. Uses `TrendingUp` icon with success variant                                                                                                                                                                                                                                                                                                                                                                                               |
+| FM-12-05 | Analytics service layer | ✅ Done | Typed service at `src/services/backoffice/analytics/` with interfaces (IFunnelStats, IFunnelTrends, ISegmentSummary, ISegmentUser, IUserEvent) and service functions (getFunnelStats, getFunnelTrends, getSegmentSummary, getSegmentUsers, exportSegmentCsv, getEventLog)                                                                                                                                                                                                                                                                            |
+| FM-12-06 | Sidebar navigation      | ✅ Done | "Analytics" accordion group (after Finance) with items: Funnel Overview (TrendingUp icon), User Segments (Users icon), Event Log (ScrollText icon)                                                                                                                                                                                                                                                                                                                                                                                                   |
+| FM-12-07 | Routing                 | ✅ Done | `ANALYTICS_SERVICES` paths: `analyticsFunnel`, `analyticsSegments`, `analyticsEvents` in centralized `PATHS` object                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+**Journey Stages:**
+
+```
+registered → verified → funded → active
+                                       → dormant (30 days inactive, scheduler)
+                                       → churned (90 days inactive, scheduler)
+dormant/churned → active (any lifecycle event re-activates)
+```
+
+**Event Types:**
+
+| Event Type          | Trigger                   | Tracking Method |
+| ------------------- | ------------------------- | --------------- |
+| `user_registered`   | Client/Mitra registration | Direct write    |
+| `email_verified`    | Email verification        | Direct write    |
+| `first_deposit`     | First deposit approval    | Direct write    |
+| `first_transaction` | First transaction         | Direct write    |
+| `app_opened`        | Mobile app open           | Queue (Redis)   |
+| `banner_clicked`    | Banner click in mobile    | Queue (Redis)   |
+| `service_viewed`    | Service view in mobile    | Queue (Redis)   |
+
+**API Endpoints:**
+
+| Method | Endpoint                                                | Request Body | Response                                     |
+| ------ | ------------------------------------------------------- | ------------ | -------------------------------------------- |
+| GET    | `/analytics/funnel?period=30d`                          | —            | Funnel stats (stages, conversions, avg time) |
+| GET    | `/analytics/funnel/trends?period=30d&granularity=daily` | —            | Trend data (labels, series per stage)        |
+| GET    | `/analytics/segments`                                   | —            | Segment summary (counts per stage)           |
+| GET    | `/analytics/segments/{stage}?page=N`                    | —            | Paginated users in stage                     |
+| GET    | `/analytics/segments/export?stage=active`               | —            | CSV file download                            |
+| GET    | `/analytics/events?page=N&event_type=&search=`          | —            | Paginated event log                          |
+
+**Acceptance Criteria:**
+
+- Funnel bar chart displays Registration → Verified → Funded → Active with user counts and conversion rate percentages
+- Period filter (7d, 30d, 90d, custom) updates funnel data and syncs to URL query params
+- Trend line chart shows daily/weekly stage counts over the selected period
+- Average time per stage displayed in human-readable format (hours)
+- Segment summary cards show user count per stage (all 6 stages including dormant, churned)
+- Clicking a stage card shows paginated user table with Name, Email, Phone, Registration Date, Last Active columns
+- CSV export downloads filtered user list matching the paginated view
+- Event log table shows events ordered by created_at descending
+- Event log search filters by user name/email (case-insensitive)
+- Event log filters: event type dropdown, date range picker
+- Metadata column shows `MetadataPopover` — truncated JSON (>50 chars) as clickable primary-colored link with dotted underline, popover shows full formatted JSON with copy-to-clipboard button
+- Dashboard StatCard shows active user count with conversion rate description
+- Analytics sidebar group appears after Finance group with three items
+- All pages use service layer pattern (no direct API calls from components)
+- All pages use `CHART_COLORS`/`CHART_SETS` for chart rendering
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -624,8 +696,9 @@ pending → approved (wallet credited, transaction logged)
 | FM-09    | Activity Log Review         | P1       | ✅ Done    |
 | FM-10    | Deposit Management          | P2       | ✅ Done    |
 | FM-11    | Banner Management           | P2       | ✅ Done    |
-| FM-12    | Service Category Management | P2       | 🔲 Planned |
-| FM-13    | Dashboard Analytics         | P2       | ✅ Done    |
-| FM-13b   | Sales Dashboard             | P2       | ✅ Done    |
-| FM-14    | Audit Log                   | P3       | 🔲 Planned |
-| FM-15    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-12    | User Journey Funnel         | P2       | ✅ Done    |
+| FM-13    | Service Category Management | P2       | 🔲 Planned |
+| FM-14    | Dashboard Analytics         | P2       | ✅ Done    |
+| FM-14b   | Sales Dashboard             | P2       | ✅ Done    |
+| FM-15    | Audit Log                   | P3       | 🔲 Planned |
+| FM-16    | Role-based UI visibility    | P3       | 🔲 Planned |

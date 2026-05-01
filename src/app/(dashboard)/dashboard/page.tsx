@@ -63,7 +63,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { clients, mitra, leads, deposits, recent_backoffice } = data;
+  const { clients, mitra, leads, deposits, recent_backoffice, journey } = data;
 
   const clientPieData = [
     {
@@ -166,6 +166,13 @@ export default function DashboardPage() {
           description={`${leads.by_status.won} won · ${leads.by_type.client} client · ${leads.by_type.mitra} mitra`}
           icon={TrendingUp}
           iconVariant="primary"
+        />
+        <StatCard
+          title="Active Users"
+          value={journey.stages.find((s) => s.stage === "active")?.count ?? 0}
+          description={`${journey.conversion_rate.toFixed(1)}% conversion rate`}
+          icon={TrendingUp}
+          iconVariant="success"
         />
         <StatCard
           title="Deposit Requests"

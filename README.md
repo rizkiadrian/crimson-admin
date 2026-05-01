@@ -50,6 +50,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Notifications       | ✅   | —      | —    | —    | —      | —      | ✅        |
 | Deposit Management  | ✅   | —      | ✅   | —    | —      | ✅     | ✅        |
 | Banner Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| User Journey Funnel | ✅   | —      | —    | —    | —      | ✅     | ✅        |
 | Service Categories  | 🔲   | 🔲     | 🔲   | 🔲   | 🔲     | 🔲     | —         |
 
 ## Project Structure
@@ -59,12 +60,12 @@ src/
 ├── app/
 │   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart, ActivityCard (with attachment thumbnail preview), CommentThread
 │   ├── components/layout/   # Sidebar (accordion), Navbar (with NotificationBell dropdown — supports backoffice + sales roles, resolveLink deep link fallback)
-│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, deposit-requests, banners, sales-activities)
+│   ├── (dashboard)/         # Dashboard pages (backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, deposit-requests, banners, sales-activities, analytics/funnel, analytics/segments, analytics/events)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useInfiniteScroll (infinite scroll + URL sync), useDetailData (single resource)
-├── services/                # API service layer per domain (backoffice/*, sales/activity-logs, sales/dashboard, sales/notifications, shared/comments)
+├── services/                # API service layer per domain (backoffice/*, sales/activity-logs, sales/dashboard, sales/notifications, shared/comments, backoffice/analytics)
 ├── store/                   # Zustand stores (notifications, confirm dialog, backoffice notifications, sales notifications)
-└── config/                  # Routing paths, environment, cookie keys (incl. role_name)
+└── config/                  # Routing paths (incl. ANALYTICS_SERVICES), environment, cookie keys (incl. role_name)
 ```
 
 ## Authentication

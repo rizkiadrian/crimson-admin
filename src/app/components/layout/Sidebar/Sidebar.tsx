@@ -24,6 +24,7 @@ import {
   Wallet,
   CreditCard,
   Image,
+  ScrollText,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -106,9 +107,30 @@ const FINANCE_NAV: NavEntry = {
   ],
 };
 
+const ANALYTICS_NAV: NavEntry = {
+  label: "Analytics",
+  icon: BarChart3,
+  items: [
+    {
+      label: "Funnel Overview",
+      href: PATHS.analyticsFunnel,
+      icon: TrendingUp,
+    },
+    {
+      label: "User Segments",
+      href: PATHS.analyticsSegments,
+      icon: Users,
+    },
+    {
+      label: "Event Log",
+      href: PATHS.analyticsEvents,
+      icon: ScrollText,
+    },
+  ],
+};
+
 const OTHER_NAVS: NavEntry[] = [
   { label: "Banners", href: PATHS.banners, icon: Image },
-  { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Reports", href: "/reports", icon: FileText },
   { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
 ];
@@ -217,6 +239,7 @@ export function Sidebar({ roleName }: SidebarProps) {
         USER_MANAGEMENT_NAV,
         SALES_MANAGEMENT_NAV,
         FINANCE_NAV,
+        ANALYTICS_NAV,
         ...OTHER_NAVS,
       ];
     }

@@ -1,3 +1,5 @@
+import type { IJourneySummary } from "@services/backoffice/analytics";
+
 export interface IClientSummary {
   total: number;
   verified: number;
@@ -51,4 +53,5 @@ export interface IDashboardData {
   leads: ILeadsSummary;
   deposits: IDepositsSummary;
   recent_backoffice: IRecentBackoffice[];
+  journey: IJourneySummary;
 }

@@ -40,7 +40,7 @@ src/
 │   │   │   ├── CommentThread/ # Reusable comment thread component (list + create, access controlled)
 │   │   │   └── BannerEditor/  # Banner canvas editor system (CanvasEditor, TextPropertiesPanel, CtaPropertiesPanel, BackgroundSelector, TemplateSelector, BannerPreviewModal)
 │   │   ├── layout/
-│   │   │   ├── Sidebar/         # Accordion navigation with grouped items (User Management, Sales Management, Finance)
+│   │   │   ├── Sidebar/         # Accordion navigation with grouped items (User Management, Sales Management, Finance, Analytics)
 │   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown (supports backoffice + sales roles, resolveLink fallback), profile
 │   │   └── core/
 │   │       ├── BackofficeStatus/
@@ -82,7 +82,11 @@ src/
 │   │       │   ├── page.tsx                    # Banner list (table with search, type/status filters, status toggle, delete)
 │   │       │   ├── create/page.tsx             # Banner create (image upload or text placement editor with CTA + target URL)
 │   │       │   └── [id]/edit/page.tsx          # Banner edit (pre-populated form)
-│   │       └── page.tsx                        # Dashboard home (backoffice, incl. deposits StatCard)
+│   │       ├── analytics/
+│   │       │   ├── funnel/page.tsx             # Funnel Overview (bar chart, trend lines, period filter, avg time per stage)
+│   │       │   ├── segments/page.tsx           # User Segments (Total Users card + DonutChart, stage cards with unique icons + progress bars, SegmentUsersTable sub-component, CSV export, date filters)
+│   │       │   └── events/page.tsx             # Event Log (paginated table, search, event type/date filters, MetadataPopover for JSON preview with copy-to-clipboard)
+│   │       └── page.tsx                        # Dashboard home (backoffice, incl. deposits StatCard, journey widget)
 │   ├── (dashboard)/
 │   │   └── sales-dashboard/
 │   │       └── page.tsx                        # Sales dashboard (leads stats, activity stats, charts, recent items)
@@ -113,7 +117,8 @@ src/
 │   │   ├── activity-logs/      # Types + service (list, detail, updateStatus) — backoffice activity log review
 │   │   ├── deposit-requests/  # Types + service (list, detail, updateStatus) — deposit request management
 │   │   ├── banners/           # Types (IBanner, ICtaConfig, ITextElement, IBackgroundConfig, IBannerParams) + service (list, detail, create, update, delete, updateStatus, reorder) — banner management. Both types use FormData (text_placement renders canvas to PNG)
-│   │   └── dashboard/          # Types + service (summary incl. leads stats, deposits summary)
+│   │   ├── analytics/         # Types (IFunnelStats, IFunnelTrends, ISegmentSummary, ISegmentUser, IUserEvent, IJourneySummary) + service (getFunnelStats, getFunnelTrends, getSegmentSummary, getSegmentUsers, exportSegmentCsv, getEventLog) — user journey funnel analytics
+│   │   └── dashboard/          # Types + service (summary incl. leads stats, deposits summary, journey summary)
 │   ├── sales/
 │   │   ├── active-leads/       # Types + service (getActiveLeads with ?search, ?unassigned_only, ?assigned_to_me)
 │   │   ├── activity-logs/      # Types (IActivityLog, ICreateActivityLogPayload, ActivityLogType) + service (list, create, detail with multipart/form-data support)
@@ -128,7 +133,7 @@ src/
 │   └── useSalesNotificationStore.ts     # Sales notification bell state (mirrors backoffice pattern, uses salesNotificationsService)
 ├── config/
 │   ├── env.ts
-│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit)
+│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit, analyticsFunnel, analyticsSegments, analyticsEvents)
 └── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 
