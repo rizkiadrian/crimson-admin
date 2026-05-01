@@ -59,6 +59,13 @@ const BANNER_SERVICES = {
   bannerEdit: (id: string) => `/dashboard/banners/${id}/edit`,
 };
 
+const SERVICE_CATEGORIES_SERVICES = {
+  serviceCategories: "/dashboard/service-categories",
+  serviceCategoryCreate: "/dashboard/service-categories/create",
+  serviceCategoryEdit: (id: number) =>
+    `/dashboard/service-categories/${id}/edit`,
+};
+
 const ANALYTICS_SERVICES = {
   analyticsFunnel: "/dashboard/analytics/funnel",
   analyticsSegments: "/dashboard/analytics/segments",
@@ -83,5 +90,6 @@ export const PATHS = {
   ...ACTIVITY_LOGS_SERVICES,
   ...DEPOSIT_REQUESTS_SERVICES,
   ...BANNER_SERVICES,
+  ...SERVICE_CATEGORIES_SERVICES,
   ...ANALYTICS_SERVICES,
 };

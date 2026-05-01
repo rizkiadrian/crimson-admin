@@ -218,6 +218,83 @@ Composable modal popup for table filters.
 | `FilterRangeSlider` | Dual-thumb range slider for numeric filtering                |
 | `FilterDateRange`   | Two side-by-side date inputs using FormInput `format="date"` |
 
+### FormCheckbox
+
+Custom-styled checkbox components matching the CRM design system. Uses a hidden native `<input>` for accessibility with a visual indicator built from design-system tokens. The checkbox renders a `Check` icon (lucide-react) inside a rounded box with primary-500 fill when checked.
+
+**Visual states:**
+
+| State             | Box                                                  | Label                |
+| ----------------- | ---------------------------------------------------- | -------------------- |
+| Unchecked         | `neutral-50` bg, `neutral-300` border                | `secondary-600` text |
+| Unchecked (hover) | `neutral-50` bg, `neutral-400` border                | `secondary-900` text |
+| Checked           | `primary-500` bg, `primary-500` border, white ✓ icon | `secondary-900` text |
+| Checked (hover)   | `primary-600` bg, `primary-600` border, white ✓ icon | `secondary-900` text |
+| Focus-visible     | `primary-500/30` ring with 1px offset                | —                    |
+| Disabled          | 50% opacity, no hover effects                        | —                    |
+
+**Single checkbox:**
+
+```tsx
+import { FormCheckbox } from "@app/components/ui/FormCheckbox";
+
+<FormCheckbox
+  id="is_active"
+  label="Active"
+  checked={isActive}
+  onChange={setIsActive}
+/>;
+```
+
+| Prop        | Type                         | Default | Description              |
+| ----------- | ---------------------------- | ------- | ------------------------ |
+| `id`        | `string`                     | —       | HTML id (required)       |
+| `label`     | `string`                     | —       | Label text (required)    |
+| `checked`   | `boolean`                    | —       | Controlled checked state |
+| `onChange`  | `(checked: boolean) => void` | —       | Change handler           |
+| `disabled`  | `boolean`                    | `false` | Disable the checkbox     |
+| `className` | `string`                     | —       | Additional className     |
+
+**Checkbox group:**
+
+```tsx
+import { FormCheckboxGroup } from "@app/components/ui/FormCheckbox";
+
+<FormCheckboxGroup
+  label="Types"
+  options={[
+    { label: "General", value: "general" },
+    { label: "Daily", value: "daily" },
+    { label: "Monthly", value: "monthly" },
+    { label: "Popular", value: "popular" },
+  ]}
+  value={selectedTypes}
+  onChange={setSelectedTypes}
+  error={formErrors.types}
+/>;
+```
+
+| Prop        | Type                            | Default        | Description                                   |
+| ----------- | ------------------------------- | -------------- | --------------------------------------------- |
+| `label`     | `string`                        | —              | Group label (required)                        |
+| `options`   | `{ label: string; value: T }[]` | —              | Available options (required)                  |
+| `value`     | `T[]`                           | —              | Currently selected values                     |
+| `onChange`  | `(value: T[]) => void`          | —              | Called with updated array on selection change |
+| `error`     | `string`                        | —              | Error message below the group                 |
+| `disabled`  | `boolean`                       | `false`        | Disable all checkboxes                        |
+| `direction` | `"horizontal"` \| `"vertical"`  | `"horizontal"` | Layout direction                              |
+| `className` | `string`                        | —              | Additional className                          |
+
+**Implementation details:**
+
+- Native `<input type="checkbox">` is visually hidden (`sr-only`) but remains in the DOM for accessibility and form semantics
+- Custom visual box is 18×18px with `rounded-md` and `border-2`
+- Check icon uses lucide-react `Check` at 12px with `strokeWidth={3}`
+- Focus ring uses `peer-focus-visible` to respond to keyboard navigation on the hidden input
+- Hover effects use Tailwind `group-hover` on the parent `<label>`
+
+Used in: Service Category Management — "Types" field and "Status" toggle.
+
 ### SearchInput
 
 Debounced search input with clear button, designed for table toolbar use.

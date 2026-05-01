@@ -180,6 +180,8 @@ Dashboard
   ├── Funnel Overview
   ├── User Segments
   └── Event Log
+▼ Master Data (accordion)
+  └── Service Categories
 Notifikasi
 ── System ──
   Settings
@@ -684,6 +686,68 @@ dormant/churned → active (any lifecycle event re-activates)
 
 ---
 
+### FM-13: Service Category Management
+
+**Route:** `/dashboard/service-categories` (list), `/dashboard/service-categories/create` (create), `/dashboard/service-categories/[id]/edit` (edit)
+**API Base:** `/api/v1/backoffice/service-categories`
+**Priority:** P2 — Master Data
+
+| ID       | Feature              | Status  | Description                                                                                                                                                                                                                                                                                                                |
+| -------- | -------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FM-13-01 | List with pagination | ✅ Done | Paginated table with columns: icon (SVG thumbnail via Next.js `<Image>` with `unoptimized`), name, slug, types (as badges), status badge (active/inactive), created date, actions. SearchInput for name. Actions: toggle status, edit link with `returnPage`, delete with ConfirmDialog                                    |
+| FM-13-02 | Create category      | ✅ Done | FormCard with name (required, max 255), description (optional textarea), icon (SVG upload, max 2MB with preview), types (multi-checkbox: general, daily, monthly, popular), is_active (toggle, default false). Client-side validation for name, icon format/size. FormData submission. 422 → field errors, non-422 → toast |
+| FM-13-03 | Edit category        | ✅ Done | Pre-populated form via `useDetailData`. "Page + Inner Form" split for React 19 compliance. Shows existing icon preview. Optional icon replacement. Submit via POST with `_method=PUT` FormData. Navigates back with preserved `returnPage`                                                                                 |
+| FM-13-04 | Status toggle        | ✅ Done | Inline status toggle per row. Sends update request to toggle `is_active`. Success → notification + table refresh. Failure → error notification                                                                                                                                                                             |
+| FM-13-05 | Delete category      | ✅ Done | ConfirmDialog before delete. Success → notification + table refresh. Failure → error notification                                                                                                                                                                                                                          |
+| FM-13-06 | Service layer        | ✅ Done | Typed service at `src/services/backoffice/service-categories/` with `serviceCategoriesService`: list, detail, create, update, delete. Types: `IServiceCategory`, `IServiceCategoryParams`, `CategoryType`                                                                                                                  |
+| FM-13-07 | Sidebar navigation   | ✅ Done | "Master Data" accordion group (after Analytics, before Content) with "Service Categories" item (FolderTree icon). Group icon: Database                                                                                                                                                                                     |
+| FM-13-08 | Routing              | ✅ Done | `SERVICE_CATEGORIES_SERVICES` paths: `serviceCategories`, `serviceCategoryCreate`, `serviceCategoryEdit` in centralized `PATHS` object                                                                                                                                                                                     |
+
+**Category Types:**
+
+| Type      | Description               |
+| --------- | ------------------------- |
+| `general` | General service category  |
+| `daily`   | Daily recurring service   |
+| `monthly` | Monthly recurring service |
+| `popular` | Popular/featured service  |
+
+**Status Badge Colors:**
+
+| Status   | Badge Variant |
+| -------- | ------------- |
+| active   | success       |
+| inactive | neutral       |
+
+**API Endpoints:**
+
+| Method | Endpoint                                | Request Body                                                       | Response                              |
+| ------ | --------------------------------------- | ------------------------------------------------------------------ | ------------------------------------- |
+| GET    | `/service-categories?page=N&per_page=N` | —                                                                  | Paginated list with `meta.pagination` |
+| GET    | `/service-categories/{id}`              | —                                                                  | Service category detail               |
+| POST   | `/service-categories`                   | FormData: `name`, `description?`, `icon?`, `types[]?`, `is_active` | Created service category              |
+| PUT    | `/service-categories/{id}`              | FormData: same fields as create (all optional)                     | Updated service category              |
+| DELETE | `/service-categories/{id}`              | —                                                                  | `null` (soft delete)                  |
+
+**Acceptance Criteria:**
+
+- Table displays service categories ordered by created_at descending
+- Search filters by name via API search parameter (case-insensitive)
+- Icon displayed as SVG thumbnail using Next.js `<Image>` with `unoptimized` prop
+- Types displayed as individual badges per row
+- Status toggle updates `is_active` inline without navigating to edit page
+- Create form validates: name required, name max 255 chars, icon must be SVG, icon max 2MB
+- Types field uses multi-checkbox (4 options visible at once), not multi-select dropdown
+- Edit form pre-populates all fields including existing icon preview
+- Edit form uses "Page + Inner Form" split pattern for React 19 compliance
+- Icon upload is optional on both create and edit (nullable field)
+- Slug is auto-generated by backend from name (not editable in frontend)
+- Delete is guarded by ConfirmDialog before sending request
+- Sidebar "Master Data" group with "Service Categories" item
+- All pages use service layer pattern (no direct API calls from components)
+
+---
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -697,7 +761,7 @@ dormant/churned → active (any lifecycle event re-activates)
 | FM-10    | Deposit Management          | P2       | ✅ Done    |
 | FM-11    | Banner Management           | P2       | ✅ Done    |
 | FM-12    | User Journey Funnel         | P2       | ✅ Done    |
-| FM-13    | Service Category Management | P2       | 🔲 Planned |
+| FM-13    | Service Category Management | P2       | ✅ Done    |
 | FM-14    | Dashboard Analytics         | P2       | ✅ Done    |
 | FM-14b   | Sales Dashboard             | P2       | ✅ Done    |
 | FM-15    | Audit Log                   | P3       | 🔲 Planned |

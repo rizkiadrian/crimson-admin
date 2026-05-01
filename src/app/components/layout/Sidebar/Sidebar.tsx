@@ -25,6 +25,8 @@ import {
   CreditCard,
   Image,
   ScrollText,
+  Database,
+  FolderTree,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -125,6 +127,18 @@ const ANALYTICS_NAV: NavEntry = {
       label: "Event Log",
       href: PATHS.analyticsEvents,
       icon: ScrollText,
+    },
+  ],
+};
+
+const MASTER_DATA_NAV: NavEntry = {
+  label: "Master Data",
+  icon: Database,
+  items: [
+    {
+      label: "Service Categories",
+      href: PATHS.serviceCategories,
+      icon: FolderTree,
     },
   ],
 };
@@ -240,6 +254,7 @@ export function Sidebar({ roleName }: SidebarProps) {
         SALES_MANAGEMENT_NAV,
         FINANCE_NAV,
         ANALYTICS_NAV,
+        MASTER_DATA_NAV,
         ...OTHER_NAVS,
       ];
     }

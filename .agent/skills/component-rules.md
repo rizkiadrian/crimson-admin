@@ -8,6 +8,7 @@ This project has a strict component system. **NEVER use native HTML elements** w
 | ------------------ | --------------------- | -------------------------------------------------------- |
 | `<button>`         | `<Button>`            | `@app/components/ui/Button`                              |
 | `<input>`          | `<FormInput>`         | `@app/components/ui/FormInput`                           |
+| `<input checkbox>` | `<FormCheckbox>`      | `@app/components/ui/FormCheckbox`                        |
 | `<select>`         | `<FormSelect>`        | `@app/components/ui/FormSelect`                          |
 | `<a>`              | `<Button href="...">` | `@app/components/ui/Button` (renders as Next.js Link)    |
 | `<img>`            | `<Image>`             | `next/image` (with `remotePatterns` in `next.config.ts`) |
@@ -234,6 +235,7 @@ return <EditMemberForm initialData={data} />;
 | `<button onClick={...}>`                      | `<Button variant="primary" onClick={...}>`                |
 | `<a href="/path">`                            | `<Button href="/path">`                                   |
 | `<img src={url} />`                           | `<Image src={url} alt="..." width={} height={} />`        |
+| `<input type="checkbox">`                     | `<FormCheckbox>` or `<FormCheckboxGroup>`                 |
 | `window.alert("Done")`                        | `showNotification({ type: "success", message: "" })`      |
 | `window.confirm("Delete?")`                   | `showConfirm({ message: "Delete?", onConfirm: fn })`      |
 | `api.get(...)` inside a component             | Call a service function from `src/services/`              |

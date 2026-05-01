@@ -3,6 +3,7 @@ import { TypographyShowcase } from "./components/typography";
 import { ButtonShowcase } from "./components/button-showcase";
 import { FormInputShowcase } from "./components/input-showcase";
 import { FormSelectShowcase } from "./components/form-select-showcase";
+import { FormCheckboxShowcase } from "./components/form-checkbox-showcase";
 import { BadgeShowcase } from "./components/badge-showcase";
 import { AppTable } from "./components/member-table";
 import { FormCardShowcase } from "./components/form-card-showcase";
@@ -67,6 +68,14 @@ export default function DesignSystemPage() {
             <FormInputShowcase />
             <FormSelectShowcase />
           </div>
+        </section>
+
+        {/* Section 4b: Checkbox */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            4b. Checkbox
+          </h2>
+          <FormCheckboxShowcase />
         </section>
 
         {/* Section 5: Badges */}
