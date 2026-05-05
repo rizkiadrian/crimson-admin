@@ -121,14 +121,15 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 **API Base:** `/api/v1/backoffice/mitra-members`
 **Priority:** P0 — Core
 
-| ID       | Feature                    | Status             | Description                                                              |
-| -------- | -------------------------- | ------------------ | ------------------------------------------------------------------------ |
-| FM-03-01 | List with pagination       | ✅ Done            | Shows verification status badge (4 states) + service category            |
-| FM-03-02 | Show detail page           | ✅ Done            | DetailCard with account info, mitra profile, and document viewer         |
-| FM-03-03 | Edit basic info            | ✅ Done            | Update name, email, phone (mitra manages their own profile/docs)         |
-| FM-03-04 | Delete member              | ✅ Done            | Global confirm dialog with async loading                                 |
-| FM-03-05 | Filter popup               | ✅ Done            | Verification status chips (4 states), date range                         |
-| FM-03-06 | Update verification status | ✅ Done (API only) | `PATCH .../verification-status` with pending/approved/rejected/suspended |
+| ID       | Feature                    | Status             | Description                                                                                                                               |
+| -------- | -------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| FM-03-01 | List with pagination       | ✅ Done            | Shows verification status badge (4 states) + service category                                                                             |
+| FM-03-02 | Show detail page           | ✅ Done            | DetailCard with account info, mitra profile, and document viewer                                                                          |
+| FM-03-03 | Edit basic info            | ✅ Done            | Update name, email, phone (mitra manages their own profile/docs)                                                                          |
+| FM-03-04 | Delete member              | ✅ Done            | Global confirm dialog with async loading                                                                                                  |
+| FM-03-05 | Filter popup               | ✅ Done            | Verification status chips (4 states), date range                                                                                          |
+| FM-03-06 | Update verification status | ✅ Done (API only) | `PATCH .../verification-status` with pending/approved/rejected/suspended                                                                  |
+| FM-03-07 | Verify UI button           | ✅ Done            | Inline verify button (ShieldCheck icon) in table row + detail page header, only for pending status. Uses confirm dialog to approve mitra. |
 
 **Key differences from Client Members:**
 
@@ -146,6 +147,18 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 | PUT    | `/mitra-members/{id}`                     | `{ name?, email?, phone? }` | Updated user with mitra profile                      |
 | PATCH  | `/mitra-members/{id}/verification-status` | `{ verification_status }`   | Updated user with new status                         |
 | DELETE | `/mitra-members/{id}`                     | —                           | `null` (soft delete)                                 |
+
+**Acceptance Criteria:**
+
+- Table shows `verification_status` as a colored badge (4 states: pending, approved, rejected, suspended)
+- Verify button (ShieldCheck icon) appears in table row actions only when `verification_status === "pending"`
+- Verify button appears on detail page header actions only when `verification_status === "pending"`
+- Clicking verify opens confirm dialog with title "Approve Mitra Verification?" and description explaining status change
+- Confirm dialog has "Approve" confirm button and "Batal" cancel button
+- On confirm: calls `PATCH /mitra-members/{id}/verification-status` with `{ verification_status: "approved" }`
+- On success: shows success toast with API response message, refetches table/detail data
+- On error: shows error toast with API response message, data remains unchanged
+- Verify button hidden for approved, rejected, and suspended statuses
 
 ---
 

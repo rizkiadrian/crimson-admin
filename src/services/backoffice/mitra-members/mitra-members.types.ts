@@ -1,5 +1,11 @@
 import { IPaginationParams } from "@services/general";
 
+export type MitraVerificationStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "suspended";
+
 export interface IMitraProfile {
   id: number;
   user_id: number;
@@ -13,7 +19,7 @@ export interface IMitraProfile {
   ktp_photo: string | null;
   selfie_ktp_photo: string | null;
   skck_photo: string | null;
-  verification_status: "pending" | "approved" | "rejected" | "suspended";
+  verification_status: MitraVerificationStatus;
   is_online: boolean;
   created_at: string;
   updated_at: string;

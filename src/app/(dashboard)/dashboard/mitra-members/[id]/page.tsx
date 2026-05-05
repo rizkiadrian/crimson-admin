@@ -24,7 +24,9 @@ import {
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { useParams, useSearchParams } from "next/navigation";
 import { PATHS } from "@config/routing";
-import { Pencil, ArrowLeft } from "lucide-react";
+import { Pencil, ArrowLeft, ShieldCheck } from "lucide-react";
+import { useConfirmStore } from "@store/useConfirmStore";
+import { useNotificationStore } from "@store/useNotificationStore";
 
 const STATUS_VARIANT: Record<
   string,
@@ -55,10 +57,42 @@ export default function MitraMemberShowPage() {
     data: member,
     isLoading,
     error,
+    refetch,
   } = useDetailData<IMitraUser>({
     fetcher,
     enabled: !!memberId,
   });
+
+  const showConfirm = useConfirmStore((s) => s.showConfirm);
+  const showNotification = useNotificationStore((s) => s.showNotification);
+
+  const handleVerify = () => {
+    showConfirm({
+      title: "Approve Mitra Verification?",
+      description:
+        "Mitra ini akan diverifikasi dan statusnya akan berubah menjadi approved. Mereka akan mendapatkan akses penuh ke platform.",
+      confirmLabel: "Approve",
+      cancelLabel: "Batal",
+      onConfirm: async () => {
+        try {
+          const resp =
+            await mitraMembersService.mitraMembersUpdateVerificationStatus(
+              memberId,
+              "approved"
+            );
+          showNotification(resp.message, "success");
+          refetch();
+        } catch (err: unknown) {
+          const apiError = err as { message?: string };
+          showNotification(
+            apiError.message || "Gagal memverifikasi mitra",
+            "error"
+          );
+          throw err;
+        }
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -116,6 +150,18 @@ export default function MitraMemberShowPage() {
                 <Pencil size={14} />
                 Edit
               </Button>
+              {mitra && verificationStatus === "pending" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1.5 hover:text-success-600 hover:bg-success-50 hover:border-transparent"
+                  aria-label="Verify"
+                  onClick={handleVerify}
+                >
+                  <ShieldCheck size={14} />
+                  Verify
+                </Button>
+              )}
             </div>
           }
         />

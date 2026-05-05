@@ -114,7 +114,7 @@ src/
 │   ├── backoffice/
 │   │   ├── backoffice-members/ # Types + service (list, create, detail, update, delete)
 │   │   ├── client-members/     # Types + service (list, create, detail, update, delete)
-│   │   ├── mitra-members/      # Types + service (list, detail, update, delete)
+│   │   ├── mitra-members/      # Types + service (list, detail, update, delete, updateVerificationStatus)
 │   │   ├── leads/              # Types + service (list, create, detail, update, delete, updateStatus, convert)
 │   │   ├── sales-members/      # Types + service (list, create, detail, update, delete, list-dropdown)
 │   │   ├── notifications/      # Types + service (list, unreadCount, markAsRead, markAllAsRead)

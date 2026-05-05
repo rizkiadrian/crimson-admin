@@ -36,22 +36,22 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Feature Status
 
-| Module              | List | Create | Show | Edit | Delete | Filter | Dashboard |
-| ------------------- | ---- | ------ | ---- | ---- | ------ | ------ | --------- |
-| Dashboard           | —    | —      | —    | —    | —      | —      | ✅        |
-| Sales Dashboard     | —    | —      | —    | —    | —      | —      | ✅        |
-| Backoffice Members  | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| Client Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| Mitra Management    | ✅   | —      | ✅   | ✅   | ✅     | ✅     | —         |
-| Leads Management    | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅        |
-| Sales Members       | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| Sales Activities    | ✅   | ✅     | ✅   | —    | —      | —      | —         |
-| Activity Log Review | ✅   | —      | ✅   | —    | —      | ✅     | —         |
-| Notifications       | ✅   | —      | —    | —    | —      | —      | ✅        |
-| Deposit Management  | ✅   | —      | ✅   | —    | —      | ✅     | ✅        |
-| Banner Management   | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
-| User Journey Funnel | ✅   | —      | —    | —    | —      | ✅     | ✅        |
-| Service Categories  | ✅   | ✅     | —    | ✅   | ✅     | ✅     | —         |
+| Module              | List | Create | Show | Edit | Delete | Verify | Filter | Dashboard |
+| ------------------- | ---- | ------ | ---- | ---- | ------ | ------ | ------ | --------- |
+| Dashboard           | —    | —      | —    | —    | —      | —      | —      | ✅        |
+| Sales Dashboard     | —    | —      | —    | —    | —      | —      | —      | ✅        |
+| Backoffice Members  | ✅   | ✅     | —    | ✅   | ✅     | —      | ✅     | —         |
+| Client Members      | ✅   | ✅     | —    | ✅   | ✅     | ✅     | ✅     | —         |
+| Mitra Management    | ✅   | —      | ✅   | ✅   | ✅     | ✅     | ✅     | —         |
+| Leads Management    | ✅   | ✅     | —    | ✅   | ✅     | —      | ✅     | ✅        |
+| Sales Members       | ✅   | ✅     | —    | ✅   | ✅     | —      | ✅     | —         |
+| Sales Activities    | ✅   | ✅     | ✅   | —    | —      | —      | —      | —         |
+| Activity Log Review | ✅   | —      | ✅   | —    | —      | —      | ✅     | —         |
+| Notifications       | ✅   | —      | —    | —    | —      | —      | —      | ✅        |
+| Deposit Management  | ✅   | —      | ✅   | —    | —      | —      | ✅     | ✅        |
+| Banner Management   | ✅   | ✅     | —    | ✅   | ✅     | —      | ✅     | —         |
+| User Journey Funnel | ✅   | —      | —    | —    | —      | —      | ✅     | ✅        |
+| Service Categories  | ✅   | ✅     | —    | ✅   | ✅     | —      | ✅     | —         |
 
 ## Project Structure
 

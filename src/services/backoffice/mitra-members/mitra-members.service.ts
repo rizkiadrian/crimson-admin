@@ -3,6 +3,7 @@ import {
   IMitraUpdatePayload,
   IMitraUser,
   IMitraUserParams,
+  MitraVerificationStatus,
 } from "./mitra-members.types";
 import {
   IApiListResponse,
@@ -26,5 +27,14 @@ export const mitraMembersService = {
   },
   mitraMembersDelete: async (id: number): Promise<IApiResponse<null>> => {
     return await api.delete(`/backoffice/mitra-members/${id}`);
+  },
+  mitraMembersUpdateVerificationStatus: async (
+    id: number,
+    status: MitraVerificationStatus
+  ): Promise<IApiResponse<IMitraUser>> => {
+    return await api.patch(
+      `/backoffice/mitra-members/${id}/verification-status`,
+      { verification_status: status }
+    );
   },
 };

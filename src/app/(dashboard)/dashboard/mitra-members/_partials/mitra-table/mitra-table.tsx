@@ -1,5 +1,12 @@
 "use client";
-import { ListFilter, Download, Pencil, Trash2, Eye } from "lucide-react";
+import {
+  ListFilter,
+  Download,
+  Pencil,
+  Trash2,
+  Eye,
+  ShieldCheck,
+} from "lucide-react";
 import {
   TableCard,
   TableCardHeader,
@@ -90,7 +97,11 @@ const getColumns = (onDeleted: () => void): TableColumn<IMitraUser>[] => [
     headerClassName: "text-right",
     render: (member) => (
       <TableCell>
-        <MitraActions memberId={member.id} onDeleted={onDeleted} />
+        <MitraActions
+          memberId={member.id}
+          verificationStatus={member.mitra?.verification_status || ""}
+          onDeleted={onDeleted}
+        />
       </TableCell>
     ),
   },
@@ -98,9 +109,11 @@ const getColumns = (onDeleted: () => void): TableColumn<IMitraUser>[] => [
 
 function MitraActions({
   memberId,
+  verificationStatus,
   onDeleted,
 }: {
   memberId: number;
+  verificationStatus: string;
   onDeleted: () => void;
 }) {
   const searchParams = useSearchParams();
@@ -113,6 +126,34 @@ function MitraActions({
   const editHref = currentPage
     ? `${PATHS.mitraMembersEdit(memberId)}?returnPage=${currentPage}`
     : PATHS.mitraMembersEdit(memberId);
+
+  const handleVerify = () => {
+    showConfirm({
+      title: "Approve Mitra Verification?",
+      description:
+        "Mitra ini akan diverifikasi dan statusnya akan berubah menjadi approved. Mereka akan mendapatkan akses penuh ke platform.",
+      confirmLabel: "Approve",
+      cancelLabel: "Batal",
+      onConfirm: async () => {
+        try {
+          const resp =
+            await mitraMembersService.mitraMembersUpdateVerificationStatus(
+              memberId,
+              "approved"
+            );
+          showNotification(resp.message, "success");
+          onDeleted();
+        } catch (err: unknown) {
+          const apiError = err as { message?: string };
+          showNotification(
+            apiError.message || "Gagal memverifikasi mitra",
+            "error"
+          );
+          throw err;
+        }
+      },
+    });
+  };
 
   const handleDelete = () => {
     showConfirm({
@@ -138,6 +179,17 @@ function MitraActions({
 
   return (
     <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+      {verificationStatus === "pending" && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-auto w-auto p-2 rounded-lg hover:text-success-600 hover:bg-success-50 hover:border-transparent"
+          aria-label="Verify"
+          onClick={handleVerify}
+        >
+          <ShieldCheck size={16} />
+        </Button>
+      )}
       <Button
         variant="ghost"
         size="icon"
