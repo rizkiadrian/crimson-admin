@@ -1,3 +1,8 @@
+---
+name: fullstack-feature-pattern
+description: "Step-by-step template for building a complete fullstack feature from backend API to frontend UI. Use when building features that span both repos."
+---
+
 # Fullstack Feature Pattern
 
 Step-by-step template for building a complete fullstack feature.
@@ -58,9 +63,9 @@ export type IFeatureParams = IPaginationParams;
 - **Create** — `FormCard` + `FormInput`/`FormSelect` + `handleFormError()`
 - **Edit** — Page + Inner Form split (React 19 compliant): page uses `useDetailData`, inner form receives `initialData` as prop
 
-> See `.agent/skills/component-rules.md` for full code examples of each page type.
-> See `.agent/skills/state-management-patterns.md` for the "Page + Inner Form" pattern.
-> See `.agent/skills/error-handling-patterns.md` for `handleFormError` usage.
+> See `.agents/skills/component-rules/SKILL.md` for full code examples of each page type.
+> See `.agents/skills/state-management-patterns/SKILL.md` for the "Page + Inner Form" pattern.
+> See `.agents/skills/error-handling-patterns/SKILL.md` for `handleFormError` usage.
 
 ---
 
@@ -88,4 +93,4 @@ export const PATHS = { ...existing, ...MYFEATURE_SERVICES };
 
 Update ALL: PRD.md, DESIGN_SYSTEM.md, ARCHITECTURE.md, README.md (both), Postman, /design-system showcase, CLAUDE.md (both)
 
-> See `.agent/skills/documentation-update-guide.md` for the exact table of what to update per change type.
+> See `.agents/skills/documentation-update-guide/SKILL.md` for the exact table of what to update per change type.

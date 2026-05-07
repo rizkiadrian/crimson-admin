@@ -4,7 +4,7 @@ inclusion: manual
 
 # Fullstack Feature Pattern
 
-> **Source of truth:** `.agent/skills/fullstack-feature-pattern.md`
+> **Source of truth:** `.agents/skills/fullstack-feature-pattern/SKILL.md`
 > This steering file includes the same content for Kiro manual-include. Keep in sync.
 
-#[[file:.agent/skills/fullstack-feature-pattern.md]]
+#[[file:.agents/skills/fullstack-feature-pattern/SKILL.md]]

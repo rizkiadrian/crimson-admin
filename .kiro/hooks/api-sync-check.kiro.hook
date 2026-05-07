@@ -1,0 +1,12 @@
+{
+  "name": "API Sync Check",
+  "version": "1.0.0",
+  "description": "After completing a spec task, reminds the agent to check if backend API changes need to be synced to frontend TypeScript types and service functions.",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A task was just completed. Check if any backend API changes were made (controllers, services, models, routes, migrations in lingkar-id-backend). If yes, verify that the corresponding frontend TypeScript types and service functions in lingkar-crm/src/services/ are still in sync. Refer to .agent/skills/api-sync-agent.md for the full sync checklist. Key checks: 1) All model $fillable fields exist in TS interface, 2) All routes have matching service methods, 3) Filter params match backend query scopes, 4) Eager-loaded relations are typed as optional fields."
+  }
+}

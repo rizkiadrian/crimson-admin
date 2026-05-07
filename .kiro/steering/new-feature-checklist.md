@@ -4,7 +4,7 @@ inclusion: manual
 
 # New Feature Checklist
 
-> **Source of truth:** `.agent/skills/new-feature-checklist.md`
+> **Source of truth:** `.agents/skills/new-feature-checklist/SKILL.md`
 > This steering file includes the same content for Kiro auto-include. Keep in sync.
 
-#[[file:.agent/skills/new-feature-checklist.md]]
+#[[file:.agents/skills/new-feature-checklist/SKILL.md]]

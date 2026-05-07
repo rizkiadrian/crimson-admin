@@ -343,10 +343,10 @@ function AssignedUsersSection({
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-neutral-50/50">
                   <td className="px-4 py-3 font-medium text-text-main">
-                    {user.user_name}
+                    {user.user?.name ?? "-"}
                   </td>
                   <td className="px-4 py-3 text-text-muted">
-                    {formatShortDate(user.assigned_at)}
+                    {user.assigned_at ? formatShortDate(user.assigned_at) : "-"}
                   </td>
                   <td className="px-4 py-3">
                     {user.used_at ? (

@@ -150,23 +150,23 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 
 ## 6. Development Guidelines for AI Agents
 
-> **Detailed skills:** See `.agent/skills/` directory for checklists and patterns.
+> **Detailed skills:** See `.agents/skills/` directory for checklists and patterns.
 
 1. **Implementation Plans First:** Always provide an implementation plan before writing code for medium to large features.
 2. **Strict Types:** TypeScript for frontend, PHPStan for backend. No `any` or loose typings.
-3. **Docs Update:** After any change, check `.agent/skills/documentation-update-guide.md` for which docs to update.
+3. **Docs Update:** After any change, check `.agents/skills/documentation-update-guide/SKILL.md` for which docs to update.
 4. **No Hallucinations:** Stick to Tailwind 4 utility classes. Do NOT use Tailwind CSS v3 syntax.
 5. **NPM Audit:** Ensure zero new vulnerabilities when adding packages.
 6. **Chart Colors:** Always use `CHART_COLORS`/`CHART_SETS` from `chart-colors.ts`. Never hardcode hex.
 7. **TypeScript Build Check:** Always run `npx tsc --noEmit` after frontend changes.
 8. **PHP Syntax Check:** Always run `php -l <file>` after backend changes.
-9. **Testing:** See `.agent/skills/testing-workflows.md` for Kiro and CLI testing workflows.
+9. **Testing:** See `.agents/skills/testing-workflows/SKILL.md` for Kiro and CLI testing workflows.
 
 ---
 
 ## 7. Component Usage Rules
 
-> **Full reference:** `.agent/skills/component-rules.md`
+> **Full reference:** `.agents/skills/component-rules/SKILL.md`
 
 **NEVER use native HTML elements** when a design system component exists.
 
@@ -180,15 +180,15 @@ This document serves as the master reference for the Lingkar Fullstack project. 
 | `window.alert()`   | `showNotification()`  | `@store/useNotificationStore`   |
 | `window.confirm()` | `showConfirm()`       | `@store/useConfirmStore`        |
 
-For Button override patterns (list items, action buttons), see `.agent/skills/component-rules.md`.
+For Button override patterns (list items, action buttons), see `.agents/skills/component-rules/SKILL.md`.
 
 ---
 
 ## 8. New Feature Checklist
 
-> **Full reference:** `.agent/skills/new-feature-checklist.md`
+> **Full reference:** `.agents/skills/new-feature-checklist/SKILL.md`
 
-When building a new feature, read the full checklist at `.agent/skills/new-feature-checklist.md`. Key items:
+When building a new feature, read the full checklist at `.agents/skills/new-feature-checklist/SKILL.md`. Key items:
 
 - Backend: Service → Controller → FormRequest → Routes → Postman → README
 - Frontend: Service layer → Zustand store → Pages → Routing → Sidebar → TypeScript check
@@ -202,26 +202,27 @@ When building a new feature, read the full checklist at `.agent/skills/new-featu
 
 ### Reading Order
 
-1. **Always:** `.agent/skills/component-rules.md` — before writing any JSX
-2. **New features:** `.agent/skills/new-feature-checklist.md`
-3. **Fullstack features:** `.agent/skills/fullstack-feature-pattern.md`
-4. **State / data fetching:** `.agent/skills/state-management-patterns.md`
-5. **Form submit / async actions:** `.agent/skills/error-handling-patterns.md`
-6. **After any change:** `.agent/skills/documentation-update-guide.md`
-7. **Verification:** `.agent/skills/testing-workflows.md`
+1. **Always:** `.agents/skills/component-rules/SKILL.md` — before writing any JSX
+2. **New features:** `.agents/skills/new-feature-checklist/SKILL.md`
+3. **Fullstack features:** `.agents/skills/fullstack-feature-pattern/SKILL.md`
+4. **State / data fetching:** `.agents/skills/state-management-patterns/SKILL.md`
+5. **Form submit / async actions:** `.agents/skills/error-handling-patterns/SKILL.md`
+6. **After any change:** `.agents/skills/documentation-update-guide/SKILL.md`
+7. **Verification:** `.agents/skills/testing-workflows/SKILL.md`
 
 ### Skill Files Reference
 
-| File                            | Description                                                               |
-| ------------------------------- | ------------------------------------------------------------------------- |
-| `README.md`                     | Index — which skill to read when                                          |
-| `component-rules.md`            | Forbidden elements, Button variants, FormCard, TableCard, hooks, mistakes |
-| `new-feature-checklist.md`      | Complete checklist (backend + frontend + routing + docs)                  |
-| `fullstack-feature-pattern.md`  | Step-by-step template with real module references                         |
-| `state-management-patterns.md`  | useState vs useTableData vs useDetailData vs Zustand + React 19 rules     |
-| `error-handling-patterns.md`    | handleFormError, showNotification, showConfirm, fetch errors              |
-| `documentation-update-guide.md` | Which docs to update after each type of change                            |
-| `testing-workflows.md`          | Kiro (MCP), Antigravity (browser_subagent), and CLI verification          |
+| Skill Folder                  | Description                                                               |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| `component-rules/`            | Forbidden elements, Button variants, FormCard, TableCard, hooks, mistakes |
+| `new-feature-checklist/`      | Complete checklist (backend + frontend + routing + docs)                  |
+| `fullstack-feature-pattern/`  | Step-by-step template with real module references                         |
+| `state-management-patterns/`  | useState vs useTableData vs useDetailData vs Zustand + React 19 rules     |
+| `error-handling-patterns/`    | handleFormError, showNotification, showConfirm, fetch errors              |
+| `documentation-update-guide/` | Which docs to update after each type of change                            |
+| `testing-workflows/`          | Kiro (MCP), Antigravity (browser_subagent), and CLI verification          |
+| `api-sync-agent/`             | TypeScript/service sync with Laravel backend                              |
+| `brainstorming/`              | Collaborative design and spec creation workflow                           |
 
 ### Agent Capabilities
 
@@ -235,7 +236,7 @@ When building a new feature, read the full checklist at `.agent/skills/new-featu
 
 ## 10. Testing Without Kiro (CLI-Only)
 
-> **Full reference:** `.agent/skills/testing-workflows.md`
+> **Full reference:** `.agents/skills/testing-workflows/SKILL.md`
 
 Quick commands:
 
@@ -247,4 +248,4 @@ npm run dev               # Start dev server at localhost:3000
 
 Test pages: Dashboard, Backoffice Members, Client Members, Mitra Members, Design System, Notifications, Activity Logs, Sales Activities, Deposit Requests, Banners, Vouchers, Analytics (Funnel, Segments, Events), Service Categories. Login: `admin@example.com` / `Password123`.
 
-For detailed testing workflows (browser testing, backend curl commands, database verification, Postman setup), see `.agent/skills/testing-workflows.md`.
+For detailed testing workflows (browser testing, backend curl commands, database verification, Postman setup), see `.agents/skills/testing-workflows/SKILL.md`.

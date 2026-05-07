@@ -38,19 +38,19 @@ Read `CLAUDE.md` for the full reference. This is a condensed version for quick o
 ### Step 1 — Always Read (every session)
 
 ```
-.agent/skills/component-rules.md       ← Read FIRST before writing any JSX
+.agents/skills/component-rules/SKILL.md       ← Read FIRST before writing any JSX
 ```
 
 ### Step 2 — Read Based on Task
 
-| Task Type                       | Read This Skill File                          |
-| ------------------------------- | --------------------------------------------- |
-| Building any feature            | `.agent/skills/new-feature-checklist.md`      |
-| Fullstack feature (API+UI)      | `.agent/skills/fullstack-feature-pattern.md`  |
-| Any state or data fetching work | `.agent/skills/state-management-patterns.md`  |
-| Any form submit or async action | `.agent/skills/error-handling-patterns.md`    |
-| After any change                | `.agent/skills/documentation-update-guide.md` |
-| Verifying / testing             | `.agent/skills/testing-workflows.md`          |
+| Task Type                       | Read This Skill File                                 |
+| ------------------------------- | ---------------------------------------------------- |
+| Building any feature            | `.agents/skills/new-feature-checklist/SKILL.md`      |
+| Fullstack feature (API+UI)      | `.agents/skills/fullstack-feature-pattern/SKILL.md`  |
+| Any state or data fetching work | `.agents/skills/state-management-patterns/SKILL.md`  |
+| Any form submit or async action | `.agents/skills/error-handling-patterns/SKILL.md`    |
+| After any change                | `.agents/skills/documentation-update-guide/SKILL.md` |
+| Verifying / testing             | `.agents/skills/testing-workflows/SKILL.md`          |
 
 ### Agent Capabilities
 

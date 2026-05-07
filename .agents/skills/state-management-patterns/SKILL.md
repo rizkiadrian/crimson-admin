@@ -1,3 +1,8 @@
+---
+name: state-management-patterns
+description: "Decision guide for useState vs useTableData vs useDetailData vs Zustand. Includes React 19 compliance rules and the mandatory 'Page + Inner Form' pattern for edit pages."
+---
+
 # State Management Patterns
 
 This project uses three layers of state. Use the **most local layer possible**.

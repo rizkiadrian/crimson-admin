@@ -1,3 +1,8 @@
+---
+name: component-rules
+description: "Read FIRST before writing any JSX. Defines forbidden native HTML elements, required design system components, FormCard/TableCard patterns, hooks usage, and common mistakes to avoid."
+---
+
 # Component Usage Rules
 
 This project has a strict component system. **NEVER use native HTML elements** when a design system component exists.

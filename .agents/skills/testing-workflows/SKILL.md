@@ -1,3 +1,8 @@
+---
+name: testing-workflows
+description: "Verification commands and testing workflows for Kiro (Chrome DevTools MCP), Antigravity/Claude (browser_subagent), and CLI-only environments."
+---
+
 # Testing Workflows
 
 ## With Kiro (Chrome DevTools MCP)

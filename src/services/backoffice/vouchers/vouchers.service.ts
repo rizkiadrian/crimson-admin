@@ -4,7 +4,13 @@ import type {
   IApiResponse,
   IPaginationMeta,
 } from "@services/general";
-import type { IVoucher, IVoucherParams } from "./vouchers.types";
+import type {
+  IVoucher,
+  IVoucherAssignPayload,
+  IVoucherCreatePayload,
+  IVoucherParams,
+  IVoucherUpdatePayload,
+} from "./vouchers.types";
 
 export const vouchersService = {
   /** GET /backoffice/vouchers — paginated list with filters */
@@ -20,12 +26,17 @@ export const vouchersService = {
   },
 
   /** POST /backoffice/vouchers — create a new voucher */
-  create: async (data: object): Promise<IApiResponse<IVoucher>> => {
+  create: async (
+    data: IVoucherCreatePayload
+  ): Promise<IApiResponse<IVoucher>> => {
     return await api.post("/backoffice/vouchers", data);
   },
 
   /** PUT /backoffice/vouchers/:id — update voucher */
-  update: async (id: number, data: object): Promise<IApiResponse<IVoucher>> => {
+  update: async (
+    id: number,
+    data: IVoucherUpdatePayload
+  ): Promise<IApiResponse<IVoucher>> => {
     return await api.put(`/backoffice/vouchers/${id}`, data);
   },
 
@@ -42,7 +53,7 @@ export const vouchersService = {
   /** POST /backoffice/vouchers/:id/assign — assign voucher to users */
   assign: async (
     id: number,
-    payload: { user_ids: number[] }
+    payload: IVoucherAssignPayload
   ): Promise<IApiResponse<null>> => {
     return await api.post(`/backoffice/vouchers/${id}/assign`, payload);
   },

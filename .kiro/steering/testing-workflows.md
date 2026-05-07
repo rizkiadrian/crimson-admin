@@ -4,6 +4,6 @@ inclusion: manual
 
 # Testing Workflows
 
-> **Source of truth:** `.agent/skills/testing-workflows.md`
+> **Source of truth:** `.agents/skills/testing-workflows/SKILL.md`
 
-#[[file:.agent/skills/testing-workflows.md]]
+#[[file:.agents/skills/testing-workflows/SKILL.md]]

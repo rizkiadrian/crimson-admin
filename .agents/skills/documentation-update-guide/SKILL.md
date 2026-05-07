@@ -1,3 +1,8 @@
+---
+name: documentation-update-guide
+description: "After ANY change, check this guide to know which documentation files need updating. Covers all doc files across both repos."
+---
+
 # Documentation Update Guide
 
 After ANY change, check this table to know which docs need updating.
@@ -13,7 +18,7 @@ After ANY change, check this table to know which docs need updating.
 | New library added                   | `docs/ARCHITECTURE.md` (Tech Stack table), `README.md` (Tech Stack table)                                              |
 | Visual change to existing component | `docs/DESIGN_SYSTEM.md`, `/design-system` showcase                                                                     |
 | New sidebar entry                   | `docs/PRD.md` (Navigation Structure)                                                                                   |
-| New pattern/convention              | `CLAUDE.md` (both repos), `.agent/skills/` (if reusable)                                                               |
+| New pattern/convention              | `CLAUDE.md` (both repos), `.agents/skills/` (if reusable)                                                              |
 
 ## Documentation Files Reference
 

@@ -364,7 +364,7 @@ export default function VouchersPage() {
         undefined,
       target_user_type:
         (filters.targets[0] as IVoucherParams["target_user_type"]) ?? undefined,
-      is_active: filters.statuses[0] ?? undefined,
+      status: (filters.statuses[0] as IVoucherParams["status"]) ?? undefined,
     });
     setFilterOpen(false);
   };
@@ -374,7 +374,7 @@ export default function VouchersPage() {
     setParams({
       discount_type: undefined,
       target_user_type: undefined,
-      is_active: undefined,
+      status: undefined,
     });
   };
 

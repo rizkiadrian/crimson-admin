@@ -218,7 +218,9 @@ function VoucherCreateForm() {
           .filter((id) => !isNaN(id));
       }
 
-      const resp = await vouchersService.create(payload);
+      const resp = await vouchersService.create(
+        payload as unknown as Parameters<typeof vouchersService.create>[0]
+      );
       showNotification(resp.message || "Voucher berhasil dibuat", "success");
       router.push(PATHS.vouchers);
     } catch (err: unknown) {

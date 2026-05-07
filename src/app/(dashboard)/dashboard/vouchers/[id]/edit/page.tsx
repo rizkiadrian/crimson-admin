@@ -280,7 +280,10 @@ function VoucherEditForm({ initialData }: { initialData: IVoucher }) {
           .filter((id) => !isNaN(id));
       }
 
-      const resp = await vouchersService.update(initialData.id, payload);
+      const resp = await vouchersService.update(
+        initialData.id,
+        payload as unknown as Parameters<typeof vouchersService.update>[1]
+      );
       showNotification(
         resp.message || "Voucher berhasil diperbarui",
         "success"

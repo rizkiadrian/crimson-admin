@@ -5,7 +5,7 @@ fileMatchPattern: "src/app/**/*.tsx,src/app/**/*.ts"
 
 # Error Handling Patterns
 
-> **Source of truth:** `.agent/skills/error-handling-patterns.md`
+> **Source of truth:** `.agents/skills/error-handling-patterns/SKILL.md`
 > This steering file includes the same content for Kiro auto-include. Keep in sync.
 
-#[[file:.agent/skills/error-handling-patterns.md]]
+#[[file:.agents/skills/error-handling-patterns/SKILL.md]]

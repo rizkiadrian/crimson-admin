@@ -1,3 +1,8 @@
+---
+name: error-handling-patterns
+description: "Patterns for handling form validation errors (422), toast notifications, fetch errors, and delete confirmation flows. Use when building any form submit or async action."
+---
+
 # Error Handling Patterns
 
 This project has two distinct error categories: **form validation errors** (field-level, from backend 422) and **general errors** (toast notifications, fetch failures). Use the right tool for each.

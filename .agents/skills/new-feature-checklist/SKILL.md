@@ -1,3 +1,8 @@
+---
+name: new-feature-checklist
+description: "Complete checklist for building a new feature module — backend API, frontend service layer, pages, routing, and documentation. Use as a todo list when building new features."
+---
+
 # New Feature Checklist
 
 When building a new feature module, complete ALL items below.
