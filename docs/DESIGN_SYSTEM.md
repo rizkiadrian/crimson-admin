@@ -149,6 +149,70 @@ import { FormSelect } from "@app/components/ui/FormSelect";
 | `isLoading`         | `boolean`                 | `false`       | Shows a spinner inside dropdown when searching   |
 | `searchPlaceholder` | `string`                  | `"Search..."` | Placeholder text for the search input            |
 
+**Searchable mode behavior:**
+
+When `onSearch` is provided, a search input appears at the top of the dropdown panel. Typing in the search input calls `onSearch` with the current query. The component shows a loading spinner when `isLoading` is true, and displays "No results found" when the options array is empty. Closing the dropdown (click outside or Escape) resets the search query and calls `onSearch("")` to restore the default options.
+
+**Recommended pattern — debounced API fetch hook:**
+
+For async autocomplete backed by an API endpoint, extract the fetch logic into a reusable hook with debounced search:
+
+```tsx
+function useVoucherOptions() {
+  const [options, setOptions] = useState<FormSelectOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const fetchVouchers = useCallback(async (search?: string) => {
+    setIsLoading(true);
+    try {
+      const resp = await vouchersService.list({ search, per_page: 20 });
+      setOptions(
+        resp.data.map((v) => ({
+          label: `${v.name}${v.code ? ` (${v.code})` : ""}`,
+          value: String(v.id),
+        }))
+      );
+    } catch {
+      setOptions([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchVouchers();
+  }, [fetchVouchers]); // initial load
+
+  const handleSearch = useCallback(
+    (query: string) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => fetchVouchers(query), 300);
+    },
+    [fetchVouchers]
+  );
+
+  return { options, isLoading, handleSearch };
+}
+
+// Usage in component:
+const { options, isLoading, handleSearch } = useVoucherOptions();
+
+<FormSelect
+  id="voucher_id"
+  label="Voucher"
+  value={formData.voucher_id}
+  onChange={handleChange}
+  options={options}
+  placeholder="Select voucher"
+  onSearch={handleSearch}
+  isLoading={isLoading}
+  searchPlaceholder="Search voucher..."
+/>;
+```
+
+This pattern is used in the Referral Campaign create/edit forms for milestone voucher selection.
+
 ### Table System
 
 A composable table system split into low-level primitives and high-level card components.

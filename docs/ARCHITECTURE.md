@@ -87,6 +87,14 @@ src/
 │   │       │   ├── create/page.tsx             # Voucher create (conditional form with 5 sections based on discount_type)
 │   │       │   ├── [id]/page.tsx               # Voucher detail (read-only info, usage stats, assigned users table, assign modal)
 │   │       │   └── [id]/edit/page.tsx          # Voucher edit (pre-populated, edit restrictions for used vouchers)
+│   │       ├── referral-campaigns/
+│   │       │   ├── page.tsx                    # Campaign list (table with search, status/target_role filters, status toggle, delete)
+│   │       │   ├── create/page.tsx             # Campaign create (multi-section: basic info, milestones repeater, tiers repeater)
+│   │       │   ├── [id]/page.tsx               # Campaign detail (stats, milestone breakdown, tier distribution, tabs)
+│   │       │   └── [id]/edit/page.tsx          # Campaign edit (pre-populated, edit restrictions for active campaigns)
+│   │       ├── referrals/
+│   │       │   ├── page.tsx                    # Referral list (table with search, campaign/status/date filters, flag action)
+│   │       │   └── [id]/page.tsx               # Referral detail (milestone timeline, reward history, retry, flag section)
 │   │       ├── analytics/
 │   │       │   ├── funnel/page.tsx             # Funnel Overview (bar chart, trend lines, period filter, avg time per stage)
 │   │       │   ├── segments/page.tsx           # User Segments (Total Users card + DonutChart, stage cards with unique icons + progress bars, SegmentUsersTable sub-component, CSV export, date filters)
@@ -129,6 +137,8 @@ src/
 │   │   ├── analytics/         # Types (IFunnelStats, IFunnelTrends, ISegmentSummary, ISegmentUser, IUserEvent, IJourneySummary) + service (getFunnelStats, getFunnelTrends, getSegmentSummary, getSegmentUsers, exportSegmentCsv, getEventLog) — user journey funnel analytics
 │   │   ├── service-categories/ # Types (IServiceCategory, IServiceCategoryParams, CategoryType) + service (list, detail, create, update, delete) — service category management. Uses FormData for SVG icon upload, POST with _method=PUT for update
 │   │   ├── vouchers/          # Types (IVoucher, IVoucherUser, IVoucherTargetSegment, IVoucherParams, DiscountType, TargetUserType, DistributionType, SegmentType) + service (list, detail, create, update, delete, toggleActive, assign) — voucher management
+│   │   ├── referral-campaigns/ # Types (IReferralCampaign, IReferralCampaignDetail, IReferralTier, IReferralMilestone, IReferralCampaignParams) + service (list, detail, create, update, delete, updateStatus) — referral campaign management
+│   │   ├── referrals/         # Types (IReferral, IReferralDetail, IReferralReward, IReferralOverview, IReferralLeaderboard, ITierDistribution) + service (list, detail, flag, retryReward) + analytics service (overview, leaderboard, tierDistribution) — referral management and analytics
 │   │   └── dashboard/          # Types + service (summary incl. leads stats, deposits summary, journey summary)
 │   ├── sales/
 │   │   ├── active-leads/       # Types + service (getActiveLeads with ?search, ?unassigned_only, ?assigned_to_me)
@@ -144,7 +154,7 @@ src/
 │   └── useSalesNotificationStore.ts     # Sales notification bell state (mirrors backoffice pattern, uses salesNotificationsService)
 ├── config/
 │   ├── env.ts
-│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit, analyticsFunnel, analyticsSegments, analyticsEvents, serviceCategories, serviceCategoryCreate, serviceCategoryEdit, vouchers, voucherCreate, voucherEdit, voucherDetail)
+│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit, analyticsFunnel, analyticsSegments, analyticsEvents, serviceCategories, serviceCategoryCreate, serviceCategoryEdit, vouchers, voucherCreate, voucherEdit, voucherDetail, referralCampaigns, referralCampaignCreate, referralCampaignEdit, referralCampaignDetail, referrals, referralDetail)
 └── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 

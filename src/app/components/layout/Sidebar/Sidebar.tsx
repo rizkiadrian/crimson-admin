@@ -29,6 +29,7 @@ import {
   FolderTree,
   Megaphone,
   Ticket,
+  Gift,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -158,6 +159,16 @@ const MARKETING_NAV: NavEntry = {
       label: "Vouchers",
       href: PATHS.vouchers,
       icon: Ticket,
+    },
+    {
+      label: "Referral Campaigns",
+      href: PATHS.referralCampaigns,
+      icon: Gift,
+    },
+    {
+      label: "Referrals",
+      href: PATHS.referrals,
+      icon: Users,
     },
   ],
 };

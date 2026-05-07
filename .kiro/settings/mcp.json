@@ -20,7 +20,8 @@
         "list_console_messages",
         "close_page",
         "press_key",
-        "type_text"
+        "type_text",
+        "get_network_request"
       ]
     }
   }

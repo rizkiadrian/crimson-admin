@@ -73,6 +73,16 @@ const VOUCHER_SERVICES = {
   voucherDetail: (id: number) => `/dashboard/vouchers/${id}`,
 };
 
+const REFERRAL_SERVICES = {
+  referralCampaigns: "/dashboard/referral-campaigns",
+  referralCampaignCreate: "/dashboard/referral-campaigns/create",
+  referralCampaignEdit: (id: number) =>
+    `/dashboard/referral-campaigns/${id}/edit`,
+  referralCampaignDetail: (id: number) => `/dashboard/referral-campaigns/${id}`,
+  referrals: "/dashboard/referrals",
+  referralDetail: (id: number) => `/dashboard/referrals/${id}`,
+};
+
 const ANALYTICS_SERVICES = {
   analyticsFunnel: "/dashboard/analytics/funnel",
   analyticsSegments: "/dashboard/analytics/segments",
@@ -98,6 +108,7 @@ export const PATHS = {
   ...DEPOSIT_REQUESTS_SERVICES,
   ...BANNER_SERVICES,
   ...VOUCHER_SERVICES,
+  ...REFERRAL_SERVICES,
   ...SERVICE_CATEGORIES_SERVICES,
   ...ANALYTICS_SERVICES,
 };

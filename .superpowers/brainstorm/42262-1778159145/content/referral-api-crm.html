@@ -1,0 +1,191 @@
+<h2>Referral Program — API & CRM Design</h2>
+<p class="subtitle">Backend endpoints + CRM page structure (scope: Backend + CRM only)</p>
+
+<!-- ─── BACKEND API ──────────────────────────────────────── -->
+<div class="section">
+  <h3>⚙️ Backend API Endpoints</h3>
+  <div class="mockup">
+    <div class="mockup-header">Backoffice API — /api/v1/backoffice/referral-*</div>
+    <div class="mockup-body" style="padding:16px; font-size:12px; font-family:monospace; line-height:1.9;">
+      <strong style="color:#1976d2;">── Campaign Management ──</strong><br>
+      GET &nbsp;&nbsp;&nbsp;/referral-campaigns?page=N&per_page=N&status=&target_role=<br>
+      POST &nbsp;&nbsp;/referral-campaigns<br>
+      GET &nbsp;&nbsp;&nbsp;/referral-campaigns/{id}<br>
+      PUT &nbsp;&nbsp;&nbsp;/referral-campaigns/{id}<br>
+      DELETE &nbsp;/referral-campaigns/{id}<br>
+      PATCH &nbsp;/referral-campaigns/{id}/status &nbsp;← {status: active|paused|ended}<br>
+      <br>
+      <strong style="color:#388e3c;">── Tier Management (nested under campaign) ──</strong><br>
+      GET &nbsp;&nbsp;&nbsp;/referral-campaigns/{id}/tiers<br>
+      POST &nbsp;&nbsp;/referral-campaigns/{id}/tiers<br>
+      PUT &nbsp;&nbsp;&nbsp;/referral-campaigns/{id}/tiers/{tierId}<br>
+      DELETE &nbsp;/referral-campaigns/{id}/tiers/{tierId}<br>
+      <br>
+      <strong style="color:#f57c00;">── Milestone Management (nested under campaign) ──</strong><br>
+      GET &nbsp;&nbsp;&nbsp;/referral-campaigns/{id}/milestones<br>
+      POST &nbsp;&nbsp;/referral-campaigns/{id}/milestones<br>
+      PUT &nbsp;&nbsp;&nbsp;/referral-campaigns/{id}/milestones/{milestoneId}<br>
+      DELETE &nbsp;/referral-campaigns/{id}/milestones/{milestoneId}<br>
+      <br>
+      <strong style="color:#7b1fa2;">── Referral Records (read-only from CRM) ──</strong><br>
+      GET &nbsp;&nbsp;&nbsp;/referrals?page=N&campaign_id=&status=&search=<br>
+      GET &nbsp;&nbsp;&nbsp;/referrals/{id}<br>
+      PATCH &nbsp;/referrals/{id}/flag &nbsp;← {reason: "suspected fraud"}<br>
+      <br>
+      <strong style="color:#c62828;">── Rewards (read-only + retry) ──</strong><br>
+      GET &nbsp;&nbsp;&nbsp;/referral-rewards?page=N&referral_id=&status=<br>
+      PATCH &nbsp;/referral-rewards/{id}/retry &nbsp;← retry failed disbursement<br>
+      <br>
+      <strong style="color:#00695c;">── Analytics ──</strong><br>
+      GET &nbsp;&nbsp;&nbsp;/referral-analytics/overview?campaign_id=&period=<br>
+      GET &nbsp;&nbsp;&nbsp;/referral-analytics/leaderboard?campaign_id=&limit=20<br>
+      GET &nbsp;&nbsp;&nbsp;/referral-analytics/tier-distribution?campaign_id=
+    </div>
+  </div>
+</div>
+
+<!-- ─── BACKEND SERVICES ─────────────────────────────────── -->
+<div class="section">
+  <h3>🏗️ Backend Service Layer</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <div class="mockup">
+      <div class="mockup-header">app/Services/Backoffice/</div>
+      <div class="mockup-body" style="padding:12px; font-size:12px; font-family:monospace;">
+        <strong>ReferralCampaignService</strong><br>
+        &nbsp;├ list(), create(), show(), update(), delete()<br>
+        &nbsp;├ updateStatus()<br>
+        &nbsp;├ manageTiers()<br>
+        &nbsp;└ manageMilestones()<br><br>
+        <strong>ReferralManagementService</strong><br>
+        &nbsp;├ listReferrals()<br>
+        &nbsp;├ showReferral()<br>
+        &nbsp;├ flagReferral()<br>
+        &nbsp;├ listRewards()<br>
+        &nbsp;└ retryReward()<br><br>
+        <strong>ReferralAnalyticsService</strong><br>
+        &nbsp;├ getOverview()<br>
+        &nbsp;├ getLeaderboard()<br>
+        &nbsp;└ getTierDistribution()
+      </div>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">app/Services/Referral/ (core logic)</div>
+      <div class="mockup-body" style="padding:12px; font-size:12px; font-family:monospace;">
+        <strong>ReferralService</strong><br>
+        &nbsp;├ generateCode(user, campaign)<br>
+        &nbsp;├ applyReferralCode(referee, code)<br>
+        &nbsp;├ getActiveCampaign(role)<br>
+        &nbsp;└ getUserTier(user, campaign)<br><br>
+        <strong>ReferralMilestoneService</strong><br>
+        &nbsp;├ checkMilestone(referral, event)<br>
+        &nbsp;├ advanceMilestone(referral)<br>
+        &nbsp;└ isCompleted(referral)<br><br>
+        <strong>ReferralRewardService</strong><br>
+        &nbsp;├ disburse(referral, milestone)<br>
+        &nbsp;├ disburseCashback(user, amount)<br>
+        &nbsp;├ disburseVoucher(user, voucher)<br>
+        &nbsp;├ calculateTierBonus(user, base)<br>
+        &nbsp;└ retryFailed(reward)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── EVENT LISTENER ───────────────────────────────────── -->
+<div class="section">
+  <h3>⚡ Event Listener Flow</h3>
+  <div class="mockup">
+    <div class="mockup-header">Automatic Milestone Processing</div>
+    <div class="mockup-body" style="padding:16px; font-size:12px; font-family:monospace; line-height:2;">
+      UserEvent created (e.g. "email_verified")<br>
+      &nbsp;&nbsp;↓<br>
+      ReferralMilestoneListener::handle($event)<br>
+      &nbsp;&nbsp;↓ Check: does this user have a pending referral?<br>
+      &nbsp;&nbsp;↓ Check: does the campaign have a milestone matching this event_type?<br>
+      &nbsp;&nbsp;↓<br>
+      ReferralMilestoneService::advanceMilestone($referral)<br>
+      &nbsp;&nbsp;↓ Update referral.current_milestone_id<br>
+      &nbsp;&nbsp;↓<br>
+      ReferralRewardService::disburse($referral, $milestone)<br>
+      &nbsp;&nbsp;├─ Calculate tier bonus for referrer<br>
+      &nbsp;&nbsp;├─ Disburse referrer reward (cashback → WalletTransaction / voucher → VoucherUser)<br>
+      &nbsp;&nbsp;├─ Disburse referee reward (if configured)<br>
+      &nbsp;&nbsp;└─ Update referral_codes.usage_count (on first milestone only)<br>
+      &nbsp;&nbsp;↓<br>
+      If all milestones completed → referral.status = "completed"<br>
+      <br>
+      <em style="color:#666;">Job: ProcessReferralMilestone (queued, retryable)</em>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CRM PAGES ────────────────────────────────────────── -->
+<div class="section">
+  <h3>🖥️ CRM Pages Structure</h3>
+  <div class="mockup">
+    <div class="mockup-header">Sidebar: Marketing → Referral Program</div>
+    <div class="mockup-body" style="padding:16px; font-size:13px;">
+      <div style="display:grid; grid-template-columns:1fr; gap:16px;">
+        
+        <div style="border-left:4px solid #1976d2; padding-left:12px;">
+          <strong>📋 /dashboard/referral-campaigns</strong> — Campaign List<br>
+          <span style="color:#666; font-size:12px;">Table: name, target_role badge, status badge, period, total referrals, total rewards disbursed, actions (edit/toggle/delete)</span><br>
+          <span style="color:#666; font-size:12px;">Filters: status chips, target_role chips. Search by name.</span>
+        </div>
+
+        <div style="border-left:4px solid #1976d2; padding-left:12px;">
+          <strong>📝 /dashboard/referral-campaigns/create</strong> — Create Campaign<br>
+          <span style="color:#666; font-size:12px;">Multi-section form: Basic Info → Milestones (repeater) → Tiers (repeater) → Review</span><br>
+          <span style="color:#666; font-size:12px;">Each milestone: event_type selector, referrer reward config, referee reward config</span><br>
+          <span style="color:#666; font-size:12px;">Each tier: name, min/max referrals, bonus %, extra perks</span>
+        </div>
+
+        <div style="border-left:4px solid #1976d2; padding-left:12px;">
+          <strong>📊 /dashboard/referral-campaigns/[id]</strong> — Campaign Detail<br>
+          <span style="color:#666; font-size:12px;">Overview stats (total referrals, conversion rate, total disbursed) + milestone breakdown chart + tier distribution donut</span><br>
+          <span style="color:#666; font-size:12px;">Tabs: Overview | Referrals | Rewards | Leaderboard</span>
+        </div>
+
+        <div style="border-left:4px solid #7b1fa2; padding-left:12px;">
+          <strong>👥 /dashboard/referrals</strong> — All Referrals<br>
+          <span style="color:#666; font-size:12px;">Table: referrer name, referee name, campaign, status badge, milestones progress, rewards given, created_at</span><br>
+          <span style="color:#666; font-size:12px;">Filters: campaign, status, date range. Search by referrer/referee name.</span><br>
+          <span style="color:#666; font-size:12px;">Actions: view detail, flag as fraud</span>
+        </div>
+
+        <div style="border-left:4px solid #7b1fa2; padding-left:12px;">
+          <strong>🔍 /dashboard/referrals/[id]</strong> — Referral Detail<br>
+          <span style="color:#666; font-size:12px;">Referrer info, referee info, milestone timeline (visual progress), reward history, fraud flags</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── REGISTRATION INTEGRATION ─────────────────────────── -->
+<div class="section">
+  <h3>🔌 Integration Points (Backend)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Existing code modifications</div>
+    <div class="mockup-body" style="padding:16px; font-size:12px; font-family:monospace; line-height:1.8;">
+      <strong style="color:#c62828;">1. RegisterService::handle()</strong><br>
+      &nbsp;&nbsp;+ Accept optional `referral_code` in registration data<br>
+      &nbsp;&nbsp;+ After user creation: ReferralService::applyReferralCode($user, $code)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;→ Creates referral record, triggers first milestone<br>
+      <br>
+      <strong style="color:#c62828;">2. EventTrackingService::trackEvent()</strong><br>
+      &nbsp;&nbsp;+ After tracking: dispatch ProcessReferralMilestone job<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;→ Checks if user is a referee with pending referral<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;→ Advances milestone if event matches<br>
+      <br>
+      <strong style="color:#c62828;">3. MitraMemberService (verification approval)</strong><br>
+      &nbsp;&nbsp;+ Track new event "mitra_approved" via EventTrackingService<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;→ Triggers milestone check for mitra referrals<br>
+      <br>
+      <strong style="color:#c62828;">4. New WalletTransaction type</strong><br>
+      &nbsp;&nbsp;+ Add "referral_reward" to transaction types<br>
+      &nbsp;&nbsp;+ reference_type: "referral_reward", reference_id: reward UUID
+    </div>
+  </div>
+</div>

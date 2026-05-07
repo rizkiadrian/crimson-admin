@@ -189,7 +189,8 @@ Dashboard
   └── Deposit Requests
 ▼ Marketing (accordion)
   ├── Banners
-  └── Vouchers
+  ├── Vouchers
+  └── Referral Program
 ▼ Analytics (accordion)
   ├── Funnel Overview
   ├── User Segments
@@ -847,6 +848,86 @@ dormant/churned → active (any lifecycle event re-activates)
 
 ---
 
+### FM-15: Referral Program
+
+**Route:** `/dashboard/referral-campaigns`, `/dashboard/referrals`
+**API Base:** `/api/v1/backoffice/referral-campaigns`, `/api/v1/backoffice/referrals`, `/api/v1/backoffice/referral-analytics`
+**Priority:** P2 — Growth
+
+| ID       | Feature         | Status  | Description                                                                                                                                                         |
+| -------- | --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FM-15-01 | Campaign list   | ✅ Done | Paginated table with status/target_role filters, search, status badges                                                                                              |
+| FM-15-02 | Campaign create | ✅ Done | Multi-section form (basic info, milestones repeater, tiers repeater) with conditional fields per reward type and searchable voucher selector (autocomplete via API) |
+| FM-15-03 | Campaign edit   | ✅ Done | Pre-populated form with edit restrictions (target_role disabled when has active referrals), searchable voucher selector                                             |
+| FM-15-04 | Campaign detail | ✅ Done | Overview stats, milestone breakdown, tier distribution chart, tabs (Overview/Referrals/Rewards/Leaderboard)                                                         |
+| FM-15-05 | Referral list   | ✅ Done | Paginated table with campaign/status/date filters, milestone progress indicator, flag action                                                                        |
+| FM-15-06 | Referral detail | ✅ Done | Referrer/referee info, milestone timeline, reward history table, retry button for failed rewards, flag section                                                      |
+
+**Pages:**
+
+1. **Campaign List** (`/dashboard/referral-campaigns`) — TableCard with columns: Name, Target Role (badge), Status (badge), Period, Total Referrals, Total Disbursed, Actions. Filters: status (draft/active/paused/ended), target_role (client/mitra). Search by campaign name.
+2. **Campaign Create** (`/dashboard/referral-campaigns/create`) — Multi-section form: Basic Info (name, description, target_role, dates, max_referrals), Milestones repeater (event_type, reward config with conditional cashback/voucher fields — voucher selection uses searchable FormSelect with debounced API autocomplete via `useVoucherOptions` hook), Tiers repeater (name, min/max referrals, bonus_percentage).
+3. **Campaign Edit** (`/dashboard/referral-campaigns/{id}/edit`) — Same as create with pre-populated data. Edit restrictions: target_role disabled when campaign has active referrals. Voucher selection uses the same searchable autocomplete pattern as create.
+4. **Campaign Detail** (`/dashboard/referral-campaigns/{id}`) — Stats cards (total/active/completed referrals, conversion rate, total rewards), milestone breakdown, tier distribution (donut chart with CHART_COLORS), tabbed content.
+5. **Referral List** (`/dashboard/referrals`) — TableCard with columns: Referrer, Referee, Campaign, Status (badge), Milestones (progress "2/3"), Rewards Given, Created. Filters: campaign dropdown, status chips, date range.
+6. **Referral Detail** (`/dashboard/referrals/{id}`) — Referrer/referee info cards, milestone timeline (visual progress with checkmarks), reward history table (milestone, recipient, type, amount, status, date), retry button for failed rewards, flag section with reason.
+
+**Status Badge Colors:**
+
+| Status (Campaign) | Badge Variant |
+| ----------------- | ------------- |
+| draft             | neutral       |
+| active            | success       |
+| paused            | warning       |
+| ended             | error         |
+
+| Status (Referral) | Badge Variant |
+| ----------------- | ------------- |
+| pending           | warning       |
+| completed         | success       |
+| expired           | neutral       |
+| flagged           | error         |
+
+**Navigation:**
+
+- Sidebar: "Referral Program" under "Marketing" group (after Vouchers), icon: Gift from lucide-react
+
+**API Endpoints:**
+
+| Method | Endpoint                                           | Description                               |
+| ------ | -------------------------------------------------- | ----------------------------------------- |
+| GET    | `/backoffice/referral-campaigns`                   | Paginated campaign list with filters      |
+| POST   | `/backoffice/referral-campaigns`                   | Create campaign with milestones + tiers   |
+| GET    | `/backoffice/referral-campaigns/{id}`              | Campaign detail with milestones and tiers |
+| PUT    | `/backoffice/referral-campaigns/{id}`              | Update campaign                           |
+| DELETE | `/backoffice/referral-campaigns/{id}`              | Soft delete campaign                      |
+| PATCH  | `/backoffice/referral-campaigns/{id}/status`       | Update campaign status                    |
+| GET    | `/backoffice/referrals`                            | Paginated referral list with filters      |
+| GET    | `/backoffice/referrals/{id}`                       | Referral detail with milestone progress   |
+| PATCH  | `/backoffice/referrals/{id}/flag`                  | Flag referral with reason                 |
+| PATCH  | `/backoffice/referral-rewards/{id}/retry`          | Retry failed reward disbursement          |
+| GET    | `/backoffice/referral-analytics/overview`          | Analytics overview stats                  |
+| GET    | `/backoffice/referral-analytics/leaderboard`       | Top referrers leaderboard                 |
+| GET    | `/backoffice/referral-analytics/tier-distribution` | Tier distribution for campaign            |
+
+**Acceptance Criteria:**
+
+- Campaign list shows status and target_role as colored badges
+- Campaign create form shows/hides reward amount or voucher selector based on reward_type selection
+- Voucher selection uses searchable FormSelect (`onSearch` + `isLoading`) with debounced API fetch (300ms) instead of raw voucher ID input
+- Milestone repeater allows add/remove with sort_order management
+- Tier repeater validates non-overlapping ranges
+- Campaign edit disables target_role when campaign has active referrals (shows warning notice)
+- Campaign detail shows analytics overview with stats cards
+- Referral list shows milestone progress as "completed/total" indicator
+- Referral detail shows visual milestone timeline with checkmarks
+- Retry button only visible for rewards with status "failed"
+- Flag action opens dialog with reason input
+- All pages use service layer pattern (no direct API calls from components)
+- Sidebar "Marketing" group contains Banners, Vouchers, and Referral Program
+
+---
+
 ---
 
 ## Roadmap
@@ -866,5 +947,6 @@ dormant/churned → active (any lifecycle event re-activates)
 | FM-14    | Dashboard Analytics         | P2       | ✅ Done    |
 | FM-14b   | Sales Dashboard             | P2       | ✅ Done    |
 | FM-14c   | Voucher Management          | P2       | ✅ Done    |
-| FM-15    | Audit Log                   | P3       | 🔲 Planned |
-| FM-16    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-15    | Referral Program            | P2       | ✅ Done    |
+| FM-16    | Audit Log                   | P3       | 🔲 Planned |
+| FM-17    | Role-based UI visibility    | P3       | 🔲 Planned |

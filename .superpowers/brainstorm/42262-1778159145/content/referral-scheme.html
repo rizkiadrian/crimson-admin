@@ -1,0 +1,177 @@
+<h2>Referral Program — Skema Lengkap</h2>
+<p class="subtitle">Tiered Reward + Wallet Cashback, Multi-milestone, Fully Configurable</p>
+
+<!-- ─── FLOW DIAGRAM ─────────────────────────────────────── -->
+<div class="section">
+  <h3>🔄 Referral Flow (Client & Mitra)</h3>
+  <div class="mockup">
+    <div class="mockup-header">User Journey × Referral Milestones</div>
+    <div class="mockup-body" style="padding:20px; font-family:monospace; font-size:13px; line-height:2;">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span style="background:#e3f2fd; padding:4px 10px; border-radius:6px;">📱 Referrer share kode</span>
+        <span>→</span>
+        <span style="background:#fff3e0; padding:4px 10px; border-radius:6px;">👤 Referee daftar (pakai kode)</span>
+        <span>→</span>
+        <span style="background:#e8f5e9; padding:4px 10px; border-radius:6px; border:2px solid #4caf50;">✅ Milestone 1: Registered</span>
+      </div>
+      <div style="margin-left:40px; color:#666;">↓ Reward: Voucher diskon 10% untuk referee</div>
+      
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
+        <span style="background:#e8f5e9; padding:4px 10px; border-radius:6px; border:2px solid #4caf50;">✅ Milestone 2: Verified</span>
+        <span style="color:#666;">(Client: email verified | Mitra: dokumen approved)</span>
+      </div>
+      <div style="margin-left:40px; color:#666;">↓ Reward: Rp 10.000 cashback ke wallet referrer</div>
+      
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
+        <span style="background:#e8f5e9; padding:4px 10px; border-radius:6px; border:2px solid #4caf50;">✅ Milestone 3: First Action</span>
+        <span style="color:#666;">(Client: deposit pertama | Mitra: transaksi pertama)</span>
+      </div>
+      <div style="margin-left:40px; color:#666;">↓ Reward: Rp 25.000 cashback ke wallet referrer + Rp 15.000 ke referee</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TIER SYSTEM ──────────────────────────────────────── -->
+<div class="section">
+  <h3>🏆 Tier System (Referrer Levels)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Contoh Default Tier Configuration</div>
+    <div class="mockup-body" style="padding:16px;">
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead>
+          <tr style="background:#f5f5f5; text-align:left;">
+            <th style="padding:10px; border-bottom:2px solid #ddd;">Tier</th>
+            <th style="padding:10px; border-bottom:2px solid #ddd;">Syarat</th>
+            <th style="padding:10px; border-bottom:2px solid #ddd;">Bonus per Referral</th>
+            <th style="padding:10px; border-bottom:2px solid #ddd;">Extra Perks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:10px;"><span style="background:#e0e0e0; padding:2px 8px; border-radius:4px;">🥉 Starter</span></td>
+            <td style="padding:10px;">0-2 referral</td>
+            <td style="padding:10px;">Base reward (sesuai milestone)</td>
+            <td style="padding:10px;">—</td>
+          </tr>
+          <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:10px;"><span style="background:#bbdefb; padding:2px 8px; border-radius:4px;">🥈 Bronze</span></td>
+            <td style="padding:10px;">3-9 referral</td>
+            <td style="padding:10px;">Base + 10% bonus</td>
+            <td style="padding:10px;">Voucher eksklusif</td>
+          </tr>
+          <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:10px;"><span style="background:#c8e6c9; padding:2px 8px; border-radius:4px;">🥇 Silver</span></td>
+            <td style="padding:10px;">10-24 referral</td>
+            <td style="padding:10px;">Base + 25% bonus</td>
+            <td style="padding:10px;">Priority support</td>
+          </tr>
+          <tr>
+            <td style="padding:10px;"><span style="background:#fff9c4; padding:2px 8px; border-radius:4px;">👑 Gold</span></td>
+            <td style="padding:10px;">25+ referral</td>
+            <td style="padding:10px;">Base + 50% bonus</td>
+            <td style="padding:10px;">Cashback boost + badge</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ─── REWARD TYPES ─────────────────────────────────────── -->
+<div class="section">
+  <h3>💰 Reward Types (Configurable per Milestone)</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <div class="mockup">
+      <div class="mockup-header">Wallet Cashback</div>
+      <div class="mockup-body" style="padding:12px; font-size:13px;">
+        <p>• Langsung masuk saldo wallet</p>
+        <p>• WalletTransaction type: <code>referral_reward</code></p>
+        <p>• Reference: referral record ID</p>
+        <p>• Nominal configurable per campaign</p>
+      </div>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">Voucher Auto-Assign</div>
+      <div class="mockup-body" style="padding:12px; font-size:13px;">
+        <p>• Auto-assign voucher ke user</p>
+        <p>• Leverage VoucherUser existing</p>
+        <p>• Voucher template configurable</p>
+        <p>• distribution_type: <code>auto_assign</code></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SYSTEM ARCHITECTURE ──────────────────────────────── -->
+<div class="section">
+  <h3>🏗️ Arsitektur (3 Layer)</h3>
+  <div class="mockup">
+    <div class="mockup-header">System Components</div>
+    <div class="mockup-body" style="padding:16px; font-size:13px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; text-align:center;">
+        <div style="border:2px solid #1976d2; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#1976d2; margin-bottom:8px;">📱 Mobile App</div>
+          <div style="text-align:left; font-size:12px;">
+            • Referral code di Profile<br>
+            • Share via deeplink<br>
+            • Progress tracker<br>
+            • Reward history<br>
+            • Tier badge display
+          </div>
+        </div>
+        <div style="border:2px solid #388e3c; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#388e3c; margin-bottom:8px;">⚙️ Backend API</div>
+          <div style="text-align:left; font-size:12px;">
+            • ReferralService<br>
+            • ReferralRewardService<br>
+            • Milestone listeners<br>
+            • Tier calculator<br>
+            • Anti-fraud checks
+          </div>
+        </div>
+        <div style="border:2px solid #f57c00; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#f57c00; margin-bottom:8px;">🖥️ CRM Dashboard</div>
+          <div style="text-align:left; font-size:12px;">
+            • Campaign CRUD<br>
+            • Tier configuration<br>
+            • Reward management<br>
+            • Analytics & reports<br>
+            • Fraud monitoring
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CRM PAGES ────────────────────────────────────────── -->
+<div class="section">
+  <h3>🖥️ CRM Pages (Backoffice)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Sidebar: Marketing → Referral Program</div>
+    <div class="mockup-body" style="padding:16px; font-size:13px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div style="background:#f5f5f5; padding:12px; border-radius:6px;">
+          <strong>📋 Campaigns</strong><br>
+          <span style="color:#666;">List, Create, Edit, Toggle active</span><br>
+          <span style="font-size:11px; color:#999;">Set: nama, target role, period, milestones, rewards per milestone, tier bonuses</span>
+        </div>
+        <div style="background:#f5f5f5; padding:12px; border-radius:6px;">
+          <strong>📊 Referral Analytics</strong><br>
+          <span style="color:#666;">Dashboard overview</span><br>
+          <span style="font-size:11px; color:#999;">Total referrals, conversion rate, top referrers, reward disbursed, tier distribution</span>
+        </div>
+        <div style="background:#f5f5f5; padding:12px; border-radius:6px;">
+          <strong>👥 Referral List</strong><br>
+          <span style="color:#666;">All referral records</span><br>
+          <span style="font-size:11px; color:#999;">Referrer, referee, status, milestones completed, rewards given, fraud flags</span>
+        </div>
+        <div style="background:#f5f5f5; padding:12px; border-radius:6px;">
+          <strong>🏆 Leaderboard</strong><br>
+          <span style="color:#666;">Top referrers ranking</span><br>
+          <span style="font-size:11px; color:#999;">Tier badge, total referrals, total earned, conversion rate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

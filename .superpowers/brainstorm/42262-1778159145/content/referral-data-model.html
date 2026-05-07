@@ -1,0 +1,179 @@
+<h2>Referral Program — Data Model</h2>
+<p class="subtitle">Database schema untuk Backend (PostgreSQL)</p>
+
+<div class="section">
+  <h3>📦 New Tables</h3>
+  <div class="mockup">
+    <div class="mockup-header">Entity Relationship</div>
+    <div class="mockup-body" style="padding:20px; font-size:12px; font-family:monospace; line-height:1.8;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        
+        <!-- referral_campaigns -->
+        <div style="border:2px solid #1976d2; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#1976d2; margin-bottom:8px; font-size:14px;">referral_campaigns</div>
+          <div style="border-top:1px solid #ddd; padding-top:8px;">
+            id (PK)<br>
+            name (string)<br>
+            description (text, nullable)<br>
+            target_role (enum: client, mitra)<br>
+            status (enum: draft, active, paused, ended)<br>
+            starts_at (datetime)<br>
+            ends_at (datetime, nullable)<br>
+            max_referrals_per_user (int, nullable)<br>
+            created_by (FK → users)<br>
+            created_at / updated_at<br>
+            deleted_at (soft delete)
+          </div>
+        </div>
+
+        <!-- referral_tiers -->
+        <div style="border:2px solid #388e3c; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#388e3c; margin-bottom:8px; font-size:14px;">referral_tiers</div>
+          <div style="border-top:1px solid #ddd; padding-top:8px;">
+            id (PK)<br>
+            campaign_id (FK → referral_campaigns)<br>
+            name (string, e.g. "Bronze")<br>
+            icon (string, nullable — emoji/icon key)<br>
+            min_referrals (int)<br>
+            max_referrals (int, nullable)<br>
+            bonus_percentage (decimal — extra % on base reward)<br>
+            extra_perks (json, nullable)<br>
+            sort_order (int)<br>
+            created_at / updated_at
+          </div>
+        </div>
+
+        <!-- referral_milestones -->
+        <div style="border:2px solid #f57c00; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#f57c00; margin-bottom:8px; font-size:14px;">referral_milestones</div>
+          <div style="border-top:1px solid #ddd; padding-top:8px;">
+            id (PK)<br>
+            campaign_id (FK → referral_campaigns)<br>
+            name (string, e.g. "Registered")<br>
+            event_type (string — maps to UserEvent types)<br>
+            sort_order (int)<br>
+            <strong style="color:#1976d2;">— Referrer Reward —</strong><br>
+            referrer_reward_type (enum: cashback, voucher, none)<br>
+            referrer_reward_amount (decimal, nullable)<br>
+            referrer_voucher_id (FK → vouchers, nullable)<br>
+            <strong style="color:#e65100;">— Referee Reward —</strong><br>
+            referee_reward_type (enum: cashback, voucher, none)<br>
+            referee_reward_amount (decimal, nullable)<br>
+            referee_voucher_id (FK → vouchers, nullable)<br>
+            created_at / updated_at
+          </div>
+        </div>
+
+        <!-- referrals -->
+        <div style="border:2px solid #7b1fa2; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#7b1fa2; margin-bottom:8px; font-size:14px;">referrals</div>
+          <div style="border-top:1px solid #ddd; padding-top:8px;">
+            id (PK)<br>
+            campaign_id (FK → referral_campaigns)<br>
+            referrer_id (FK → users)<br>
+            referee_id (FK → users)<br>
+            referral_code (string — used during signup)<br>
+            status (enum: pending, completed, expired, flagged)<br>
+            current_milestone_id (FK → referral_milestones, nullable)<br>
+            completed_at (datetime, nullable)<br>
+            expires_at (datetime, nullable)<br>
+            created_at / updated_at
+          </div>
+        </div>
+
+        <!-- referral_rewards -->
+        <div style="border:2px solid #c62828; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#c62828; margin-bottom:8px; font-size:14px;">referral_rewards</div>
+          <div style="border-top:1px solid #ddd; padding-top:8px;">
+            id (PK, UUID)<br>
+            referral_id (FK → referrals)<br>
+            milestone_id (FK → referral_milestones)<br>
+            recipient_id (FK → users)<br>
+            recipient_type (enum: referrer, referee)<br>
+            reward_type (enum: cashback, voucher)<br>
+            amount (decimal, nullable)<br>
+            voucher_id (FK → vouchers, nullable)<br>
+            tier_bonus_amount (decimal, default 0)<br>
+            wallet_transaction_id (FK, nullable)<br>
+            status (enum: pending, disbursed, failed)<br>
+            disbursed_at (datetime, nullable)<br>
+            created_at / updated_at
+          </div>
+        </div>
+
+        <!-- referral_codes -->
+        <div style="border:2px solid #00695c; border-radius:8px; padding:12px;">
+          <div style="font-weight:bold; color:#00695c; margin-bottom:8px; font-size:14px;">referral_codes</div>
+          <div style="border-top:1px solid #ddd; padding-top:8px;">
+            id (PK)<br>
+            user_id (FK → users)<br>
+            campaign_id (FK → referral_campaigns)<br>
+            code (string, unique — e.g. "RIZKI2025")<br>
+            usage_count (int, default 0)<br>
+            is_active (boolean, default true)<br>
+            created_at / updated_at<br>
+            <br>
+            <em style="color:#666;">UNIQUE(user_id, campaign_id)</em>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔗 Relationships Summary</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding:16px; font-size:13px; font-family:monospace;">
+      Campaign 1──* Tiers<br>
+      Campaign 1──* Milestones<br>
+      Campaign 1──* Referrals<br>
+      Campaign 1──* ReferralCodes<br>
+      <br>
+      User 1──* ReferralCodes (one per campaign)<br>
+      User 1──* Referrals (as referrer)<br>
+      User 1──1 Referral (as referee, per campaign)<br>
+      <br>
+      Referral 1──* ReferralRewards<br>
+      ReferralReward ──1 WalletTransaction (for cashback)<br>
+      ReferralReward ──1 Voucher (for voucher rewards)<br>
+      <br>
+      Milestone.event_type maps to UserEvent types:<br>
+      &nbsp;&nbsp;• "user_registered" → Milestone 1<br>
+      &nbsp;&nbsp;• "email_verified" → Milestone 2 (Client)<br>
+      &nbsp;&nbsp;• "mitra_approved" → Milestone 2 (Mitra) *new event*<br>
+      &nbsp;&nbsp;• "first_deposit" → Milestone 3 (Client)<br>
+      &nbsp;&nbsp;• "first_transaction" → Milestone 3 (Mitra)
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>⚡ Key Design Decisions</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>Strengths</h4>
+        <ul>
+          <li>Fully normalized — no JSON blobs for critical data</li>
+          <li>Tier bonus calculated at disburse time (not stored on tier change)</li>
+          <li>Referral codes per-campaign — user bisa punya kode berbeda per campaign</li>
+          <li>Soft delete on campaigns — historical data preserved</li>
+          <li>UUID on rewards — safe for wallet transaction references</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pros-cons">
+      <div class="cons">
+        <h4>Considerations</h4>
+        <ul>
+          <li>Need new UserEvent type "mitra_approved" for mitra verification milestone</li>
+          <li>referral_codes.code needs unique index + collision handling</li>
+          <li>Anti-fraud: same device/IP detection deferred to Phase 2</li>
+          <li>Expiry: referrals can expire if referee doesn't complete milestones within campaign period</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
