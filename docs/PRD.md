@@ -187,8 +187,9 @@ Dashboard
   └── Activity Logs
 ▼ Finance (accordion)
   └── Deposit Requests
-▼ Content (accordion)
-  └── Banners
+▼ Marketing (accordion)
+  ├── Banners
+  └── Vouchers
 ▼ Analytics (accordion)
   ├── Funnel Overview
   ├── User Segments
@@ -759,6 +760,93 @@ dormant/churned → active (any lifecycle event re-activates)
 - Sidebar "Master Data" group with "Service Categories" item
 - All pages use service layer pattern (no direct API calls from components)
 
+### FM-14c: Voucher Management
+
+**Route:** `/dashboard/vouchers` (list), `/dashboard/vouchers/create` (create), `/dashboard/vouchers/[id]/edit` (edit), `/dashboard/vouchers/[id]` (detail)
+**API Base:** `/api/v1/backoffice/vouchers`
+**Priority:** P2 — Marketing
+
+| ID        | Feature              | Status  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| --------- | -------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FM-14c-01 | List with pagination | ✅ Done | Paginated table with columns: Code, Name, Discount Type (badge), Target User Type (badge), Status (badge with logic: Active/Inactive/Expired/Scheduled), Quota (used/total or Unlimited), Period (starts_at - expires_at), Actions. SearchInput for code or name. FilterPopup with discount_type, target_user_type, status chips. Actions: view detail, edit, toggle active, delete with ConfirmDialog                                           |
+| FM-14c-02 | Create voucher       | ✅ Done | FormCard with 5 sections: Basic Info (name, code conditional on distribution_type, description), Discount Config (discount_type selector with conditional fields), Conditions and Limits (starts_at, expires_at, quota, per_user_limit, min_transaction_amount), Distribution (distribution_type selector), Target Segment (target_user_type, segment_type, user picker for specific_users). Conditional field visibility based on discount_type |
+| FM-14c-03 | Edit voucher         | ✅ Done | Same form as create with pre-populated fields via useDetailData. Edit restrictions: if used_count > 0, discount_type and code fields are disabled with warning notice. Uses Page + Inner Form split pattern. Preserves returnPage                                                                                                                                                                                                                |
+| FM-14c-04 | Detail page          | ✅ Done | DetailCard with all voucher config fields (read-only). Usage stats summary (used_count/quota, redemption rate). Assigned Users table (user name, assigned_at, status badge used/unused, usage_count). Assign to User button opens modal with user picker                                                                                                                                                                                         |
+| FM-14c-05 | Status toggle        | ✅ Done | Inline toggle per row via vouchersService.toggleActive. PATCH endpoint toggles is_active                                                                                                                                                                                                                                                                                                                                                         |
+| FM-14c-06 | User assignment      | ✅ Done | Assign to User modal on detail page. User picker with search. POST to /vouchers/{id}/assign with user_ids array. Duplicate assignment returns 422                                                                                                                                                                                                                                                                                                |
+| FM-14c-07 | Service layer        | ✅ Done | Typed service at src/services/backoffice/vouchers/ with vouchersService: list, detail, create, update, delete, toggleActive, assign. Types: IVoucher, IVoucherUser, IVoucherTargetSegment, IVoucherParams, DiscountType, TargetUserType, DistributionType, SegmentType                                                                                                                                                                           |
+| FM-14c-08 | Sidebar navigation   | ✅ Done | Marketing accordion group (renamed from Content) with Banners and Vouchers items. Vouchers uses Ticket icon                                                                                                                                                                                                                                                                                                                                      |
+| FM-14c-09 | Routing              | ✅ Done | VOUCHER_SERVICES paths: vouchers, voucherCreate, voucherEdit, voucherDetail in centralized PATHS object                                                                                                                                                                                                                                                                                                                                          |
+
+**Discount Types:**
+
+| Type                  | Description                       | Conditional Fields                                |
+| --------------------- | --------------------------------- | ------------------------------------------------- |
+| `percentage`          | Percentage discount with max cap  | discount_value (1-100%), max_discount_cap (Rp)    |
+| `fixed_amount`        | Fixed nominal discount            | discount_value (Rp)                               |
+| `free_service`        | Free service in specific category | service_category_id (required)                    |
+| `commission_discount` | Platform fee reduction for mitra  | discount_value (%), forces target_user_type=mitra |
+
+**Status Badge Logic:**
+
+| Condition                                         | Badge     | Variant |
+| ------------------------------------------------- | --------- | ------- |
+| `is_active=false`                                 | Inactive  | neutral |
+| `expires_at < now`                                | Expired   | error   |
+| `starts_at > now`                                 | Scheduled | primary |
+| `is_active=true` and within starts_at..expires_at | Active    | success |
+
+**Distribution Types:**
+
+| Type          | Description                          | Code Required |
+| ------------- | ------------------------------------ | ------------- |
+| `public_code` | Voucher redeemable via public code   | Yes           |
+| `auto_assign` | Voucher auto-assigned to user wallet | No            |
+| `both`        | Both public code and auto-assign     | Yes           |
+
+**Target Segment Options:**
+
+| Segment          | Description                |
+| ---------------- | -------------------------- |
+| `all`            | All eligible users         |
+| `new_user`       | Newly registered users     |
+| `verified_only`  | Only verified users        |
+| `specific_users` | Manually selected user IDs |
+
+**API Endpoints:**
+
+| Method | Endpoint                                  | Request Body                                            | Response                              |
+| ------ | ----------------------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| GET    | `/backoffice/vouchers?page=N&per_page=N`  | —                                                       | Paginated list with `meta.pagination` |
+| POST   | `/backoffice/vouchers`                    | `{ name, code?, discount_type, target_user_type, ... }` | Created voucher                       |
+| GET    | `/backoffice/vouchers/{id}`               | —                                                       | Voucher detail with usage stats       |
+| PUT    | `/backoffice/vouchers/{id}`               | All fields optional                                     | Updated voucher                       |
+| DELETE | `/backoffice/vouchers/{id}`               | —                                                       | `null` (soft delete)                  |
+| PATCH  | `/backoffice/vouchers/{id}/toggle-active` | —                                                       | Updated voucher                       |
+| POST   | `/backoffice/vouchers/{id}/assign`        | `{ user_ids: [1, 2, 3] }`                               | Success response                      |
+
+**Acceptance Criteria:**
+
+- Table displays vouchers ordered by created_at descending
+- Search filters by code or name (case-insensitive)
+- Discount type, target user type, and status filters work independently
+- Status badge derived from is_active, starts_at, and expires_at with priority: Inactive > Expired > Scheduled > Active
+- Quota column shows "used/total" or "Unlimited" when quota is null
+- Create form shows/hides fields based on discount_type selection
+- commission_discount forces target_user_type to "mitra" and disables the selector
+- free_service requires service_category_id and hides discount_value
+- percentage requires max_discount_cap and discount_value between 1-100
+- Code field visibility controlled by distribution_type (shown for public_code and both)
+- Date validation: starts_at must be before expires_at
+- Edit page disables discount_type and code fields when used_count > 0, shows warning notice
+- Detail page shows usage stats (used_count/quota, redemption rate percentage)
+- Assign to User modal prevents duplicate assignment (422 with "User sudah memiliki voucher ini")
+- Sidebar "Marketing" group contains Banners and Vouchers (renamed from Content)
+- All pages use service layer pattern (no direct API calls from components)
+- Soft delete — deleted vouchers excluded from list
+
+---
+
 ---
 
 ## Roadmap
@@ -777,5 +865,6 @@ dormant/churned → active (any lifecycle event re-activates)
 | FM-13    | Service Category Management | P2       | ✅ Done    |
 | FM-14    | Dashboard Analytics         | P2       | ✅ Done    |
 | FM-14b   | Sales Dashboard             | P2       | ✅ Done    |
+| FM-14c   | Voucher Management          | P2       | ✅ Done    |
 | FM-15    | Audit Log                   | P3       | 🔲 Planned |
 | FM-16    | Role-based UI visibility    | P3       | 🔲 Planned |

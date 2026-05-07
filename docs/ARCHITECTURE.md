@@ -40,7 +40,7 @@ src/
 │   │   │   ├── CommentThread/ # Reusable comment thread component (list + create, access controlled)
 │   │   │   └── BannerEditor/  # Banner canvas editor system (CanvasEditor, TextPropertiesPanel, CtaPropertiesPanel, BackgroundSelector, TemplateSelector, BannerPreviewModal)
 │   │   ├── layout/
-│   │   │   ├── Sidebar/         # Accordion navigation with grouped items (User Management, Sales Management, Finance, Analytics, Master Data)
+│   │   │   ├── Sidebar/         # Accordion navigation with grouped items (User Management, Sales Management, Finance, Marketing, Analytics, Master Data)
 │   │   │   └── Navbar/          # Top bar with search, NotificationBell dropdown (supports backoffice + sales roles, resolveLink fallback), profile
 │   │   └── core/
 │   │       ├── BackofficeStatus/
@@ -82,6 +82,11 @@ src/
 │   │       │   ├── page.tsx                    # Banner list (table with search, type/status filters, status toggle, delete)
 │   │       │   ├── create/page.tsx             # Banner create (image upload or text placement editor with CTA + target URL)
 │   │       │   └── [id]/edit/page.tsx          # Banner edit (pre-populated form)
+│   │       ├── vouchers/
+│   │       │   ├── page.tsx                    # Voucher list (table with search, discount_type/target/status filters, status toggle, delete)
+│   │       │   ├── create/page.tsx             # Voucher create (conditional form with 5 sections based on discount_type)
+│   │       │   ├── [id]/page.tsx               # Voucher detail (read-only info, usage stats, assigned users table, assign modal)
+│   │       │   └── [id]/edit/page.tsx          # Voucher edit (pre-populated, edit restrictions for used vouchers)
 │   │       ├── analytics/
 │   │       │   ├── funnel/page.tsx             # Funnel Overview (bar chart, trend lines, period filter, avg time per stage)
 │   │       │   ├── segments/page.tsx           # User Segments (Total Users card + DonutChart, stage cards with unique icons + progress bars, SegmentUsersTable sub-component, CSV export, date filters)
@@ -123,6 +128,7 @@ src/
 │   │   ├── banners/           # Types (IBanner, ICtaConfig, ITextElement, IBackgroundConfig, IBannerParams) + service (list, detail, create, update, delete, updateStatus, reorder) — banner management. Both types use FormData (text_placement renders canvas to PNG)
 │   │   ├── analytics/         # Types (IFunnelStats, IFunnelTrends, ISegmentSummary, ISegmentUser, IUserEvent, IJourneySummary) + service (getFunnelStats, getFunnelTrends, getSegmentSummary, getSegmentUsers, exportSegmentCsv, getEventLog) — user journey funnel analytics
 │   │   ├── service-categories/ # Types (IServiceCategory, IServiceCategoryParams, CategoryType) + service (list, detail, create, update, delete) — service category management. Uses FormData for SVG icon upload, POST with _method=PUT for update
+│   │   ├── vouchers/          # Types (IVoucher, IVoucherUser, IVoucherTargetSegment, IVoucherParams, DiscountType, TargetUserType, DistributionType, SegmentType) + service (list, detail, create, update, delete, toggleActive, assign) — voucher management
 │   │   └── dashboard/          # Types + service (summary incl. leads stats, deposits summary, journey summary)
 │   ├── sales/
 │   │   ├── active-leads/       # Types + service (getActiveLeads with ?search, ?unassigned_only, ?assigned_to_me)
@@ -138,7 +144,7 @@ src/
 │   └── useSalesNotificationStore.ts     # Sales notification bell state (mirrors backoffice pattern, uses salesNotificationsService)
 ├── config/
 │   ├── env.ts
-│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit, analyticsFunnel, analyticsSegments, analyticsEvents, serviceCategories, serviceCategoryCreate, serviceCategoryEdit)
+│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit, analyticsFunnel, analyticsSegments, analyticsEvents, serviceCategories, serviceCategoryCreate, serviceCategoryEdit, vouchers, voucherCreate, voucherEdit, voucherDetail)
 └── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 

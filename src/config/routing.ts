@@ -66,6 +66,13 @@ const SERVICE_CATEGORIES_SERVICES = {
     `/dashboard/service-categories/${id}/edit`,
 };
 
+const VOUCHER_SERVICES = {
+  vouchers: "/dashboard/vouchers",
+  voucherCreate: "/dashboard/vouchers/create",
+  voucherEdit: (id: number) => `/dashboard/vouchers/${id}/edit`,
+  voucherDetail: (id: number) => `/dashboard/vouchers/${id}`,
+};
+
 const ANALYTICS_SERVICES = {
   analyticsFunnel: "/dashboard/analytics/funnel",
   analyticsSegments: "/dashboard/analytics/segments",
@@ -90,6 +97,7 @@ export const PATHS = {
   ...ACTIVITY_LOGS_SERVICES,
   ...DEPOSIT_REQUESTS_SERVICES,
   ...BANNER_SERVICES,
+  ...VOUCHER_SERVICES,
   ...SERVICE_CATEGORIES_SERVICES,
   ...ANALYTICS_SERVICES,
 };

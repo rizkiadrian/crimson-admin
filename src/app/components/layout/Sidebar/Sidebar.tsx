@@ -27,6 +27,8 @@ import {
   ScrollText,
   Database,
   FolderTree,
+  Megaphone,
+  Ticket,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -143,8 +145,24 @@ const MASTER_DATA_NAV: NavEntry = {
   ],
 };
 
+const MARKETING_NAV: NavEntry = {
+  label: "Marketing",
+  icon: Megaphone,
+  items: [
+    {
+      label: "Banners",
+      href: PATHS.banners,
+      icon: Image,
+    },
+    {
+      label: "Vouchers",
+      href: PATHS.vouchers,
+      icon: Ticket,
+    },
+  ],
+};
+
 const OTHER_NAVS: NavEntry[] = [
-  { label: "Banners", href: PATHS.banners, icon: Image },
   { label: "Reports", href: "/reports", icon: FileText },
   { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
 ];
@@ -253,6 +271,7 @@ export function Sidebar({ roleName }: SidebarProps) {
         USER_MANAGEMENT_NAV,
         SALES_MANAGEMENT_NAV,
         FINANCE_NAV,
+        MARKETING_NAV,
         ANALYTICS_NAV,
         MASTER_DATA_NAV,
         ...OTHER_NAVS,
