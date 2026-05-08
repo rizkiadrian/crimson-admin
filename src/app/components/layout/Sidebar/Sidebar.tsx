@@ -30,6 +30,9 @@ import {
   Megaphone,
   Ticket,
   Gift,
+  Newspaper,
+  UserPen,
+  Tag,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -169,6 +172,26 @@ const MARKETING_NAV: NavEntry = {
       label: "Referrals",
       href: PATHS.referrals,
       icon: Users,
+    },
+    {
+      label: "Articles",
+      href: PATHS.articles,
+      icon: Newspaper,
+    },
+    {
+      label: "Authors",
+      href: PATHS.authors,
+      icon: UserPen,
+    },
+    {
+      label: "Article Categories",
+      href: PATHS.articleCategories,
+      icon: FolderTree,
+    },
+    {
+      label: "Article Tags",
+      href: PATHS.articleTags,
+      icon: Tag,
     },
   ],
 };

@@ -1,0 +1,10 @@
+{
+  "name": "lingkar-crm",
+  "description": "Lingkar CRM development agent with all project skills auto-loaded",
+  "resources": [
+    "file://AGENTS.md",
+    "file://CLAUDE.md",
+    "file://README.md",
+    "skill://.kiro/skills/**/SKILL.md"
+  ]
+}

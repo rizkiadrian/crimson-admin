@@ -12,6 +12,7 @@
 | HTTP Client      | Axios                            | 1.15+   |
 | Calendar         | react-day-picker + date-fns      | 9 / 4   |
 | Icons            | Lucide React                     | 1.7+    |
+| Rich Text Editor | Tiptap                           | 3.22+   |
 | Linting          | ESLint + Prettier                | —       |
 | Git Hooks        | Husky + lint-staged + commitlint | —       |
 

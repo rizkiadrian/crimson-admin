@@ -930,6 +930,82 @@ dormant/churned → active (any lifecycle event re-activates)
 
 ---
 
+## FM-18: Blog/Article Management
+
+### Overview
+
+Full blog/article management system for the CRM. Includes Authors, Article Categories, Article Tags, and Articles with rich text editing via Tiptap.
+
+### Routes
+
+| Path                                     | Page                                |
+| ---------------------------------------- | ----------------------------------- |
+| `/dashboard/articles`                    | Article list (filterable by status) |
+| `/dashboard/articles/create`             | Create article (Tiptap editor)      |
+| `/dashboard/articles/:id/edit`           | Edit article                        |
+| `/dashboard/authors`                     | Authors list                        |
+| `/dashboard/authors/create`              | Create author                       |
+| `/dashboard/authors/:id/edit`            | Edit author                         |
+| `/dashboard/article-categories`          | Categories list                     |
+| `/dashboard/article-categories/create`   | Create category                     |
+| `/dashboard/article-categories/:id/edit` | Edit category                       |
+| `/dashboard/article-tags`                | Tags list                           |
+| `/dashboard/article-tags/create`         | Create tag                          |
+| `/dashboard/article-tags/:id/edit`       | Edit tag                            |
+
+### Status Workflow
+
+```
+Draft → Published (direct publish)
+Draft → Scheduled → Published (auto-publish at scheduled time)
+Published → Archived
+Published → Draft (unpublish)
+```
+
+### API Endpoints
+
+| Method | Endpoint                             | Description         |
+| ------ | ------------------------------------ | ------------------- |
+| GET    | `/backoffice/authors`                | List authors        |
+| POST   | `/backoffice/authors`                | Create author       |
+| GET    | `/backoffice/authors/:id`            | Author detail       |
+| PUT    | `/backoffice/authors/:id`            | Update author       |
+| DELETE | `/backoffice/authors/:id`            | Delete author       |
+| GET    | `/backoffice/article-categories`     | List categories     |
+| POST   | `/backoffice/article-categories`     | Create category     |
+| GET    | `/backoffice/article-categories/:id` | Category detail     |
+| PUT    | `/backoffice/article-categories/:id` | Update category     |
+| DELETE | `/backoffice/article-categories/:id` | Delete category     |
+| GET    | `/backoffice/article-tags`           | List tags           |
+| POST   | `/backoffice/article-tags`           | Create tag          |
+| GET    | `/backoffice/article-tags/:id`       | Tag detail          |
+| PUT    | `/backoffice/article-tags/:id`       | Update tag          |
+| DELETE | `/backoffice/article-tags/:id`       | Delete tag          |
+| GET    | `/backoffice/articles`               | List articles       |
+| POST   | `/backoffice/articles`               | Create article      |
+| GET    | `/backoffice/articles/:id`           | Article detail      |
+| PUT    | `/backoffice/articles/:id`           | Update article      |
+| DELETE | `/backoffice/articles/:id`           | Delete article      |
+| POST   | `/backoffice/articles/:id/publish`   | Publish             |
+| POST   | `/backoffice/articles/:id/unpublish` | Unpublish           |
+| POST   | `/backoffice/articles/:id/archive`   | Archive             |
+| POST   | `/backoffice/articles/:id/schedule`  | Schedule            |
+| POST   | `/backoffice/articles/upload-image`  | Upload inline image |
+
+### Acceptance Criteria
+
+- [x] Authors CRUD with avatar upload
+- [x] Categories CRUD with auto-slug
+- [x] Tags CRUD with auto-slug
+- [x] Articles CRUD with Tiptap rich text editor
+- [x] Inline image upload in article body
+- [x] Author autocomplete search in article form
+- [x] Status workflow (publish, unpublish, archive, schedule)
+- [x] Scheduled publishing via cron (every minute)
+- [x] Status filter on articles list
+- [x] SEO fields (meta_title, meta_description)
+- [x] Featured article flag
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -950,3 +1026,4 @@ dormant/churned → active (any lifecycle event re-activates)
 | FM-15    | Referral Program            | P2       | ✅ Done    |
 | FM-16    | Audit Log                   | P3       | 🔲 Planned |
 | FM-17    | Role-based UI visibility    | P3       | 🔲 Planned |
+| FM-18    | Blog/Article Management     | P2       | ✅ Done    |

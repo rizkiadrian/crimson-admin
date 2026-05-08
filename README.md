@@ -32,6 +32,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Calendar  | react-day-picker 9 + date-fns 4     |
 | Icons     | Lucide React                        |
 | Charts    | Recharts                            |
+| Editor    | Tiptap (@tiptap/react)              |
 | Quality   | ESLint, Prettier, Husky, commitlint |
 
 ## Feature Status
@@ -54,6 +55,10 @@ Open [http://localhost:3000](http://localhost:3000).
 | Service Categories  | ✅   | ✅     | —    | ✅   | ✅     | —      | ✅     | —         |
 | Voucher Management  | ✅   | ✅     | ✅   | ✅   | ✅     | —      | ✅     | —         |
 | Referral Program    | ✅   | ✅     | ✅   | ✅   | ✅     | —      | ✅     | —         |
+| Articles            | ✅   | ✅     | —    | ✅   | ✅     | —      | ✅     | —         |
+| Authors             | ✅   | ✅     | —    | ✅   | ✅     | —      | —      | —         |
+| Article Categories  | ✅   | ✅     | —    | ✅   | ✅     | —      | —      | —         |
+| Article Tags        | ✅   | ✅     | —    | ✅   | ✅     | —      | —      | —         |
 
 ## Project Structure
 

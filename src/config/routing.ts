@@ -89,6 +89,22 @@ const ANALYTICS_SERVICES = {
   analyticsEvents: "/dashboard/analytics/events",
 };
 
+const ARTICLE_SERVICES = {
+  articles: "/dashboard/articles",
+  articleCreate: "/dashboard/articles/create",
+  articleEdit: (id: number) => `/dashboard/articles/${id}/edit`,
+  authors: "/dashboard/authors",
+  authorCreate: "/dashboard/authors/create",
+  authorEdit: (id: number) => `/dashboard/authors/${id}/edit`,
+  articleCategories: "/dashboard/article-categories",
+  articleCategoryCreate: "/dashboard/article-categories/create",
+  articleCategoryEdit: (id: number) =>
+    `/dashboard/article-categories/${id}/edit`,
+  articleTags: "/dashboard/article-tags",
+  articleTagCreate: "/dashboard/article-tags/create",
+  articleTagEdit: (id: number) => `/dashboard/article-tags/${id}/edit`,
+};
+
 const SALES_DASHBOARD_SERVICES = {
   salesDashboard: "/sales-dashboard",
 };
@@ -111,4 +127,5 @@ export const PATHS = {
   ...REFERRAL_SERVICES,
   ...SERVICE_CATEGORIES_SERVICES,
   ...ANALYTICS_SERVICES,
+  ...ARTICLE_SERVICES,
 };

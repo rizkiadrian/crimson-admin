@@ -922,3 +922,45 @@ function EditForm({ data, backUrl }) {
   // ... submit, redirect to backUrl
 }
 ```
+
+---
+
+## TiptapEditor
+
+Rich text editor component built on Tiptap. Located at `src/app/components/ui/TiptapEditor/`.
+
+### Props
+
+| Prop            | Type                              | Required | Description                             |
+| --------------- | --------------------------------- | -------- | --------------------------------------- |
+| `value`         | `string`                          | No       | HTML content                            |
+| `onChange`      | `(html: string) => void`          | No       | Called on content change                |
+| `onImageUpload` | `(file: File) => Promise<string>` | No       | Async image upload handler, returns URL |
+| `placeholder`   | `string`                          | No       | Placeholder text                        |
+| `error`         | `string`                          | No       | Error message                           |
+| `label`         | `string`                          | No       | Label text                              |
+| `required`      | `boolean`                         | No       | Shows required indicator                |
+| `disabled`      | `boolean`                         | No       | Disables editing                        |
+
+### Toolbar Features
+
+Headings (H1-H3), Bold, Italic, Strikethrough, Inline Code, Bullet List, Ordered List, Blockquote, Horizontal Rule, Link, Unlink, Image Upload, Undo, Redo.
+
+### Usage
+
+```tsx
+import { TiptapEditor } from "@app/components/ui/TiptapEditor";
+
+<TiptapEditor
+  label="Article Body"
+  required
+  value={body}
+  onChange={setBody}
+  onImageUpload={async (file) => {
+    const resp = await articlesService.uploadImage(file);
+    return resp.data.url;
+  }}
+  placeholder="Write your content..."
+  error={formErrors.body}
+/>;
+```
