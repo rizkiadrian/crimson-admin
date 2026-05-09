@@ -1,33 +1,22 @@
 import { create } from "zustand";
-import { notificationsService } from "@services/backoffice/notifications";
-import type { INotification } from "@services/backoffice/notifications";
+import type { INotification } from "@services/notifications";
+import type { INotificationService } from "@services/notifications/notifications.service";
 
-interface BackofficeNotificationState {
-  /** Number of unread notifications. */
+interface RoleNotificationState {
   unreadCount: number;
-  /** Recent notifications for the dropdown (latest 5). */
   recentNotifications: INotification[];
-  /** Whether the dropdown is open. */
   isDropdownOpen: boolean;
-  /** Whether we're currently fetching. */
   isLoading: boolean;
-
-  /** Fetch unread count from API. */
   fetchUnreadCount: () => Promise<void>;
-  /** Fetch recent notifications for dropdown. */
   fetchRecent: () => Promise<void>;
-  /** Mark a single notification as read and update local state. */
   markAsRead: (id: number) => Promise<void>;
-  /** Mark all notifications as read. */
   markAllAsRead: () => Promise<void>;
-  /** Toggle dropdown visibility. */
   toggleDropdown: () => void;
-  /** Close dropdown. */
   closeDropdown: () => void;
 }
 
-export const useBackofficeNotificationStore =
-  create<BackofficeNotificationState>((set, get) => ({
+export function createRoleNotificationStore(service: INotificationService) {
+  return create<RoleNotificationState>((set, get) => ({
     unreadCount: 0,
     recentNotifications: [],
     isDropdownOpen: false,
@@ -35,20 +24,17 @@ export const useBackofficeNotificationStore =
 
     fetchUnreadCount: async () => {
       try {
-        const res = await notificationsService.unreadCount();
+        const res = await service.unreadCount();
         set({ unreadCount: res.data.unread_count });
       } catch {
-        // Silently fail — badge just won't update
+        // Silently fail
       }
     },
 
     fetchRecent: async () => {
       set({ isLoading: true });
       try {
-        const res = await notificationsService.list({
-          page: 1,
-          per_page: 5,
-        });
+        const res = await service.list({ page: 1, per_page: 5 });
         set({ recentNotifications: res.data, isLoading: false });
       } catch {
         set({ isLoading: false });
@@ -57,7 +43,7 @@ export const useBackofficeNotificationStore =
 
     markAsRead: async (id: number) => {
       try {
-        await notificationsService.markAsRead(id);
+        await service.markAsRead(id);
         const { recentNotifications, unreadCount } = get();
         set({
           recentNotifications: recentNotifications.map((n) =>
@@ -72,7 +58,7 @@ export const useBackofficeNotificationStore =
 
     markAllAsRead: async () => {
       try {
-        await notificationsService.markAllAsRead();
+        await service.markAllAsRead();
         const { recentNotifications } = get();
         set({
           recentNotifications: recentNotifications.map((n) => ({
@@ -89,7 +75,6 @@ export const useBackofficeNotificationStore =
     toggleDropdown: () => {
       const wasOpen = get().isDropdownOpen;
       set({ isDropdownOpen: !wasOpen });
-      // Fetch recent when opening
       if (!wasOpen) {
         get().fetchRecent();
       }
@@ -97,3 +82,4 @@ export const useBackofficeNotificationStore =
 
     closeDropdown: () => set({ isDropdownOpen: false }),
   }));
+}

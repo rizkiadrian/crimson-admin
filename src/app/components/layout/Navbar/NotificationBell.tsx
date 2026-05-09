@@ -3,9 +3,9 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, CheckCheck, Loader2 } from "lucide-react";
-import { useBackofficeNotificationStore } from "@store/useBackofficeNotificationStore";
-import { useSalesNotificationStore } from "@store/useSalesNotificationStore";
-import { BUSINESSFLOW } from "@config/env";
+import { ROLE_NOTIFICATION_ENDPOINT } from "@config/env";
+import { createNotificationService } from "@services/notifications/notifications.service";
+import { createRoleNotificationStore } from "@store/useRoleNotificationStore";
 import { cn } from "@lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
@@ -24,6 +24,10 @@ function typeLabel(type: string): string {
       return "Status Update";
     case "new_comment":
       return "Komentar Baru";
+    case "deposit_request":
+      return "Deposit";
+    case "referral":
+      return "Referral";
     default:
       return "Notifikasi";
   }
@@ -51,24 +55,21 @@ interface NotificationBellProps {
   roleName: string | null;
 }
 
-/** Resolve the navigation link for a notification.
- *  Uses the explicit `link` field when available, otherwise constructs
- *  a link from `reference_type` + `reference_id` based on role context.
- */
+/** Resolve the navigation link for a notification. */
 function resolveLink(
   notif: {
     link: string | null;
     reference_type: string | null;
     reference_id: number | null;
   },
-  isSales: boolean
+  roleName: string | null
 ): string | null {
   if (notif.link) return notif.link;
 
   if (notif.reference_type && notif.reference_id) {
     switch (notif.reference_type) {
       case "activity_log":
-        return isSales
+        return roleName === "Sales"
           ? `/sales-activities/${notif.reference_id}`
           : `/dashboard/activity-logs/${notif.reference_id}`;
       case "lead":
@@ -81,51 +82,50 @@ function resolveLink(
   return null;
 }
 
+// Cache stores per endpoint to avoid re-creating on every render
+const storeCache = new Map<
+  string,
+  ReturnType<typeof createRoleNotificationStore>
+>();
+
+function getOrCreateStore(endpoint: string) {
+  if (!storeCache.has(endpoint)) {
+    const service = createNotificationService(endpoint);
+    storeCache.set(endpoint, createRoleNotificationStore(service));
+  }
+  return storeCache.get(endpoint)!;
+}
+
 export function NotificationBell({ roleName }: NotificationBellProps) {
   const router = useRouter();
 
-  const isBackoffice = Boolean(
-    roleName && BUSINESSFLOW.backofficeRoles.includes(roleName)
+  const endpoint = roleName ? ROLE_NOTIFICATION_ENDPOINT[roleName] : null;
+  const useStore = useMemo(
+    () => (endpoint ? getOrCreateStore(endpoint) : null),
+    [endpoint]
   );
-  const isSales = Boolean(
-    roleName && BUSINESSFLOW.salesRoles.includes(roleName)
-  );
 
-  // Backoffice store
-  const boStore = useBackofficeNotificationStore();
-  // Sales store
-  const salesStore = useSalesNotificationStore();
-
-  // Pick the right store based on role
-  const store = useMemo(() => {
-    if (isBackoffice) return boStore;
-    if (isSales) return salesStore;
-    return boStore; // fallback
-  }, [isBackoffice, isSales, boStore, salesStore]);
-
-  const {
-    unreadCount,
-    recentNotifications,
-    isDropdownOpen,
-    isLoading,
-    fetchUnreadCount,
-    toggleDropdown,
-    closeDropdown,
-    markAsRead,
-    markAllAsRead,
-  } = store;
+  const fetchUnreadCount = useStore?.((s) => s.fetchUnreadCount);
+  const unreadCount = useStore?.((s) => s.unreadCount) ?? 0;
+  const recentNotifications = useStore?.((s) => s.recentNotifications) ?? [];
+  const isDropdownOpen = useStore?.((s) => s.isDropdownOpen) ?? false;
+  const isLoading = useStore?.((s) => s.isLoading) ?? false;
+  const toggleDropdown = useStore?.((s) => s.toggleDropdown);
+  const markAsRead = useStore?.((s) => s.markAsRead);
+  const markAllAsRead = useStore?.((s) => s.markAllAsRead);
+  const closeDropdown = useStore?.((s) => s.closeDropdown);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Poll unread count every 30 seconds
   useEffect(() => {
-    if (isBackoffice || isSales) {
+    if (fetchUnreadCount) {
       fetchUnreadCount();
       const interval = setInterval(fetchUnreadCount, 30_000);
       return () => clearInterval(interval);
     }
-  }, [fetchUnreadCount, isBackoffice, isSales]);
+  }, [fetchUnreadCount]);
 
   // Close dropdown on outside click
   const handleMouseUp = useCallback(
@@ -136,7 +136,7 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
         buttonRef.current &&
         !buttonRef.current.contains(e.target as Node)
       ) {
-        closeDropdown();
+        closeDropdown?.();
       }
     },
     [closeDropdown]
@@ -149,19 +149,18 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
     }
   }, [isDropdownOpen, handleMouseUp]);
 
-  // "View all" link depends on role
-  const viewAllHref = isSales
-    ? "/sales-activities"
-    : "/dashboard/notifications";
+  if (!endpoint || !toggleDropdown) return null;
+
+  const viewAllHref =
+    roleName === "Sales" ? "/sales-activities" : "/dashboard/notifications";
 
   return (
     <div className="relative">
-      {/* Bell button */}
       <Button
         ref={buttonRef}
         variant="ghost"
         size="icon"
-        onClick={toggleDropdown}
+        onClick={() => toggleDropdown?.()}
         className="rounded-full relative border-none hover:border-none hover:bg-neutral-100 text-neutral-800"
         aria-label="Notifikasi"
       >
@@ -173,13 +172,11 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
         )}
       </Button>
 
-      {/* Dropdown */}
       {isDropdownOpen && (
         <div
           ref={dropdownRef}
           className="absolute right-0 top-full mt-2 w-[360px] bg-white rounded-2xl shadow-xl border border-neutral-200/60 z-50 overflow-hidden"
         >
-          {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-bold text-neutral-900">Notifikasi</h3>
@@ -193,7 +190,7 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={markAllAsRead}
+                onClick={() => markAllAsRead?.()}
                 className="gap-1 h-auto py-1 px-2 text-xs text-tertiary-600 hover:text-tertiary-700 border-none hover:border-none hover:bg-tertiary-50"
               >
                 <CheckCheck size={14} />
@@ -202,7 +199,6 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
             )}
           </div>
 
-          {/* Notification list */}
           <div className="max-h-[360px] overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center py-10">
@@ -219,10 +215,10 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
                   key={notif.id}
                   variant="ghost"
                   onClick={() => {
-                    if (!notif.read_at) markAsRead(notif.id);
-                    const link = resolveLink(notif, isSales);
+                    if (!notif.read_at) markAsRead?.(notif.id);
+                    const link = resolveLink(notif, roleName);
                     if (link) {
-                      closeDropdown();
+                      closeDropdown?.();
                       router.push(link);
                     }
                   }}
@@ -232,7 +228,6 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
                   )}
                 >
                   <div className="flex items-start gap-3 w-full">
-                    {/* Unread dot */}
                     <div className="mt-1.5 shrink-0">
                       <div
                         className={cn(
@@ -280,12 +275,11 @@ export function NotificationBell({ roleName }: NotificationBellProps) {
             )}
           </div>
 
-          {/* Footer */}
           <div className="border-t border-neutral-100 px-5 py-3">
             <Button
               variant="ghost"
               href={viewAllHref}
-              onClick={closeDropdown}
+              onClick={() => closeDropdown?.()}
               className="w-full justify-center h-auto py-1 text-sm text-tertiary-600 hover:text-tertiary-700 border-none hover:border-none hover:bg-transparent"
             >
               Lihat semua notifikasi

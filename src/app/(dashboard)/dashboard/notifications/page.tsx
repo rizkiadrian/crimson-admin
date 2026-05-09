@@ -1,19 +1,20 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, CheckCheck } from "lucide-react";
 import { cn } from "@lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { notificationsService } from "@services/backoffice/notifications";
+import { createNotificationService } from "@services/notifications/notifications.service";
 import type {
   INotification,
   INotificationParams,
-} from "@services/backoffice/notifications";
+} from "@services/notifications";
 import { useTableData } from "@lib/hooks/use-table-data";
-import { useBackofficeNotificationStore } from "@store/useBackofficeNotificationStore";
+import { useUserProfile } from "@store/useUserProfile";
 import { useNotificationStore } from "@store/useNotificationStore";
+import { ROLE_NOTIFICATION_ENDPOINT } from "@config/env";
 import { Button } from "@app/components/ui/Button";
 import {
   TableCard,
@@ -82,11 +83,18 @@ function resolveNotificationLink(notif: INotification): string | null {
 export default function NotificationsPage() {
   const router = useRouter();
   const { showNotification } = useNotificationStore();
-  const { fetchUnreadCount } = useBackofficeNotificationStore();
+  const { profile } = useUserProfile();
+
+  const service = useMemo(() => {
+    const endpoint = profile?.role_name
+      ? ROLE_NOTIFICATION_ENDPOINT[profile.role_name]
+      : "/backoffice/notifications";
+    return createNotificationService(endpoint);
+  }, [profile?.role_name]);
 
   const fetcher = useCallback(
-    (params: INotificationParams) => notificationsService.list(params),
-    []
+    (params: INotificationParams) => service.list(params),
+    [service]
   );
 
   const {
@@ -104,9 +112,8 @@ export default function NotificationsPage() {
 
   const handleMarkAsRead = async (id: number) => {
     try {
-      await notificationsService.markAsRead(id);
+      await service.markAsRead(id);
       refetch();
-      fetchUnreadCount();
     } catch {
       showNotification("Gagal menandai notifikasi sebagai dibaca.", "error");
     }
@@ -114,9 +121,8 @@ export default function NotificationsPage() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      await notificationsService.markAllAsRead();
+      await service.markAllAsRead();
       refetch();
-      fetchUnreadCount();
       showNotification("Semua notifikasi ditandai sudah dibaca.", "success");
     } catch {
       showNotification("Gagal menandai semua notifikasi.", "error");

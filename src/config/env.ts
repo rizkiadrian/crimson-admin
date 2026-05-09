@@ -12,11 +12,12 @@ export const COOKIE_KEYS = {
   roleName: "role_name",
 };
 
-export const BUSINESSFLOW = {
-  backofficeRoles: ["Admin", "Backoffice"],
-  financeRoles: ["Finance"],
-  marketingRoles: ["Marketing"],
-  salesRoles: ["Sales"],
+export const ROLE_NOTIFICATION_ENDPOINT: Record<string, string> = {
+  Admin: "/admin/notifications",
+  Backoffice: "/backoffice/notifications",
+  Finance: "/finance/notifications",
+  Marketing: "/marketing/notifications",
+  Sales: "/sales/notifications",
 };
 
 export const ROLE_DASHBOARD_MAP: Record<string, string> = {
