@@ -2,6 +2,18 @@ const DASHBOARD_SERVICES = {
   dashboard: "/dashboard",
 };
 
+const BACKOFFICE_DASHBOARD_SERVICES = {
+  backofficeDashboard: "/backoffice-dashboard",
+};
+
+const FINANCE_DASHBOARD_SERVICES = {
+  financeDashboard: "/finance-dashboard",
+};
+
+const MARKETING_DASHBOARD_SERVICES = {
+  marketingDashboard: "/marketing-dashboard",
+};
+
 const BACKOFFICEMEMBERS_SERVICES = {
   backofficeMembers: "/dashboard/backoffice-members",
   backofficeMembersCreate: "/dashboard/backoffice-members/create",
@@ -112,6 +124,9 @@ const SALES_DASHBOARD_SERVICES = {
 export const PATHS = {
   login: "/login",
   ...DASHBOARD_SERVICES,
+  ...BACKOFFICE_DASHBOARD_SERVICES,
+  ...FINANCE_DASHBOARD_SERVICES,
+  ...MARKETING_DASHBOARD_SERVICES,
   ...SALES_DASHBOARD_SERVICES,
   ...BACKOFFICEMEMBERS_SERVICES,
   ...CLIENTMEMBERS_SERVICES,

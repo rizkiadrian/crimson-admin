@@ -14,5 +14,15 @@ export const COOKIE_KEYS = {
 
 export const BUSINESSFLOW = {
   backofficeRoles: ["Admin", "Backoffice"],
+  financeRoles: ["Finance"],
+  marketingRoles: ["Marketing"],
   salesRoles: ["Sales"],
+};
+
+export const ROLE_DASHBOARD_MAP: Record<string, string> = {
+  Admin: "/dashboard",
+  Backoffice: "/backoffice-dashboard",
+  Finance: "/finance-dashboard",
+  Marketing: "/marketing-dashboard",
+  Sales: "/sales-dashboard",
 };

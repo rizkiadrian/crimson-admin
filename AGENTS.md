@@ -82,6 +82,9 @@ npm run dev         # Start dev server at localhost:3000
 ## Login Credentials
 
 - URL: `http://localhost:3000/login`
-- Email: `admin@example.com`
-- Password: `Password123`
+- Admin: `admin@example.com` / `Password123`
+- Backoffice: `backoffice1@example.com` / `password123`
+- Finance: `finance1@example.com` / `password123`
+- Marketing: `marketing1@example.com` / `password123`
+- Sales: `sales1@example.com` / `password123`
 <!-- END:lingkar-crm-agent-rules -->

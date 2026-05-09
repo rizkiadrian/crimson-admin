@@ -2,70 +2,113 @@
 import { NextResponse } from "next/server";
 import { PATHS } from "@config/routing";
 import type { NextRequest } from "next/server";
-import { COOKIE_KEYS, ENV, BUSINESSFLOW } from "@config/env";
+import { COOKIE_KEYS, ENV, ROLE_DASHBOARD_MAP } from "@config/env";
+
+/** Paths each role is allowed to access (besides their own dashboard) */
+const ROLE_ALLOWED_PATHS: Record<string, string[]> = {
+  Admin: [
+    "/dashboard",
+    "/backoffice-dashboard",
+    "/finance-dashboard",
+    "/marketing-dashboard",
+  ],
+  Backoffice: [
+    "/backoffice-dashboard",
+    "/dashboard/backoffice-members",
+    "/dashboard/client-members",
+    "/dashboard/mitra-members",
+    "/dashboard/sales-members",
+    "/dashboard/leads",
+    "/dashboard/activity-logs",
+    "/dashboard/service-categories",
+    "/dashboard/notifications",
+  ],
+  Finance: [
+    "/finance-dashboard",
+    "/dashboard/deposit-requests",
+    "/dashboard/notifications",
+  ],
+  Marketing: [
+    "/marketing-dashboard",
+    "/dashboard/banners",
+    "/dashboard/vouchers",
+    "/dashboard/referral-campaigns",
+    "/dashboard/referrals",
+    "/dashboard/articles",
+    "/dashboard/authors",
+    "/dashboard/article-categories",
+    "/dashboard/article-tags",
+    "/dashboard/analytics",
+    "/dashboard/notifications",
+  ],
+  Sales: ["/sales-dashboard", "/sales-activities"],
+};
+
+function isPathAllowed(roleName: string, pathname: string): boolean {
+  // Admin can access all /dashboard/* pages
+  if (roleName === "Admin" && pathname.startsWith("/dashboard")) return true;
+
+  const allowed = ROLE_ALLOWED_PATHS[roleName];
+  if (!allowed) return false;
+
+  return allowed.some(
+    (path) => pathname === path || pathname.startsWith(path + "/")
+  );
+}
+
+function isDashboardPath(pathname: string): boolean {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/backoffice-dashboard") ||
+    pathname.startsWith("/finance-dashboard") ||
+    pathname.startsWith("/marketing-dashboard") ||
+    pathname.startsWith("/sales-dashboard") ||
+    pathname.startsWith("/sales-activities")
+  );
+}
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get(COOKIE_KEYS.accessToken)?.value;
   const { pathname } = request.nextUrl;
 
   // --- 1. HANDLE API PROXY (Inject Token ke Header) ---
-  // Jika request mengarah ke API v1, kita suntikkan token jika ada
   if (pathname.startsWith(ENV.API_PROXY_PATH ?? "")) {
     const requestHeaders = new Headers(request.headers);
-
     if (token) {
       requestHeaders.set("Authorization", `Bearer ${token}`);
     }
-
-    // Teruskan request dengan header yang sudah dimodifikasi
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   // --- 2. HANDLE AUTH REDIRECTION (Proteksi Rute) ---
-  const isDashboardPage =
-    pathname.startsWith(PATHS.dashboard) || pathname === "/";
-  const isSalesPage =
-    pathname.startsWith(PATHS.salesDashboard) ||
-    pathname.startsWith(PATHS.salesActivities);
-
-  if (isDashboardPage || isSalesPage) {
+  if (isDashboardPath(pathname)) {
     if (!token) {
-      const loginUrl = new URL(PATHS.login, request.url);
-      return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(new URL(PATHS.login, request.url));
     }
   }
 
   if (pathname === PATHS.login && token) {
-    return NextResponse.redirect(new URL(PATHS.dashboard, request.url));
+    const roleName = request.cookies.get(COOKIE_KEYS.roleName)?.value;
+    const defaultDashboard =
+      (roleName && ROLE_DASHBOARD_MAP[roleName]) || PATHS.dashboard;
+    return NextResponse.redirect(new URL(defaultDashboard, request.url));
   }
 
   // --- 3. ROLE-BASED ROUTING ---
   const roleName = request.cookies.get(COOKIE_KEYS.roleName)?.value;
 
-  if (roleName && token) {
-    const isSalesUser = BUSINESSFLOW.salesRoles.includes(roleName);
-    const isBackofficeUser = BUSINESSFLOW.backofficeRoles.includes(roleName);
+  if (roleName && token && isDashboardPath(pathname)) {
+    const defaultDashboard = ROLE_DASHBOARD_MAP[roleName] || PATHS.dashboard;
 
-    // Sales mengakses /dashboard atau /dashboard/* → redirect ke /sales-dashboard
-    if (
-      isSalesUser &&
-      (pathname === PATHS.dashboard ||
-        pathname.startsWith(PATHS.dashboard + "/"))
-    ) {
-      return NextResponse.redirect(new URL(PATHS.salesDashboard, request.url));
+    // Redirect root to role's default dashboard
+    if (pathname === "/") {
+      return NextResponse.redirect(new URL(defaultDashboard, request.url));
     }
 
-    // Backoffice mengakses /sales-dashboard atau /sales-activities → redirect ke /dashboard
-    if (
-      isBackofficeUser &&
-      (pathname.startsWith(PATHS.salesDashboard) ||
-        pathname.startsWith(PATHS.salesActivities))
-    ) {
-      return NextResponse.redirect(new URL(PATHS.dashboard, request.url));
+    // Check if user can access this path
+    if (!isPathAllowed(roleName, pathname)) {
+      return NextResponse.redirect(new URL(defaultDashboard, request.url));
     }
   }
 
@@ -74,7 +117,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Tambahkan '/api/v1/:path*' agar middleware juga menangkap rute API tersebut
     "/api/v1/:path*",
     "/((?!_next/static|_next/image|favicon.ico|public).*)",
   ],

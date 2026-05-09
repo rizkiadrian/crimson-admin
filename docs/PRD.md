@@ -6,10 +6,13 @@ Lingkar CRM is the administrative control panel for the Lingkar service marketpl
 
 ### Target Users
 
-| Role       | Access Level       | Description                                                     |
-| ---------- | ------------------ | --------------------------------------------------------------- |
-| Admin      | Full access        | Platform administrators with unrestricted access to all modules |
-| Backoffice | Operational access | Support staff managing day-to-day user operations               |
+| Role       | Access Level       | Description                                                                        |
+| ---------- | ------------------ | ---------------------------------------------------------------------------------- |
+| Admin      | Full access        | Platform administrators with unrestricted access to all modules                    |
+| Backoffice | Operational access | Support staff managing users, leads, sales members, and master data                |
+| Finance    | Finance access     | Finance team managing deposit requests and transaction oversight                   |
+| Marketing  | Marketing access   | Marketing team managing banners, vouchers, referral campaigns, articles, analytics |
+| Sales      | Sales access       | Sales representatives with own dashboard and activity reports                      |
 
 ### Key Capabilities
 

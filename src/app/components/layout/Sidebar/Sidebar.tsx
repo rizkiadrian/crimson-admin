@@ -38,7 +38,6 @@ import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
 import { useSidebarStore } from "@store/useSidebarStore";
 import { useUserProfile } from "@store/useUserProfile";
-import { BUSINESSFLOW } from "@config/env";
 import { logout } from "@actions/auth/auth.actions";
 
 interface NavItem {
@@ -196,23 +195,56 @@ const MARKETING_NAV: NavEntry = {
   ],
 };
 
-const OTHER_NAVS: NavEntry[] = [
-  { label: "Reports", href: "/reports", icon: FileText },
-  { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
-];
-
-const SALES_NAVS: NavEntry[] = [
-  {
-    label: "Sales Dashboard",
-    href: PATHS.salesDashboard,
-    icon: LayoutDashboard,
-  },
-  { label: "Sales Activity Report", href: PATHS.salesActivities, icon: Users2 },
-];
-
-const NAV_ENTRIES: NavEntry[] = [
-  { label: "Dashboard", href: PATHS.dashboard, icon: LayoutDashboard },
-];
+const ROLE_NAV_CONFIG: Record<string, NavEntry[]> = {
+  Admin: [
+    { label: "Dashboard", href: PATHS.dashboard, icon: LayoutDashboard },
+    USER_MANAGEMENT_NAV,
+    SALES_MANAGEMENT_NAV,
+    FINANCE_NAV,
+    MARKETING_NAV,
+    ANALYTICS_NAV,
+    MASTER_DATA_NAV,
+    { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
+  ],
+  Backoffice: [
+    {
+      label: "Dashboard",
+      href: PATHS.backofficeDashboard,
+      icon: LayoutDashboard,
+    },
+    USER_MANAGEMENT_NAV,
+    SALES_MANAGEMENT_NAV,
+    MASTER_DATA_NAV,
+    { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
+  ],
+  Finance: [
+    { label: "Dashboard", href: PATHS.financeDashboard, icon: LayoutDashboard },
+    FINANCE_NAV,
+    { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
+  ],
+  Marketing: [
+    {
+      label: "Dashboard",
+      href: PATHS.marketingDashboard,
+      icon: LayoutDashboard,
+    },
+    MARKETING_NAV,
+    ANALYTICS_NAV,
+    { label: "Notifikasi", href: PATHS.notifications, icon: Bell },
+  ],
+  Sales: [
+    {
+      label: "Sales Dashboard",
+      href: PATHS.salesDashboard,
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Sales Activity Report",
+      href: PATHS.salesActivities,
+      icon: Users2,
+    },
+  ],
+};
 
 /**
  * Collapsible sidebar group with accordion behavior.
@@ -299,22 +331,12 @@ export function Sidebar({ roleName }: SidebarProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const navs = useMemo(() => {
-    if (roleName && BUSINESSFLOW.backofficeRoles.includes(roleName)) {
-      return [
-        ...NAV_ENTRIES,
-        USER_MANAGEMENT_NAV,
-        SALES_MANAGEMENT_NAV,
-        FINANCE_NAV,
-        MARKETING_NAV,
-        ANALYTICS_NAV,
-        MASTER_DATA_NAV,
-        ...OTHER_NAVS,
-      ];
+    if (roleName && ROLE_NAV_CONFIG[roleName]) {
+      return ROLE_NAV_CONFIG[roleName];
     }
-    if (roleName && BUSINESSFLOW.salesRoles.includes(roleName)) {
-      return SALES_NAVS;
-    }
-    return NAV_ENTRIES;
+    return [
+      { label: "Dashboard", href: PATHS.dashboard, icon: LayoutDashboard },
+    ];
   }, [roleName]);
 
   const navLoaded = roleName !== null;

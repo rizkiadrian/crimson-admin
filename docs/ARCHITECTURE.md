@@ -223,12 +223,38 @@ src/
 **Implementation:**
 
 - `setCredentials` server action fetches `GET /auth/me` after login to obtain `role_name`, then stores it in a `role_name` httpOnly cookie alongside `access_token` and `refresh_token`
-- Middleware reads `role_name` from `request.cookies` and performs 307 redirects before the page renders:
-  - Sales → `/dashboard` or `/dashboard/*` → redirect to `/sales-dashboard`
-  - Backoffice → `/sales-dashboard` or `/sales-activities` → redirect to `/dashboard`
-- If `role_name` cookie is missing (e.g., user logged in before this feature), middleware falls back to no role redirect; `useUserProfile` store calls `syncRoleCookie` after profile fetch to populate the cookie for subsequent requests
-- Layout (`layout.tsx`) is an async server component that reads the cookie and passes `roleName` as a prop to `Sidebar`, `Navbar`, and `BackofficeStatus` — eliminating Zustand dependency for role-based UI decisions
+- Middleware reads `role_name` from `request.cookies` and uses `ROLE_DASHBOARD_MAP` + `ROLE_ALLOWED_PATHS` for routing:
+  - Each role has a default dashboard: Admin→`/dashboard`, Backoffice→`/backoffice-dashboard`, Finance→`/finance-dashboard`, Marketing→`/marketing-dashboard`, Sales→`/sales-dashboard`
+  - Each role has a whitelist of allowed paths (e.g., Finance can only access `/dashboard/deposit-requests` and `/dashboard/notifications`)
+  - Admin can access all dashboards except `/sales-dashboard`
+  - Unauthorized path access → redirect to role's default dashboard
+- If `role_name` cookie is missing, middleware falls back to no role redirect; `useUserProfile` store calls `syncRoleCookie` after profile fetch to populate the cookie for subsequent requests
+- Layout (`layout.tsx`) is an async server component that reads the cookie and passes `roleName` as a prop to `Sidebar`, `Navbar`, and `BackofficeStatus`
+- Sidebar uses `ROLE_NAV_CONFIG` map to show only permitted navigation items per role
 - `removeAuth` deletes the `role_name` cookie alongside auth tokens on logout
+
+**Role → Dashboard Routing:**
+
+| Role       | Default Dashboard       | Can Also Access                                                       |
+| ---------- | ----------------------- | --------------------------------------------------------------------- |
+| Admin      | `/dashboard`            | `/backoffice-dashboard`, `/finance-dashboard`, `/marketing-dashboard` |
+| Backoffice | `/backoffice-dashboard` | —                                                                     |
+| Finance    | `/finance-dashboard`    | —                                                                     |
+| Marketing  | `/marketing-dashboard`  | —                                                                     |
+| Sales      | `/sales-dashboard`      | —                                                                     |
+
+**Backend Route Groups (API protection):**
+
+| Group            | Middleware                                | Endpoints                                                         |
+| ---------------- | ----------------------------------------- | ----------------------------------------------------------------- |
+| Shared           | `role:admin,backoffice,finance,marketing` | status, notifications                                             |
+| User Management  | `role:admin,backoffice`                   | backoffice-members, client-members, mitra-members, sales-members  |
+| Sales Management | `role:admin,backoffice`                   | leads, activity-logs                                              |
+| Master Data      | `role:admin,backoffice`                   | service-categories                                                |
+| Finance          | `role:admin,finance`                      | deposit-requests                                                  |
+| Marketing        | `role:admin,marketing`                    | banners, vouchers, referrals, articles, authors, tags, categories |
+| Analytics        | `role:admin,marketing`                    | analytics/\*                                                      |
+| Sales            | `role:sales`                              | sales/\* (fully isolated)                                         |
 
 ### Cookie Schema
 
