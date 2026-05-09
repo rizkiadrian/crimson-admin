@@ -27,7 +27,7 @@ import {
   type IReferralCampaignParams,
   type ReferralCampaignStatus,
   type TargetRole,
-} from "@services/backoffice/referral-campaigns";
+} from "@services/marketing/referral-campaigns";
 import { PATHS } from "@config/routing";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────

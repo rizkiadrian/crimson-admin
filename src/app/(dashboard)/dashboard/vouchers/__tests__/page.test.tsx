@@ -17,7 +17,7 @@ const mockList = vi.fn();
 const mockDelete = vi.fn();
 const mockToggleActive = vi.fn();
 
-vi.mock("@services/backoffice/vouchers", () => ({
+vi.mock("@services/marketing/vouchers", () => ({
   vouchersService: {
     list: (...args: unknown[]) => mockList(...args),
     delete: (...args: unknown[]) => mockDelete(...args),

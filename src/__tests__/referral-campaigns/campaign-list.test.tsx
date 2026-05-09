@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
 const mockList = vi.fn();
 const mockDelete = vi.fn();
 
-vi.mock("@services/backoffice/referral-campaigns", () => ({
+vi.mock("@services/marketing/referral-campaigns", () => ({
   referralCampaignsService: {
     list: (...args: unknown[]) => mockList(...args),
     delete: (...args: unknown[]) => mockDelete(...args),

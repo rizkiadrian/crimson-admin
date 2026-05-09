@@ -17,8 +17,8 @@ import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { PATHS } from "@config/routing";
-import { articleTagsService } from "@services/backoffice/article-tags";
-import type { IArticleTag } from "@services/backoffice/article-tags";
+import { articleTagsService } from "@services/marketing/article-tags";
+import type { IArticleTag } from "@services/marketing/article-tags";
 
 export default function ArticleTagEditPage() {
   const params = useParams();

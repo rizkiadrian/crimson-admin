@@ -14,7 +14,7 @@ import {
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { articleCategoriesService } from "@services/backoffice/article-categories";
+import { articleCategoriesService } from "@services/marketing/article-categories";
 
 export default function ArticleCategoryCreatePage() {
   const router = useRouter();

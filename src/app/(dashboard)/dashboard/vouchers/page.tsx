@@ -35,7 +35,7 @@ import {
   type IVoucherParams,
   type DiscountType,
   type TargetUserType,
-} from "@services/backoffice/vouchers";
+} from "@services/marketing/vouchers";
 import { PATHS } from "@config/routing";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────

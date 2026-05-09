@@ -19,7 +19,7 @@ const mockCreate = vi.fn();
 const mockUpdate = vi.fn();
 const mockDetail = vi.fn();
 
-vi.mock("@services/backoffice/vouchers", () => ({
+vi.mock("@services/marketing/vouchers", () => ({
   vouchersService: {
     create: (...args: unknown[]) => mockCreate(...args),
     update: (...args: unknown[]) => mockUpdate(...args),

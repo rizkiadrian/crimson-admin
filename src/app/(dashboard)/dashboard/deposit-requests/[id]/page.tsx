@@ -27,7 +27,7 @@ import {
   depositRequestsService,
   type IDepositRequest,
   type IUpdateDepositStatusPayload,
-} from "@services/backoffice/deposit-requests";
+} from "@services/finance/deposit-requests";
 
 // ─── Badge Configs ──────────────────────────────────────────────────────────────
 

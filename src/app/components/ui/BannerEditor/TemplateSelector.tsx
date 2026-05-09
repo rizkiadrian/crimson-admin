@@ -6,7 +6,7 @@ import type {
   ITextElement,
   ICtaConfig,
   IBackgroundConfig,
-} from "@services/backoffice/banners/banners.types";
+} from "@services/marketing/banners/banners.types";
 
 /** A banner template with pre-configured text elements, CTA, and background */
 interface BannerTemplate {

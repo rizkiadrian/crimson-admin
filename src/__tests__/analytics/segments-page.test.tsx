@@ -22,7 +22,7 @@ const mockGetSegmentSummary = vi.fn();
 const mockGetSegmentUsers = vi.fn();
 const mockExportSegmentCsv = vi.fn();
 
-vi.mock("@services/backoffice/analytics", () => ({
+vi.mock("@services/marketing/analytics", () => ({
   analyticsService: {
     getSegmentSummary: (...args: unknown[]) => mockGetSegmentSummary(...args),
     getSegmentUsers: (...args: unknown[]) => mockGetSegmentUsers(...args),

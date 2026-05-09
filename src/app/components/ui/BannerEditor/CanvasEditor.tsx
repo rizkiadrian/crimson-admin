@@ -14,7 +14,7 @@ import type {
   IBackgroundConfig,
   ICtaConfig,
   FontWeight,
-} from "@services/backoffice/banners/banners.types";
+} from "@services/marketing/banners/banners.types";
 
 /** Aspect ratio: 2:1 matching mobile banner card (280×140) */
 const ASPECT_RATIO = 2 / 1;

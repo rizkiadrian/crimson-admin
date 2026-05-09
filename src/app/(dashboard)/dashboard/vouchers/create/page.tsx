@@ -15,7 +15,7 @@ import {
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { vouchersService } from "@services/backoffice/vouchers";
+import { vouchersService } from "@services/marketing/vouchers";
 import { serviceCategoriesService } from "@services/backoffice/service-categories";
 import type { IServiceCategory } from "@services/backoffice/service-categories/service-categories.types";
 import type {
@@ -23,7 +23,7 @@ import type {
   TargetUserType,
   DistributionType,
   SegmentType,
-} from "@services/backoffice/vouchers/vouchers.types";
+} from "@services/marketing/vouchers/vouchers.types";
 
 const DISCOUNT_TYPE_OPTIONS = [
   { label: "Percentage", value: "percentage" },

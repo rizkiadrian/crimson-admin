@@ -20,7 +20,7 @@ const mockDetailFn = vi.fn();
 const mockFlag = vi.fn();
 const mockRetryReward = vi.fn();
 
-vi.mock("@services/backoffice/referrals", () => ({
+vi.mock("@services/marketing/referrals", () => ({
   referralsService: {
     list: (...args: unknown[]) => mockList(...args),
     detail: (...args: unknown[]) => mockDetailFn(...args),

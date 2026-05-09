@@ -25,7 +25,7 @@ const mockList = vi.fn();
 const mockDelete = vi.fn();
 const mockUpdateStatus = vi.fn();
 
-vi.mock("@services/backoffice/banners", () => ({
+vi.mock("@services/marketing/banners", () => ({
   bannersService: {
     list: (...args: unknown[]) => mockList(...args),
     delete: (...args: unknown[]) => mockDelete(...args),

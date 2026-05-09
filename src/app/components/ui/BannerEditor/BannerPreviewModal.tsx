@@ -11,7 +11,7 @@ import type {
   ITextElement,
   ICtaConfig,
   FontWeight,
-} from "@services/backoffice/banners/banners.types";
+} from "@services/marketing/banners/banners.types";
 
 /** Duration in ms for the enter/exit animation. */
 const ANIMATION_DURATION = 200;

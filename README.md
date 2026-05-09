@@ -73,7 +73,7 @@ src/
 │   ├── (dashboard)/         # Dashboard pages (backoffice-dashboard, finance-dashboard, marketing-dashboard, backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, deposit-requests, banners, vouchers, referral-campaigns, referrals, sales-activities, analytics/funnel, analytics/segments, analytics/events, service-categories)
 │   └── design-system/       # Live component preview
 ├── lib/hooks/               # useTableData (list + URL sync), useInfiniteScroll (infinite scroll + URL sync), useDetailData (single resource)
-├── services/                # API service layer per domain (backoffice/*, backoffice/backoffice-dashboard, backoffice/finance-dashboard, backoffice/marketing-dashboard, notifications (generic factory), sales/activity-logs, sales/dashboard, shared/comments)
+├── services/                # API service layer per domain (admin/dashboard, backoffice/*, finance/*, marketing/*, notifications (generic factory), sales/*, shared/comments)
 ├── store/                   # Zustand stores (useNotificationStore (toast), useRoleNotificationStore (generic per-role), confirm dialog)
 └── config/                  # Routing paths, environment (ROLE_NOTIFICATION_ENDPOINT, ROLE_DASHBOARD_MAP), cookie keys
 ```

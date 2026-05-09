@@ -43,7 +43,7 @@ import {
   type ISegmentSummary,
   type ISegmentUser,
   type ISegmentUsersParams,
-} from "@services/backoffice/analytics";
+} from "@services/marketing/analytics";
 
 // ─── Stage display config ────────────────────────────────────────────────────
 

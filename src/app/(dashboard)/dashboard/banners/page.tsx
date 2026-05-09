@@ -35,7 +35,7 @@ import {
   IBannerParams,
   BannerType,
   BannerStatus,
-} from "@services/backoffice/banners";
+} from "@services/marketing/banners";
 import { PATHS } from "@config/routing";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────

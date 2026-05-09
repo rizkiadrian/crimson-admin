@@ -43,7 +43,7 @@ vi.mock("recharts", () => ({
 const mockGetFunnelStats = vi.fn();
 const mockGetFunnelTrends = vi.fn();
 
-vi.mock("@services/backoffice/analytics", () => ({
+vi.mock("@services/marketing/analytics", () => ({
   analyticsService: {
     getFunnelStats: (...args: unknown[]) => mockGetFunnelStats(...args),
     getFunnelTrends: (...args: unknown[]) => mockGetFunnelTrends(...args),

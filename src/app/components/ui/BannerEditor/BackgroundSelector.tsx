@@ -10,7 +10,7 @@ import type {
   IBackgroundConfig,
   BackgroundType,
   GradientDirection,
-} from "@services/backoffice/banners/banners.types";
+} from "@services/marketing/banners/banners.types";
 
 /** Solid color presets */
 const SOLID_PRESETS: string[] = [

@@ -15,11 +15,11 @@ import { SearchInput } from "@app/components/ui/SearchInput";
 import { useTableData } from "@lib/hooks/use-table-data";
 import { useConfirmStore } from "@store/useConfirmStore";
 import { useNotificationStore } from "@store/useNotificationStore";
-import { articleTagsService } from "@services/backoffice/article-tags";
+import { articleTagsService } from "@services/marketing/article-tags";
 import type {
   IArticleTag,
   IArticleTagParams,
-} from "@services/backoffice/article-tags";
+} from "@services/marketing/article-tags";
 import { PATHS } from "@config/routing";
 
 const formatDate = (date: string): string =>

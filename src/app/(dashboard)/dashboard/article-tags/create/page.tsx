@@ -14,7 +14,7 @@ import {
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { articleTagsService } from "@services/backoffice/article-tags";
+import { articleTagsService } from "@services/marketing/article-tags";
 
 export default function ArticleTagCreatePage() {
   const router = useRouter();

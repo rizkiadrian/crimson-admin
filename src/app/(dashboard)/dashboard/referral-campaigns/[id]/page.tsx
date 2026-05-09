@@ -20,13 +20,13 @@ import {
 } from "@app/components/ui/FormCard";
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { PATHS } from "@config/routing";
-import { referralCampaignsService } from "@services/backoffice/referral-campaigns";
-import { referralAnalyticsService } from "@services/backoffice/referrals";
+import { referralCampaignsService } from "@services/marketing/referral-campaigns";
+import { referralAnalyticsService } from "@services/marketing/referrals";
 import type {
   IReferralCampaignDetail,
   ReferralCampaignStatus,
-} from "@services/backoffice/referral-campaigns";
-import type { IReferralOverview } from "@services/backoffice/referrals";
+} from "@services/marketing/referral-campaigns";
+import type { IReferralOverview } from "@services/marketing/referrals";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 

@@ -16,13 +16,13 @@ import {
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { bannersService } from "@services/backoffice/banners";
+import { bannersService } from "@services/marketing/banners";
 import type {
   BannerType,
   ITextElement,
   IBackgroundConfig,
   ICtaConfig,
-} from "@services/backoffice/banners/banners.types";
+} from "@services/marketing/banners/banners.types";
 import {
   BackgroundSelector,
   CanvasEditor,

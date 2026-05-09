@@ -21,7 +21,7 @@ import {
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { referralsService } from "@services/backoffice/referrals";
+import { referralsService } from "@services/marketing/referrals";
 import type {
   IReferralDetail,
   IReferralReward,
@@ -29,7 +29,7 @@ import type {
   RewardStatus,
   RecipientType,
   RewardType,
-} from "@services/backoffice/referrals";
+} from "@services/marketing/referrals";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 

@@ -21,7 +21,7 @@ const mockArticlesDetail = vi.fn();
 const mockArticlesCreate = vi.fn();
 const mockArticlesUploadImage = vi.fn();
 
-vi.mock("@services/backoffice/articles", () => ({
+vi.mock("@services/marketing/articles", () => ({
   articlesService: {
     list: (...args: unknown[]) => mockArticlesList(...args),
     delete: (...args: unknown[]) => mockArticlesDelete(...args),
@@ -37,7 +37,7 @@ vi.mock("@services/backoffice/articles", () => ({
 }));
 
 const mockAuthorsList = vi.fn();
-vi.mock("@services/backoffice/authors", () => ({
+vi.mock("@services/marketing/authors", () => ({
   authorsService: {
     list: (...args: unknown[]) => mockAuthorsList(...args),
     detail: vi.fn(),
@@ -48,7 +48,7 @@ vi.mock("@services/backoffice/authors", () => ({
 }));
 
 const mockCategoriesList = vi.fn();
-vi.mock("@services/backoffice/article-categories", () => ({
+vi.mock("@services/marketing/article-categories", () => ({
   articleCategoriesService: {
     list: (...args: unknown[]) => mockCategoriesList(...args),
     detail: vi.fn(),
@@ -59,7 +59,7 @@ vi.mock("@services/backoffice/article-categories", () => ({
 }));
 
 const mockTagsList = vi.fn();
-vi.mock("@services/backoffice/article-tags", () => ({
+vi.mock("@services/marketing/article-tags", () => ({
   articleTagsService: {
     list: (...args: unknown[]) => mockTagsList(...args),
     detail: vi.fn(),

@@ -508,7 +508,7 @@ new → contacted → qualified → proposal → negotiation → won
 ### FM-10: Deposit Request Management
 
 **Route:** `/dashboard/deposit-requests` (list), `/dashboard/deposit-requests/[id]` (detail)
-**API Base:** `/api/v1/backoffice/deposit-requests`
+**API Base:** `/api/v1/finance/deposit-requests`
 **Priority:** P2 — Finance
 
 | ID       | Feature              | Status  | Description                                                                                                                                                                                                                                                            |
@@ -564,7 +564,7 @@ pending → approved (wallet credited, transaction logged)
 ### FM-11: Banner Management
 
 **Route:** `/dashboard/banners` (list), `/dashboard/banners/create` (create), `/dashboard/banners/[id]/edit` (edit)
-**API Base:** `/api/v1/backoffice/banners`
+**API Base:** `/api/v1/marketing/banners`
 **Priority:** P2 — Content
 
 | ID       | Feature              | Status  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -639,7 +639,7 @@ pending → approved (wallet credited, transaction logged)
 ### FM-12: User Journey Funnel
 
 **Route:** `/dashboard/analytics/funnel` (funnel), `/dashboard/analytics/segments` (segments), `/dashboard/analytics/events` (event log)
-**API Base:** `/api/v1/backoffice/analytics`
+**API Base:** `/api/v1/marketing/analytics`
 **Priority:** P2 — Analytics
 
 | ID       | Feature                 | Status  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -648,7 +648,7 @@ pending → approved (wallet credited, transaction logged)
 | FM-12-02 | User Segments page      | ✅ Done | Top section with Total Users summary card + DonutChart showing stage distribution. Redesigned stage cards with unique icons per stage (UserPlus, UserCheck, Wallet, Zap, Moon, UserX), colored progress bars, hover animations, click-to-deselect (clicking same stage hides table). `SegmentUsersTable` sub-component mounts only when stage is selected. Paginated user table via `useTableData`. Filter controls: registration date range, last active date range. CSV export button. URL-synced: stage, pagination, filters                      |
 | FM-12-03 | Event Log page          | ✅ Done | Paginated table via `useTableData`. SearchInput for user name/email. FilterPopup with event type dropdown and date range. Columns: User, Event Type (badge), Timestamp, Metadata (`MetadataPopover` component — truncated metadata >50 chars shown as clickable primary-colored link with dotted underline, popover shows full formatted JSON with "METADATA" header, copy-to-clipboard button, close button, smart positioning above/below based on viewport space, closes on click outside or Escape key). URL-synced: search, filters, pagination |
 | FM-12-04 | Dashboard widget        | ✅ Done | StatCard on backoffice dashboard showing "Active Users" count with conversion rate percentage description. Uses `TrendingUp` icon with success variant                                                                                                                                                                                                                                                                                                                                                                                               |
-| FM-12-05 | Analytics service layer | ✅ Done | Typed service at `src/services/backoffice/analytics/` with interfaces (IFunnelStats, IFunnelTrends, ISegmentSummary, ISegmentUser, IUserEvent) and service functions (getFunnelStats, getFunnelTrends, getSegmentSummary, getSegmentUsers, exportSegmentCsv, getEventLog)                                                                                                                                                                                                                                                                            |
+| FM-12-05 | Analytics service layer | ✅ Done | Typed service at `src/services/marketing/analytics/` with interfaces (IFunnelStats, IFunnelTrends, ISegmentSummary, ISegmentUser, IUserEvent) and service functions (getFunnelStats, getFunnelTrends, getSegmentSummary, getSegmentUsers, exportSegmentCsv, getEventLog)                                                                                                                                                                                                                                                                             |
 | FM-12-06 | Sidebar navigation      | ✅ Done | "Analytics" accordion group (after Finance) with items: Funnel Overview (TrendingUp icon), User Segments (Users icon), Event Log (ScrollText icon)                                                                                                                                                                                                                                                                                                                                                                                                   |
 | FM-12-07 | Routing                 | ✅ Done | `ANALYTICS_SERVICES` paths: `analyticsFunnel`, `analyticsSegments`, `analyticsEvents` in centralized `PATHS` object                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
@@ -767,7 +767,7 @@ dormant/churned → active (any lifecycle event re-activates)
 ### FM-14c: Voucher Management
 
 **Route:** `/dashboard/vouchers` (list), `/dashboard/vouchers/create` (create), `/dashboard/vouchers/[id]/edit` (edit), `/dashboard/vouchers/[id]` (detail)
-**API Base:** `/api/v1/backoffice/vouchers`
+**API Base:** `/api/v1/marketing/vouchers`
 **Priority:** P2 — Marketing
 
 | ID        | Feature              | Status  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -778,7 +778,7 @@ dormant/churned → active (any lifecycle event re-activates)
 | FM-14c-04 | Detail page          | ✅ Done | DetailCard with all voucher config fields (read-only). Usage stats summary (used_count/quota, redemption rate). Assigned Users table (user name, assigned_at, status badge used/unused, usage_count). Assign to User button opens modal with user picker                                                                                                                                                                                         |
 | FM-14c-05 | Status toggle        | ✅ Done | Inline toggle per row via vouchersService.toggleActive. PATCH endpoint toggles is_active                                                                                                                                                                                                                                                                                                                                                         |
 | FM-14c-06 | User assignment      | ✅ Done | Assign to User modal on detail page. User picker with search. POST to /vouchers/{id}/assign with user_ids array. Duplicate assignment returns 422                                                                                                                                                                                                                                                                                                |
-| FM-14c-07 | Service layer        | ✅ Done | Typed service at src/services/backoffice/vouchers/ with vouchersService: list, detail, create, update, delete, toggleActive, assign. Types: IVoucher, IVoucherUser, IVoucherTargetSegment, IVoucherParams, DiscountType, TargetUserType, DistributionType, SegmentType                                                                                                                                                                           |
+| FM-14c-07 | Service layer        | ✅ Done | Typed service at src/services/marketing/vouchers/ with vouchersService: list, detail, create, update, delete, toggleActive, assign. Types: IVoucher, IVoucherUser, IVoucherTargetSegment, IVoucherParams, DiscountType, TargetUserType, DistributionType, SegmentType                                                                                                                                                                            |
 | FM-14c-08 | Sidebar navigation   | ✅ Done | Marketing accordion group (renamed from Content) with Banners and Vouchers items. Vouchers uses Ticket icon                                                                                                                                                                                                                                                                                                                                      |
 | FM-14c-09 | Routing              | ✅ Done | VOUCHER_SERVICES paths: vouchers, voucherCreate, voucherEdit, voucherDetail in centralized PATHS object                                                                                                                                                                                                                                                                                                                                          |
 
@@ -819,15 +819,15 @@ dormant/churned → active (any lifecycle event re-activates)
 
 **API Endpoints:**
 
-| Method | Endpoint                                  | Request Body                                            | Response                              |
-| ------ | ----------------------------------------- | ------------------------------------------------------- | ------------------------------------- |
-| GET    | `/backoffice/vouchers?page=N&per_page=N`  | —                                                       | Paginated list with `meta.pagination` |
-| POST   | `/backoffice/vouchers`                    | `{ name, code?, discount_type, target_user_type, ... }` | Created voucher                       |
-| GET    | `/backoffice/vouchers/{id}`               | —                                                       | Voucher detail with usage stats       |
-| PUT    | `/backoffice/vouchers/{id}`               | All fields optional                                     | Updated voucher                       |
-| DELETE | `/backoffice/vouchers/{id}`               | —                                                       | `null` (soft delete)                  |
-| PATCH  | `/backoffice/vouchers/{id}/toggle-active` | —                                                       | Updated voucher                       |
-| POST   | `/backoffice/vouchers/{id}/assign`        | `{ user_ids: [1, 2, 3] }`                               | Success response                      |
+| Method | Endpoint                                 | Request Body                                            | Response                              |
+| ------ | ---------------------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| GET    | `/marketing/vouchers?page=N&per_page=N`  | —                                                       | Paginated list with `meta.pagination` |
+| POST   | `/marketing/vouchers`                    | `{ name, code?, discount_type, target_user_type, ... }` | Created voucher                       |
+| GET    | `/marketing/vouchers/{id}`               | —                                                       | Voucher detail with usage stats       |
+| PUT    | `/marketing/vouchers/{id}`               | All fields optional                                     | Updated voucher                       |
+| DELETE | `/marketing/vouchers/{id}`               | —                                                       | `null` (soft delete)                  |
+| PATCH  | `/marketing/vouchers/{id}/toggle-active` | —                                                       | Updated voucher                       |
+| POST   | `/marketing/vouchers/{id}/assign`        | `{ user_ids: [1, 2, 3] }`                               | Success response                      |
 
 **Acceptance Criteria:**
 
@@ -854,7 +854,7 @@ dormant/churned → active (any lifecycle event re-activates)
 ### FM-15: Referral Program
 
 **Route:** `/dashboard/referral-campaigns`, `/dashboard/referrals`
-**API Base:** `/api/v1/backoffice/referral-campaigns`, `/api/v1/backoffice/referrals`, `/api/v1/backoffice/referral-analytics`
+**API Base:** `/api/v1/marketing/referral-campaigns`, `/api/v1/marketing/referrals`, `/api/v1/marketing/referral-analytics`
 **Priority:** P2 — Growth
 
 | ID       | Feature         | Status  | Description                                                                                                                                                         |
@@ -897,21 +897,21 @@ dormant/churned → active (any lifecycle event re-activates)
 
 **API Endpoints:**
 
-| Method | Endpoint                                           | Description                               |
-| ------ | -------------------------------------------------- | ----------------------------------------- |
-| GET    | `/backoffice/referral-campaigns`                   | Paginated campaign list with filters      |
-| POST   | `/backoffice/referral-campaigns`                   | Create campaign with milestones + tiers   |
-| GET    | `/backoffice/referral-campaigns/{id}`              | Campaign detail with milestones and tiers |
-| PUT    | `/backoffice/referral-campaigns/{id}`              | Update campaign                           |
-| DELETE | `/backoffice/referral-campaigns/{id}`              | Soft delete campaign                      |
-| PATCH  | `/backoffice/referral-campaigns/{id}/status`       | Update campaign status                    |
-| GET    | `/backoffice/referrals`                            | Paginated referral list with filters      |
-| GET    | `/backoffice/referrals/{id}`                       | Referral detail with milestone progress   |
-| PATCH  | `/backoffice/referrals/{id}/flag`                  | Flag referral with reason                 |
-| PATCH  | `/backoffice/referral-rewards/{id}/retry`          | Retry failed reward disbursement          |
-| GET    | `/backoffice/referral-analytics/overview`          | Analytics overview stats                  |
-| GET    | `/backoffice/referral-analytics/leaderboard`       | Top referrers leaderboard                 |
-| GET    | `/backoffice/referral-analytics/tier-distribution` | Tier distribution for campaign            |
+| Method | Endpoint                                          | Description                               |
+| ------ | ------------------------------------------------- | ----------------------------------------- |
+| GET    | `/marketing/referral-campaigns`                   | Paginated campaign list with filters      |
+| POST   | `/marketing/referral-campaigns`                   | Create campaign with milestones + tiers   |
+| GET    | `/marketing/referral-campaigns/{id}`              | Campaign detail with milestones and tiers |
+| PUT    | `/marketing/referral-campaigns/{id}`              | Update campaign                           |
+| DELETE | `/marketing/referral-campaigns/{id}`              | Soft delete campaign                      |
+| PATCH  | `/marketing/referral-campaigns/{id}/status`       | Update campaign status                    |
+| GET    | `/marketing/referrals`                            | Paginated referral list with filters      |
+| GET    | `/marketing/referrals/{id}`                       | Referral detail with milestone progress   |
+| PATCH  | `/marketing/referrals/{id}/flag`                  | Flag referral with reason                 |
+| PATCH  | `/marketing/referral-rewards/{id}/retry`          | Retry failed reward disbursement          |
+| GET    | `/marketing/referral-analytics/overview`          | Analytics overview stats                  |
+| GET    | `/marketing/referral-analytics/leaderboard`       | Top referrers leaderboard                 |
+| GET    | `/marketing/referral-analytics/tier-distribution` | Tier distribution for campaign            |
 
 **Acceptance Criteria:**
 
@@ -967,33 +967,33 @@ Published → Draft (unpublish)
 
 ### API Endpoints
 
-| Method | Endpoint                             | Description         |
-| ------ | ------------------------------------ | ------------------- |
-| GET    | `/backoffice/authors`                | List authors        |
-| POST   | `/backoffice/authors`                | Create author       |
-| GET    | `/backoffice/authors/:id`            | Author detail       |
-| PUT    | `/backoffice/authors/:id`            | Update author       |
-| DELETE | `/backoffice/authors/:id`            | Delete author       |
-| GET    | `/backoffice/article-categories`     | List categories     |
-| POST   | `/backoffice/article-categories`     | Create category     |
-| GET    | `/backoffice/article-categories/:id` | Category detail     |
-| PUT    | `/backoffice/article-categories/:id` | Update category     |
-| DELETE | `/backoffice/article-categories/:id` | Delete category     |
-| GET    | `/backoffice/article-tags`           | List tags           |
-| POST   | `/backoffice/article-tags`           | Create tag          |
-| GET    | `/backoffice/article-tags/:id`       | Tag detail          |
-| PUT    | `/backoffice/article-tags/:id`       | Update tag          |
-| DELETE | `/backoffice/article-tags/:id`       | Delete tag          |
-| GET    | `/backoffice/articles`               | List articles       |
-| POST   | `/backoffice/articles`               | Create article      |
-| GET    | `/backoffice/articles/:id`           | Article detail      |
-| PUT    | `/backoffice/articles/:id`           | Update article      |
-| DELETE | `/backoffice/articles/:id`           | Delete article      |
-| POST   | `/backoffice/articles/:id/publish`   | Publish             |
-| POST   | `/backoffice/articles/:id/unpublish` | Unpublish           |
-| POST   | `/backoffice/articles/:id/archive`   | Archive             |
-| POST   | `/backoffice/articles/:id/schedule`  | Schedule            |
-| POST   | `/backoffice/articles/upload-image`  | Upload inline image |
+| Method | Endpoint                            | Description         |
+| ------ | ----------------------------------- | ------------------- |
+| GET    | `/marketing/authors`                | List authors        |
+| POST   | `/marketing/authors`                | Create author       |
+| GET    | `/marketing/authors/:id`            | Author detail       |
+| PUT    | `/marketing/authors/:id`            | Update author       |
+| DELETE | `/marketing/authors/:id`            | Delete author       |
+| GET    | `/marketing/article-categories`     | List categories     |
+| POST   | `/marketing/article-categories`     | Create category     |
+| GET    | `/marketing/article-categories/:id` | Category detail     |
+| PUT    | `/marketing/article-categories/:id` | Update category     |
+| DELETE | `/marketing/article-categories/:id` | Delete category     |
+| GET    | `/marketing/article-tags`           | List tags           |
+| POST   | `/marketing/article-tags`           | Create tag          |
+| GET    | `/marketing/article-tags/:id`       | Tag detail          |
+| PUT    | `/marketing/article-tags/:id`       | Update tag          |
+| DELETE | `/marketing/article-tags/:id`       | Delete tag          |
+| GET    | `/marketing/articles`               | List articles       |
+| POST   | `/marketing/articles`               | Create article      |
+| GET    | `/marketing/articles/:id`           | Article detail      |
+| PUT    | `/marketing/articles/:id`           | Update article      |
+| DELETE | `/marketing/articles/:id`           | Delete article      |
+| POST   | `/marketing/articles/:id/publish`   | Publish             |
+| POST   | `/marketing/articles/:id/unpublish` | Unpublish           |
+| POST   | `/marketing/articles/:id/archive`   | Archive             |
+| POST   | `/marketing/articles/:id/schedule`  | Schedule            |
+| POST   | `/marketing/articles/upload-image`  | Upload inline image |
 
 ### Acceptance Criteria
 

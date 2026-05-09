@@ -18,8 +18,8 @@ import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { PATHS } from "@config/routing";
-import { authorsService } from "@services/backoffice/authors";
-import type { IAuthor } from "@services/backoffice/authors";
+import { authorsService } from "@services/marketing/authors";
+import type { IAuthor } from "@services/marketing/authors";
 
 export default function AuthorEditPage() {
   const params = useParams();

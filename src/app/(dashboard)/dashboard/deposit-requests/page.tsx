@@ -24,7 +24,7 @@ import {
   depositRequestsService,
   IDepositRequest,
   IDepositRequestParams,
-} from "@services/backoffice/deposit-requests";
+} from "@services/finance/deposit-requests";
 import { PATHS } from "@config/routing";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────

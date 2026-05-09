@@ -16,14 +16,14 @@ import {
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { referralCampaignsService } from "@services/backoffice/referral-campaigns";
-import { vouchersService } from "@services/backoffice/vouchers";
+import { referralCampaignsService } from "@services/marketing/referral-campaigns";
+import { vouchersService } from "@services/marketing/vouchers";
 import type {
   RewardType,
   TargetRole,
   IReferralMilestonePayload,
   IReferralTierPayload,
-} from "@services/backoffice/referral-campaigns";
+} from "@services/marketing/referral-campaigns";
 
 // ─── Options ────────────────────────────────────────────────────────────────────
 

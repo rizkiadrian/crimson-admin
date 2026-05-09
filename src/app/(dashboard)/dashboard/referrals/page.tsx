@@ -26,7 +26,7 @@ import {
   type IReferral,
   type IReferralParams,
   type ReferralStatus,
-} from "@services/backoffice/referrals";
+} from "@services/marketing/referrals";
 import { PATHS } from "@config/routing";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { FormInput } from "@app/components/ui/FormInput";
 import { Button } from "@app/components/ui/Button";
-import type { ICtaConfig } from "@services/backoffice/banners/banners.types";
+import type { ICtaConfig } from "@services/marketing/banners/banners.types";
 
 /** Default CTA config when enabling the CTA button */
 const DEFAULT_CTA_CONFIG: ICtaConfig = {

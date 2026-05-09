@@ -14,7 +14,7 @@ import {
 import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { authorsService } from "@services/backoffice/authors";
+import { authorsService } from "@services/marketing/authors";
 
 export default function AuthorCreatePage() {
   const router = useRouter();

@@ -21,14 +21,14 @@ import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { PATHS } from "@config/routing";
-import { articlesService } from "@services/backoffice/articles";
-import { authorsService } from "@services/backoffice/authors";
-import { articleCategoriesService } from "@services/backoffice/article-categories";
-import { articleTagsService } from "@services/backoffice/article-tags";
-import type { IArticle } from "@services/backoffice/articles";
-import type { IAuthor } from "@services/backoffice/authors";
-import type { IArticleCategory } from "@services/backoffice/article-categories";
-import type { IArticleTag } from "@services/backoffice/article-tags";
+import { articlesService } from "@services/marketing/articles";
+import { authorsService } from "@services/marketing/authors";
+import { articleCategoriesService } from "@services/marketing/article-categories";
+import { articleTagsService } from "@services/marketing/article-tags";
+import type { IArticle } from "@services/marketing/articles";
+import type { IAuthor } from "@services/marketing/authors";
+import type { IArticleCategory } from "@services/marketing/article-categories";
+import type { IArticleTag } from "@services/marketing/article-tags";
 
 export default function ArticleEditPage() {
   const params = useParams();

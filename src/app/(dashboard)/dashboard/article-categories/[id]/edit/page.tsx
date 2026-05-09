@@ -17,8 +17,8 @@ import { handleFormError } from "@lib/utils";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { PATHS } from "@config/routing";
-import { articleCategoriesService } from "@services/backoffice/article-categories";
-import type { IArticleCategory } from "@services/backoffice/article-categories";
+import { articleCategoriesService } from "@services/marketing/article-categories";
+import type { IArticleCategory } from "@services/marketing/article-categories";
 
 export default function ArticleCategoryEditPage() {
   const params = useParams();

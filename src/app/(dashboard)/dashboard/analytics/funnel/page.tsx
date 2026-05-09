@@ -33,7 +33,7 @@ import {
   type IFunnelStats,
   type IFunnelTrends,
   type IFunnelParams,
-} from "@services/backoffice/analytics";
+} from "@services/marketing/analytics";
 
 // ─── Stage display config ────────────────────────────────────────────────────
 

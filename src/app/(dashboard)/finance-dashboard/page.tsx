@@ -18,7 +18,7 @@ import { useDetailData } from "@lib/hooks/use-detail-data";
 import {
   financeDashboardService,
   IFinanceDashboardData,
-} from "@services/backoffice/finance-dashboard";
+} from "@services/finance/dashboard";
 
 export default function FinanceDashboardPage() {
   const { profile, isLoading: isProfileLoading } = useUserProfile();

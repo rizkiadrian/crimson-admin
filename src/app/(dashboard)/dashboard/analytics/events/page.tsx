@@ -24,7 +24,7 @@ import {
   analyticsService,
   type IUserEvent,
   type IEventLogParams,
-} from "@services/backoffice/analytics";
+} from "@services/marketing/analytics";
 
 // ─── Event type display config ───────────────────────────────────────────────
 

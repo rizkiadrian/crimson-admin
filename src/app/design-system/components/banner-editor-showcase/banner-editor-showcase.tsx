@@ -16,7 +16,7 @@ import type {
   ITextElement,
   IBackgroundConfig,
   ICtaConfig,
-} from "@services/backoffice/banners/banners.types";
+} from "@services/marketing/banners/banners.types";
 
 // ─── Default State ──────────────────────────────────────────────────────────────
 

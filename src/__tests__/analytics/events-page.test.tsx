@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
 // Mock analytics service
 const mockGetEventLog = vi.fn();
 
-vi.mock("@services/backoffice/analytics", () => ({
+vi.mock("@services/marketing/analytics", () => ({
   analyticsService: {
     getEventLog: (...args: unknown[]) => mockGetEventLog(...args),
   },

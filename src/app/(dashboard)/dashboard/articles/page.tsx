@@ -29,12 +29,12 @@ import {
 import { useTableData } from "@lib/hooks/use-table-data";
 import { useConfirmStore } from "@store/useConfirmStore";
 import { useNotificationStore } from "@store/useNotificationStore";
-import { articlesService } from "@services/backoffice/articles";
+import { articlesService } from "@services/marketing/articles";
 import type {
   IArticle,
   IArticleParams,
   ArticleStatus,
-} from "@services/backoffice/articles";
+} from "@services/marketing/articles";
 import { PATHS } from "@config/routing";
 
 const formatDate = (date: string): string =>

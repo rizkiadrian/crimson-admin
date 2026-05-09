@@ -18,7 +18,7 @@ import { useDetailData } from "@lib/hooks/use-detail-data";
 import {
   marketingDashboardService,
   IMarketingDashboardData,
-} from "@services/backoffice/marketing-dashboard";
+} from "@services/marketing/dashboard";
 
 export default function MarketingDashboardPage() {
   const { profile, isLoading: isProfileLoading } = useUserProfile();

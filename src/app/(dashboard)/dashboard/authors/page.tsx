@@ -16,8 +16,8 @@ import { SearchInput } from "@app/components/ui/SearchInput";
 import { useTableData } from "@lib/hooks/use-table-data";
 import { useConfirmStore } from "@store/useConfirmStore";
 import { useNotificationStore } from "@store/useNotificationStore";
-import { authorsService } from "@services/backoffice/authors";
-import type { IAuthor, IAuthorParams } from "@services/backoffice/authors";
+import { authorsService } from "@services/marketing/authors";
+import type { IAuthor, IAuthorParams } from "@services/marketing/authors";
 import { PATHS } from "@config/routing";
 
 const formatDate = (date: string): string =>

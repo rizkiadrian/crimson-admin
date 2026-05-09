@@ -22,11 +22,11 @@ import {
 import { useDetailData } from "@lib/hooks/use-detail-data";
 import { useNotificationStore } from "@store/useNotificationStore";
 import { PATHS } from "@config/routing";
-import { vouchersService } from "@services/backoffice/vouchers";
+import { vouchersService } from "@services/marketing/vouchers";
 import type {
   IVoucher,
   IVoucherUser,
-} from "@services/backoffice/vouchers/vouchers.types";
+} from "@services/marketing/vouchers/vouchers.types";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 

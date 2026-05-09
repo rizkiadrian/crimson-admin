@@ -8,7 +8,7 @@ import { Button } from "@app/components/ui/Button";
 import type {
   ITextElement,
   FontWeight,
-} from "@services/backoffice/banners/banners.types";
+} from "@services/marketing/banners/banners.types";
 
 const FONT_WEIGHT_OPTIONS = [
   { label: "Normal", value: "normal" },

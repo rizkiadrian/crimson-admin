@@ -24,10 +24,7 @@ import {
 } from "@app/components/ui/FormCard";
 import { Badge } from "@app/components/ui/Table";
 import { useDetailData } from "@lib/hooks/use-detail-data";
-import {
-  dashboardService,
-  IDashboardData,
-} from "@services/backoffice/dashboard";
+import { dashboardService, IDashboardData } from "@services/admin/dashboard";
 import { getNameInitials } from "@lib/utils";
 
 export default function DashboardPage() {
