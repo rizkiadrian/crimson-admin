@@ -38,6 +38,8 @@ const ROLE_ALLOWED_PATHS: Record<string, string[]> = {
     "/dashboard/authors",
     "/dashboard/article-categories",
     "/dashboard/article-tags",
+    "/dashboard/event-registry",
+    "/dashboard/popup-promotions",
     "/dashboard/analytics",
     "/dashboard/notifications",
   ],

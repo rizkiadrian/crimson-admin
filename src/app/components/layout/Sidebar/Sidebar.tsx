@@ -33,6 +33,8 @@ import {
   Newspaper,
   UserPen,
   Tag,
+  Zap,
+  Layers,
 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { PATHS } from "@config/routing";
@@ -192,6 +194,16 @@ const MARKETING_NAV: NavEntry = {
       href: PATHS.articleTags,
       icon: Tag,
     },
+    {
+      label: "Event Registry",
+      href: PATHS.eventRegistry,
+      icon: Zap,
+    },
+    {
+      label: "Popup Promotions",
+      href: PATHS.popupPromotions,
+      icon: Layers,
+    },
   ],
 };
 
@@ -291,7 +303,7 @@ function SidebarGroup({
       <div
         className={cn(
           "overflow-hidden transition-all duration-200 ease-out",
-          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
         <div className="ml-4 pl-4 border-l border-neutral-200 space-y-0.5 py-1">

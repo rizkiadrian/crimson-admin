@@ -19,7 +19,7 @@ export function FormCard({ children, className }: FormCardProps) {
   return (
     <div
       className={cn(
-        "bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-hidden",
+        "bg-bg-card rounded-4xl shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)] border border-border-subtle overflow-visible",
         className
       )}
     >

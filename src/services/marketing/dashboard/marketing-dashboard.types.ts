@@ -25,10 +25,17 @@ export interface ITopReferrer {
   referral_count: number;
 }
 
+export interface IMarketingPopupStats {
+  active_count: number;
+  total_impressions: number;
+  conversions_this_month: number;
+}
+
 export interface IMarketingDashboardData {
   campaigns: IMarketingCampaignStats;
   vouchers: IMarketingVoucherStats;
   articles: IMarketingArticleStats;
+  popups: IMarketingPopupStats;
   funnel_summary: IFunnelSummary;
   top_referrers: ITopReferrer[];
 }

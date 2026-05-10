@@ -1009,6 +1009,66 @@ Published → Draft (unpublish)
 - [x] SEO fields (meta_title, meta_description)
 - [x] Featured article flag
 
+---
+
+### FM-19: Event Registry
+
+**Route:** `/dashboard/event-registry`
+**API Base:** `/api/v1/marketing/event-registry`
+**Priority:** P2 — Marketing
+
+| ID       | Feature             | Status  | Description                                      |
+| -------- | ------------------- | ------- | ------------------------------------------------ |
+| FM-19-01 | List events         | ✅ Done | System + custom events with type/category badges |
+| FM-19-02 | Create custom event | ✅ Done | Key (snake_case), label, category, description   |
+| FM-19-03 | Edit custom event   | ✅ Done | System events are read-only                      |
+| FM-19-04 | Delete custom event | ✅ Done | Only custom events can be deleted                |
+
+**Acceptance Criteria:**
+
+- [x] System events (user_registered, email_verified, first_deposit, first_transaction) are seeded and protected
+- [x] Custom events require snake_case key format
+- [x] Key uniqueness enforced
+
+---
+
+### FM-20: Popup Promotion Management
+
+**Route:** `/dashboard/popup-promotions`
+**API Base:** `/api/v1/marketing/popup-promotions`
+**Priority:** P1 — New Client Acquisition
+
+| ID       | Feature            | Status  | Description                                                   |
+| -------- | ------------------ | ------- | ------------------------------------------------------------- |
+| FM-20-01 | List with filters  | ✅ Done | Status/type filters, priority badges, quick actions           |
+| FM-20-02 | Create wizard      | ✅ Done | 5-step: basic info, content, targeting, scheduling, review    |
+| FM-20-03 | Detail + analytics | ✅ Done | StatCards (impressions, clicks, CTR, conversions), timeline   |
+| FM-20-04 | Edit popup         | ✅ Done | Page + Inner Form pattern                                     |
+| FM-20-05 | Status management  | ✅ Done | draft→scheduled→active→paused→ended lifecycle                 |
+| FM-20-06 | A/B testing        | ✅ Done | Sticky 50/50 variant assignment, side-by-side comparison      |
+| FM-20-07 | Targeting engine   | ✅ Done | user_type, event triggers, metadata conditions, frequency cap |
+| FM-20-08 | Content modes      | ✅ Done | Template, image upload, canvas editor, HTML code              |
+
+**Content Modes:**
+
+- Template: 4 presets (welcome_offer, flash_sale, voucher_promo, announcement)
+- Canvas Editor: drag & drop elements (text, image, button, shape, icon)
+- HTML Code: code editor with preview tab and template variables
+- Image Upload: direct image URL
+
+**Targeting:**
+
+- user_type: client or mitra (required)
+- Event-based triggers with metadata conditions (equals, contains, gt, lt, between)
+- Frequency cap: max_per_day, max_per_week, max_lifetime
+- Schedule: start_date, end_date, time_of_day, days_of_week
+
+**Client API:**
+
+- `GET /api/v1/client/popups/eligible` — returns highest-priority matching popup
+- `POST /api/v1/client/popups/{id}/impression|click|dismiss` — event tracking
+- `POST /api/v1/client/events` — generic event ingestion for triggers
+
 ## Roadmap
 
 | ID       | Feature                     | Priority | Status     |
@@ -1030,3 +1090,5 @@ Published → Draft (unpublish)
 | FM-16    | Audit Log                   | P3       | 🔲 Planned |
 | FM-17    | Role-based UI visibility    | P3       | 🔲 Planned |
 | FM-18    | Blog/Article Management     | P2       | ✅ Done    |
+| FM-19    | Event Registry              | P2       | ✅ Done    |
+| FM-20    | Popup Promotion Management  | P1       | ✅ Done    |

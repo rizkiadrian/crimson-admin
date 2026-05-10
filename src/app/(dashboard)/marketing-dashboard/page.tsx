@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { useUserProfile } from "@store/useUserProfile";
-import { Megaphone, Ticket, Users, Newspaper } from "lucide-react";
+import { Megaphone, Ticket, Users, Newspaper, Layers } from "lucide-react";
 import { StatCard } from "@app/components/ui/StatCard";
 import {
   ChartCard,
@@ -56,7 +56,14 @@ export default function MarketingDashboardPage() {
     );
   }
 
-  const { campaigns, vouchers, articles, funnel_summary, top_referrers } = data;
+  const {
+    campaigns,
+    vouchers,
+    articles,
+    popups,
+    funnel_summary,
+    top_referrers,
+  } = data;
 
   const funnelData = [
     {
@@ -90,7 +97,7 @@ export default function MarketingDashboardPage() {
         <p className="text-neutral-500 mt-1">Marketing Dashboard Overview</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           title="Active Campaigns"
           value={campaigns.active}
@@ -113,6 +120,18 @@ export default function MarketingDashboardPage() {
           value={articles.published}
           icon={Newspaper}
           description={`${articles.draft} drafts`}
+        />
+        <StatCard
+          title="Active Popups"
+          value={popups?.active_count ?? 0}
+          icon={Layers}
+          description={`${popups?.total_impressions ?? 0} impressions`}
+        />
+        <StatCard
+          title="Popup Conversions"
+          value={popups?.conversions_this_month ?? 0}
+          icon={Layers}
+          description="This month"
         />
       </div>
 

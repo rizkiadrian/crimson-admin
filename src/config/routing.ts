@@ -101,6 +101,21 @@ const ANALYTICS_SERVICES = {
   analyticsEvents: "/dashboard/analytics/events",
 };
 
+const EVENT_REGISTRY_SERVICES = {
+  eventRegistry: "/dashboard/event-registry",
+  eventRegistryCreate: "/dashboard/event-registry/create",
+  eventRegistryEdit: (id: number) => `/dashboard/event-registry/${id}/edit`,
+};
+
+const POPUP_PROMOTION_SERVICES = {
+  popupPromotions: "/dashboard/popup-promotions",
+  popupPromotionCreate: "/dashboard/popup-promotions/create",
+  popupPromotionEdit: (id: string) => `/dashboard/popup-promotions/${id}/edit`,
+  popupPromotionDetail: (id: string) => `/dashboard/popup-promotions/${id}`,
+  popupPromotionCompare: (id: string) =>
+    `/dashboard/popup-promotions/${id}/compare`,
+};
+
 const ARTICLE_SERVICES = {
   articles: "/dashboard/articles",
   articleCreate: "/dashboard/articles/create",
@@ -142,5 +157,7 @@ export const PATHS = {
   ...REFERRAL_SERVICES,
   ...SERVICE_CATEGORIES_SERVICES,
   ...ANALYTICS_SERVICES,
+  ...EVENT_REGISTRY_SERVICES,
+  ...POPUP_PROMOTION_SERVICES,
   ...ARTICLE_SERVICES,
 };

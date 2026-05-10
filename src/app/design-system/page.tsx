@@ -20,6 +20,7 @@ import { ActivityCardShowcase } from "./components/activity-card-showcase";
 import { CommentThreadShowcase } from "./components/comment-thread-showcase";
 import { BannerEditorShowcase } from "./components/banner-editor-showcase";
 import { MetadataPopoverShowcase } from "./components/metadata-popover-showcase";
+import { PopupEditorShowcase } from "./components/popup-editor-showcase";
 
 export default function DesignSystemPage() {
   return (
@@ -206,6 +207,14 @@ export default function DesignSystemPage() {
             20. Metadata Popover
           </h2>
           <MetadataPopoverShowcase />
+        </section>
+
+        {/* Section 21: Popup Editor */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-secondary-800">
+            21. Popup Editor
+          </h2>
+          <PopupEditorShowcase />
         </section>
       </main>
     </div>

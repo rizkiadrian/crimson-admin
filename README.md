@@ -62,13 +62,15 @@ Open [http://localhost:3000](http://localhost:3000).
 | Authors              | ✅   | ✅     | —    | ✅   | ✅     | —      | —      | —         |
 | Article Categories   | ✅   | ✅     | —    | ✅   | ✅     | —      | —      | —         |
 | Article Tags         | ✅   | ✅     | —    | ✅   | ✅     | —      | —      | —         |
+| Event Registry       | ✅   | ✅     | —    | ✅   | ✅     | —      | —      | —         |
+| Popup Promotions     | ✅   | ✅     | ✅   | ✅   | ✅     | —      | ✅     | ✅        |
 
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart, ActivityCard (with attachment thumbnail preview), CommentThread
+│   ├── components/ui/       # Button, FormInput, FormSelect, Table, FormCard, DetailCard, FilterPopup, ConfirmDialog, SearchInput, StatCard, Chart, ActivityCard (with attachment thumbnail preview), CommentThread, PopupEditor
 │   ├── components/layout/   # Sidebar (accordion, ROLE_NAV_CONFIG per role), Navbar (with NotificationBell dropdown — supports all backoffice roles, resolveLink deep link fallback)
 │   ├── (dashboard)/         # Dashboard pages (backoffice-dashboard, finance-dashboard, marketing-dashboard, backoffice-members, client-members, mitra-members, leads, sales-members, notifications, activity-logs, deposit-requests, banners, vouchers, referral-campaigns, referrals, sales-activities, analytics/funnel, analytics/segments, analytics/events, service-categories)
 │   └── design-system/       # Live component preview

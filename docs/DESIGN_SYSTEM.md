@@ -588,6 +588,42 @@ import type { CanvasEditorHandle } from "@app/components/ui/BannerEditor";
 | Referral Bonus  | Dark gradient (charcoal) | Matches mobile Referral promo card |
 | Promo Spesial   | Purple gradient          | Generic centered promo layout      |
 
+### PopupEditor System
+
+A composable popup editor system for creating in-app popup promotions with 4 content modes: template, canvas, HTML, and image.
+
+```tsx
+import {
+  PopupCanvasEditor,
+  PopupElementPanel,
+  PopupColorPicker,
+  PopupGradientEditor,
+  PopupBackgroundSelector,
+  PopupTemplateSelector,
+  PopupHtmlEditor,
+  PopupPreviewModal,
+  PopupImageInput,
+} from "@app/components/ui/PopupEditor";
+```
+
+| Component                 | Description                                                                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PopupCanvasEditor`       | DOM-based editor with size presets (1:1, 3:4, 9:16, 4:3), drag-and-drop elements, inline text editing (double-click), free resize handles, keyboard delete, add element toolbar |
+| `PopupElementPanel`       | Floating properties panel with sectioned layout (Position & Size, Appearance, Typography, Button Style, Shape, Image), delete button                                            |
+| `PopupColorPicker`        | Color picker with Lingkar design system presets (12 solid + 6 gradient), hex input, native picker, optional opacity slider                                                      |
+| `PopupGradientEditor`     | Gradient editor with 2-4 stops, linear/radial type, angle control                                                                                                               |
+| `PopupBackgroundSelector` | Background mode selector (solid, gradient, image, pattern) with gradient presets                                                                                                |
+| `PopupTemplateSelector`   | Template gallery (4 presets) with slot-based form editing + image upload                                                                                                        |
+| `PopupHtmlEditor`         | Code editor with iframe-sandboxed preview (safe for full HTML documents)                                                                                                        |
+| `PopupPreviewModal`       | Mobile frame preview modal for all content types (template, HTML, image)                                                                                                        |
+| `PopupImageInput`         | Image input with URL field + file upload button (uploads to backend) + thumbnail preview                                                                                        |
+| `PopupColorPicker`        | Color picker with presets, hex input, native picker, optional opacity slider                                                                                                    |
+| `PopupGradientEditor`     | Gradient editor with 2-4 stops, linear/radial type, angle control                                                                                                               |
+| `PopupBackgroundSelector` | Background mode selector (solid, gradient, image, pattern)                                                                                                                      |
+| `PopupTemplateSelector`   | Template gallery (4 presets) with slot-based form editing                                                                                                                       |
+| `PopupHtmlEditor`         | Code editor with preview tab and template variable insertion                                                                                                                    |
+| `PopupPreviewModal`       | Mobile frame preview modal for all content types                                                                                                                                |
+
 ### MetadataPopover
 
 Inline popover component for displaying truncated JSON metadata with a full-view popover on click. Used in the Event Log table to show event metadata.

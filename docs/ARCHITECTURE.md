@@ -140,6 +140,8 @@ src/
 │   │   ├── vouchers/          # Types (IVoucher, IVoucherUser, IVoucherTargetSegment, IVoucherParams, DiscountType, TargetUserType, DistributionType, SegmentType) + service (list, detail, create, update, delete, toggleActive, assign) — voucher management
 │   │   ├── referral-campaigns/ # Types (IReferralCampaign, IReferralCampaignDetail, IReferralTier, IReferralMilestone, IReferralCampaignParams) + service (list, detail, create, update, delete, updateStatus) — referral campaign management
 │   │   ├── referrals/         # Types (IReferral, IReferralDetail, IReferralReward, IReferralOverview, IReferralLeaderboard, ITierDistribution) + service (list, detail, flag, retryReward) + analytics service (overview, leaderboard, tierDistribution) — referral management and analytics
+│   │   ├── event-registry/    # Types (IEventRegistry, IEventRegistryParams) + service (list, create, update, delete) — custom/system event management for popup triggers
+│   │   ├── popup-promotions/  # Types (IPopupPromotion, IPopupAnalytics, ITriggerRule, ITargetConfig, IScheduleConfig, IFrequencyCap) + service (CRUD, changeStatus, duplicate, createABVariant, uploadImage, analytics, timeline, breakdown, compare) — in-app popup promotion management with A/B testing and image upload
 │   │   └── dashboard/          # Types + service (summary incl. leads stats, deposits summary, journey summary)
 │   ├── sales/
 │   │   ├── active-leads/       # Types + service (getActiveLeads with ?search, ?unassigned_only, ?assigned_to_me)
@@ -155,7 +157,7 @@ src/
 │   └── useSalesNotificationStore.ts     # Sales notification bell state (mirrors backoffice pattern, uses salesNotificationsService)
 ├── config/
 │   ├── env.ts
-│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit, analyticsFunnel, analyticsSegments, analyticsEvents, serviceCategories, serviceCategoryCreate, serviceCategoryEdit, vouchers, voucherCreate, voucherEdit, voucherDetail, referralCampaigns, referralCampaignCreate, referralCampaignEdit, referralCampaignDetail, referrals, referralDetail)
+│   └── routing.ts              # Centralized PATHS object (incl. activityLogs, activityLogDetail, salesActivityDetail, depositRequests, depositRequestDetail, banners, bannerCreate, bannerEdit, analyticsFunnel, analyticsSegments, analyticsEvents, serviceCategories, serviceCategoryCreate, serviceCategoryEdit, vouchers, voucherCreate, voucherEdit, voucherDetail, referralCampaigns, referralCampaignCreate, referralCampaignEdit, referralCampaignDetail, referrals, referralDetail, eventRegistry, eventRegistryCreate, eventRegistryEdit, popupPromotions, popupPromotionCreate, popupPromotionEdit, popupPromotionDetail, popupPromotionCompare)
 └── middleware.ts                # Auth redirect + role-based routing middleware
 ```
 
@@ -245,16 +247,16 @@ src/
 
 **Backend Route Groups (API protection):**
 
-| Group            | Middleware                                | Endpoints                                                         |
-| ---------------- | ----------------------------------------- | ----------------------------------------------------------------- |
-| Shared           | `role:admin,backoffice,finance,marketing` | status, notifications                                             |
-| User Management  | `role:admin,backoffice`                   | backoffice-members, client-members, mitra-members, sales-members  |
-| Sales Management | `role:admin,backoffice`                   | leads, activity-logs                                              |
-| Master Data      | `role:admin,backoffice`                   | service-categories                                                |
-| Finance          | `role:admin,finance`                      | deposit-requests                                                  |
-| Marketing        | `role:admin,marketing`                    | banners, vouchers, referrals, articles, authors, tags, categories |
-| Analytics        | `role:admin,marketing`                    | analytics/\*                                                      |
-| Sales            | `role:sales`                              | sales/\* (fully isolated)                                         |
+| Group            | Middleware                                | Endpoints                                                                                           |
+| ---------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Shared           | `role:admin,backoffice,finance,marketing` | status, notifications                                                                               |
+| User Management  | `role:admin,backoffice`                   | backoffice-members, client-members, mitra-members, sales-members                                    |
+| Sales Management | `role:admin,backoffice`                   | leads, activity-logs                                                                                |
+| Master Data      | `role:admin,backoffice`                   | service-categories                                                                                  |
+| Finance          | `role:admin,finance`                      | deposit-requests                                                                                    |
+| Marketing        | `role:admin,marketing`                    | banners, vouchers, referrals, articles, authors, tags, categories, event-registry, popup-promotions |
+| Analytics        | `role:admin,marketing`                    | analytics/\*                                                                                        |
+| Sales            | `role:sales`                              | sales/\* (fully isolated)                                                                           |
 
 ### Cookie Schema
 
