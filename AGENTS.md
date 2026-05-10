@@ -47,6 +47,7 @@ Read `CLAUDE.md` for the full reference. This is a condensed version for quick o
 | ------------------------------- | ---------------------------------------------------- |
 | Building any feature            | `.agents/skills/new-feature-checklist/SKILL.md`      |
 | Fullstack feature (API+UI)      | `.agents/skills/fullstack-feature-pattern/SKILL.md`  |
+| Popup Promotion feature         | `.agents/skills/popup-promotion/SKILL.md`            |
 | Any state or data fetching work | `.agents/skills/state-management-patterns/SKILL.md`  |
 | Any form submit or async action | `.agents/skills/error-handling-patterns/SKILL.md`    |
 | After any change                | `.agents/skills/documentation-update-guide/SKILL.md` |
