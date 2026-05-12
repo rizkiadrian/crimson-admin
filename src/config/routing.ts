@@ -114,6 +114,8 @@ const POPUP_PROMOTION_SERVICES = {
   popupPromotionDetail: (id: string) => `/dashboard/popup-promotions/${id}`,
   popupPromotionCompare: (id: string) =>
     `/dashboard/popup-promotions/${id}/compare`,
+  popupPromotionSchedule: (id: string) =>
+    `/dashboard/popup-promotions/${id}/schedule`,
 };
 
 const ARTICLE_SERVICES = {

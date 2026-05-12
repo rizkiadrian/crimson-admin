@@ -88,7 +88,7 @@ function EditForm({ initialData }: { initialData: IPopupPromotion }) {
   const [contentType, setContentType] = useState<PopupContentType>(
     initialData.content_type
   );
-  const [priority, setPriority] = useState(initialData.priority);
+  const [priority, setPriority] = useState(Math.max(0, initialData.priority));
   const [contentConfig, setContentConfig] = useState<Record<string, unknown>>(
     initialData.content_config || {}
   );
@@ -195,8 +195,9 @@ function EditForm({ initialData }: { initialData: IPopupPromotion }) {
               id="priority"
               label="Priority"
               type="number"
+              min={0}
               value={String(priority)}
-              onChange={(e) => setPriority(Number(e.target.value))}
+              onChange={(e) => setPriority(Math.max(0, Number(e.target.value)))}
             />
 
             {/* Content Editor */}

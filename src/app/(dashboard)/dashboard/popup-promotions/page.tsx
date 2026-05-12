@@ -1,7 +1,15 @@
 "use client";
 
 import { useCallback } from "react";
-import { Plus, Pencil, Trash2, Copy, Pause, Play } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Copy,
+  Pause,
+  Play,
+  CalendarClock,
+} from "lucide-react";
 import {
   TableCard,
   TableCardHeader,
@@ -105,6 +113,17 @@ function PopupActions({
 
   return (
     <div className="flex items-center justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+      {popup.status === "draft" && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-auto w-auto p-2 rounded-lg hover:text-primary-600 hover:bg-primary-50 hover:border-transparent"
+          href={PATHS.popupPromotionSchedule(popup.id)}
+          aria-label="Set Schedule"
+        >
+          <CalendarClock size={14} />
+        </Button>
+      )}
       {(popup.status === "active" || popup.status === "paused") && (
         <Button
           variant="ghost"
