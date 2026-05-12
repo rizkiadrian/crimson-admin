@@ -10,6 +10,7 @@ export interface IServiceCategory {
   slug: string;
   description: string | null;
   icon: string | null; // Full URL from backend accessor
+  font_icon: string | null; // lucide-react icon name (PascalCase)
   types: CategoryType[] | null;
   is_active: boolean;
   created_at: string;

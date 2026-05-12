@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Check, Upload, AlertCircle } from "lucide-react";
+import { Check, Upload, AlertCircle, icons } from "lucide-react";
 import { FormInput } from "@app/components/ui/FormInput";
 import {
   FormCheckbox,
@@ -41,6 +41,7 @@ export default function ServiceCategoryCreatePage() {
   // Form fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [fontIcon, setFontIcon] = useState("");
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreviewUrl, setIconPreviewUrl] = useState<string | null>(null);
   const [iconError, setIconError] = useState<string | null>(null);
@@ -127,6 +128,10 @@ export default function ServiceCategoryCreatePage() {
 
       if (iconFile) {
         formData.append("icon", iconFile);
+      }
+
+      if (fontIcon.trim()) {
+        formData.append("font_icon", fontIcon.trim());
       }
 
       selectedTypes.forEach((type) => {
@@ -239,6 +244,27 @@ export default function ServiceCategoryCreatePage() {
                     className="block w-16 h-16 object-contain"
                     unoptimized
                   />
+                </div>
+              )}
+            </div>
+
+            {/* Font Icon */}
+            <div className="space-y-3">
+              <FormInput
+                id="font_icon"
+                label="Font Icon"
+                placeholder="e.g. Sparkles, AirVent, Zap"
+                value={fontIcon}
+                onChange={(e) => setFontIcon(e.target.value)}
+                error={formErrors.font_icon}
+              />
+              {fontIcon && icons[fontIcon as keyof typeof icons] && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-neutral-50 border border-border-subtle w-fit">
+                  {React.createElement(icons[fontIcon as keyof typeof icons], {
+                    size: 24,
+                    className: "text-primary-600",
+                  })}
+                  <span className="text-xs text-text-muted">Preview</span>
                 </div>
               )}
             </div>

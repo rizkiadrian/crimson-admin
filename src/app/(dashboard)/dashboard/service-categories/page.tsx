@@ -2,7 +2,14 @@
 
 import { useCallback } from "react";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  icons,
+} from "lucide-react";
 import {
   TableCard,
   TableCardHeader,
@@ -83,6 +90,28 @@ const getColumns = (
         )}
       </TableCell>
     ),
+  },
+  {
+    key: "font_icon",
+    header: "Font Icon",
+    headerClassName: "w-32",
+    render: (item) => {
+      const IconComponent = item.font_icon
+        ? icons[item.font_icon as keyof typeof icons]
+        : null;
+      return (
+        <TableCell>
+          {IconComponent ? (
+            <div className="flex items-center gap-2">
+              <IconComponent size={20} className="text-primary-600" />
+              <span className="text-xs text-text-muted">{item.font_icon}</span>
+            </div>
+          ) : (
+            <span className="text-sm text-text-muted">—</span>
+          )}
+        </TableCell>
+      );
+    },
   },
   {
     key: "name",
